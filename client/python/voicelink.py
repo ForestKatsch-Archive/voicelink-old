@@ -13,18 +13,22 @@ ERROR_REASON_LUT={
     "arg":"Argument invalid or missing",
 }
 
+SERVER=0
+CLIENT=1
+
 class Error(Exception):
 
-    def __init__(self,reason,noun):
+    def __init__(self,reason,noun,location=SERVER):
         self.reason=reason
         self.noun=noun
-        self.handle_re=re.compile("^[\w_\-]+$")
+        self.location=location
         self.strerror=ERROR_REASON_LUT.get(self.reason,"Nonexistent error '"+self.reason+"'")
 
 class Session:
     
     def __init__(self):
         self.log=[]
+        self.handle_re=re.compile("^[\w_\-]+$")
         self.session={
             "handle":None,
             "session_id":None,
@@ -33,7 +37,7 @@ class Session:
             }
 
     def session_verified(self):
-        return self.session.verified
+        return self.session["verified"]
     
     def request(self,action,data):
         params=urllib.parse.urlencode(data)
@@ -53,11 +57,11 @@ class Session:
 
     def register(self,handle,password,repeat_password):
         if self.handle_re.match(handle) == None:
-            raise Error("invalid","handle")
+            raise Error("invalid","handle",CLIENT)
         if password != repeat_password:
-            raise Error("invalid","password")
+            raise Error("invalid","password",CLIENT)
         if password != repeat_password:
-            raise Error("invalid","password")
+            raise Error("invalid","password",CLIENT)
         self.request("register",{
                 "handle":handle,
                 "password":password,

@@ -1,5 +1,7 @@
 <?php
 
+require("db.php");
+
 function auth_logged_in() {
   return false;
 }
