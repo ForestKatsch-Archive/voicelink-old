@@ -6,4 +6,10 @@ function get($key) {
   return null;
 }
 
+function post($key) {
+  if(isset($_POST[$key]))
+    return $_POST[$key];
+  return null;
+}
+
 ?>
