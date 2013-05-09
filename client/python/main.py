@@ -15,6 +15,9 @@ COMMANDS={
     "poke":["Checks if the server is alive.",
             "",
             "Checks if the server is alive."],
+    "login":["Login to VoiceLink.",
+             "<handle>[ <password>]",
+             "Login to VoiceLink. Unless you enter your password, you will be prompted for it."],
     "quit":["Quits the VoiceLink client and ends the session.",
             "[fast]",
             "Quits the VoiceLink client and ends the current session. If the 'fast' argument is present, don't log out nicely first."]
@@ -63,9 +66,21 @@ def quit(args):
         vl.session_end()
     exit(0)
 
+def start_session(args):
+    if len(args) < 1:
+        help("login")
+        return
+    handle=args[0]
+    if len(args) >= 2:
+        password=args[1]
+    else:
+        password=getpass.getpass("Password for "+handle+": ")
+        do(vl.start_session,handle,password)
+
 def register(args):
     if len(args) < 1:
         help("register")
+        return
     handle=args[0]
     if len(args) == 3:
         password=args[1]
@@ -74,6 +89,8 @@ def register(args):
         password=getpass.getpass("New password: ")
         repeat_password=getpass.getpass("Repeat password: ")
         do(vl.register,handle,password,repeat_password)
+        print("Logging in...")
+        start_session([handle,password])
 
 def poke(args):
     r=do(vl.poke)
@@ -102,6 +119,8 @@ def go():
             quit(args)
         elif cmd == "poke":
             poke(args)
+        elif cmd == "login":
+            start_session(args)
         elif cmd == "register":
             register(args)
         else:

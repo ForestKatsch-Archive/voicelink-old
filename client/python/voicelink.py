@@ -10,7 +10,9 @@ ERROR_REASON_LUT={
     "niy":"Not implemented yet",
     "auth":"Incorrect authorization",
     "arg":"Argument invalid or missing",
+    "mysql":"MySQL database error",
     "invalid":"Invalid data",
+    "server":"Server problem.",
     "http":"HTTP response",
 }
 
@@ -82,20 +84,15 @@ class Session:
                     raise TypeError(field+" not of type string")
 
     def poke(self):
-        try:
-            r=self.get_request("poke")
-            try:
-                self.required_fields(r,["ip_address","version"])
-            except ValueError:
-                raise Error("invalid","response")
-            except TypeError:
-                raise Error("invalid","response")
-            return r
-        except Error as e:
-            if e.location == SERVER:
-                return False
-            else:
-                raise e
+        r=self.get_request("poke")
+        self.required_fields(r,["ip_address","version"])
+        return r
+        
+    def start_session(self,handle,password):
+        return self.post_request("start_session",{
+                "handle":handle,
+                "password":password
+                })
         
     def register(self,handle,password,repeat_password):
         if self.handle_re.match(handle) == None:
@@ -104,7 +101,7 @@ class Session:
             raise Error("invalid","password",CLIENT)
         if password != repeat_password:
             raise Error("invalid","password",CLIENT)
-        self.post_request("register",{
+        return self.post_request("register",{
                 "handle":handle,
                 "password":password,
                 "repeat_password":repeat_password

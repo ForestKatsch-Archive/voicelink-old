@@ -21,8 +21,10 @@ if($a == "info") {
   info();
 } else if($a == "poke") {
   info();
+} else if($a == "start_session") {
+  auth_start_session();
 } else if($a == "register") {
-  auth_register();
+  auth_register_user();
 } else {
   reply_error("arg","action");
 }
