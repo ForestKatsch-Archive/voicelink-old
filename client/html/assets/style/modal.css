@@ -1,21 +1,35 @@
 
-.dialog {
+@import "overlay.css";
+
+.modal {
     background-color: #f6f6f6;
     border: 1px solid #bbb;
     border-radius: 3px;
+    display: none;
     position: absolute;
     margin-left: -10em;
     min-width: 10em;
-    top: 10%;
     left: 50%;
     width: 20em;
+    top: 5em;
+    z-index: 5000;
 }
 
-.dialog header {
-    border-bottom: 1px solid #bbb;
+.modal header {
     padding: 10px;
 }
 
-.dialog .wrapper {
+.modal header h1 {
+    font-weight: bold;
+    display: inline-block;
+}
+
+.modal header .close {
+    float: right;
+    padding: 0px;
+}
+
+.modal .wrapper {
     padding: 10px;
+    padding-top: 0;
 }

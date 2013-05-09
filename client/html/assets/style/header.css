@@ -24,6 +24,9 @@
     display: inline-block;
     height: 32px;
     width: 128px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 
