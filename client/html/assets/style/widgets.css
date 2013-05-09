@@ -1,27 +1,4 @@
 
-.button,
-.hidden-button {
-    color: #888;
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-}
-
-.button:hover,
-.hidden-button:hover {
-    color: #555;
-    cursor: default;
-
-}
-.button:active,
-.hidden-button:active {
-    color: #222;
-}
-
-.action:hover {
-    cursor: pointer;
-}
-
-#hidden-button {
-    
-}
+@import "button.css";
+@import "modal.css";
+@import "login.css";

@@ -1,0 +1,21 @@
+
+.dialog {
+    background-color: #f6f6f6;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    position: absolute;
+    margin-left: -10em;
+    min-width: 10em;
+    top: 10%;
+    left: 50%;
+    width: 20em;
+}
+
+.dialog header {
+    border-bottom: 1px solid #bbb;
+    padding: 10px;
+}
+
+.dialog .wrapper {
+    padding: 10px;
+}

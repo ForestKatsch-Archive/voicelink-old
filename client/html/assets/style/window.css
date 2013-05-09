@@ -1,0 +1,16 @@
+
+.window {
+    background-color: #f6f6f6;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    position: absolute;
+}
+
+.window header {
+    border-bottom: 1px solid #bbb;
+    padding: 10px;
+}
+
+.window .wrapper {
+    padding: 10px;
+}
