@@ -75,7 +75,7 @@ def start_session(args):
         password=args[1]
     else:
         password=getpass.getpass("Password for "+handle+": ")
-        do(vl.start_session,handle,password)
+    do(vl.start_session,handle,password)
 
 def register(args):
     if len(args) < 1:

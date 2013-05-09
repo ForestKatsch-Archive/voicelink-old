@@ -43,7 +43,10 @@ class Session:
     def session_verified(self):
         return self.session["verified"]
     
-    def request(self,action,data={},protocol="GET"):
+    def request(self,action,data={},protocol="GET",session=False):
+        if session:
+            data["session_id"]=self.session["session_id"]
+            data["session_hash"]=self.session["session_hash"]
         params=urllib.parse.urlencode(data)
         get_params=""
         post_params=""
@@ -69,16 +72,16 @@ class Session:
         self.log.append([protocol,action,data,response])
         return response
 
-    def post_request(self,action,data={}):
-        return self.request(action,data,"POST")
+    def post_request(self,action,data={},session=False):
+        return self.request(action,data,"POST",session)
 
-    def get_request(self,action,data={}):
-        return self.request(action,data,"GET")
+    # def get_request(self,action,data={}):
+    #     return self.request(action,data,"GET")
 
     def required_fields(self,d,fields):
         for field in fields:
             if field not in d:
-                raise ValueError(field+" not in dictionary")
+                raise Error("invalid",field)
             else:
                 if type(d[field]) != type(""):
                     raise TypeError(field+" not of type string")
@@ -89,10 +92,26 @@ class Session:
         return r
         
     def start_session(self,handle,password):
-        return self.post_request("start_session",{
+        r=self.post_request("start_session",{
                 "handle":handle,
                 "password":password
                 })
+        self.required_fields(r,["session_id","session_hash"])
+        self.session["handle"]=handle
+        self.session["session_id"]=r["session_id"]
+        self.session["session_hash"]=r["session_hash"]
+        self.session["verified"]=True
+        
+    def end_session(self):
+        if not self.session_verified():
+            return;
+        r=self.post_request("end_session",{
+                },True)
+        self.required_fields(r,["session_id","session_hash"])
+        self.session["handle"]=handle
+        self.session["session_id"]=r["session_id"]
+        self.session["session_hash"]=r["session_hash"]
+        self.session["verified"]=True
         
     def register(self,handle,password,repeat_password):
         if self.handle_re.match(handle) == None:
@@ -101,8 +120,10 @@ class Session:
             raise Error("invalid","password",CLIENT)
         if password != repeat_password:
             raise Error("invalid","password",CLIENT)
-        return self.post_request("register",{
+        r=self.post_request("register",{
                 "handle":handle,
                 "password":password,
                 "repeat_password":repeat_password
                 })
+        print(handle,password)
+        self.start_session(handle,password)

@@ -100,13 +100,18 @@ function mysql_register_user($handle,$password) {
 
 function mysql_verify_user($handle,$password) {
   global $DB_NAME_USERS;
+  if(!mysql_user_exists($handle))
+    reply_error("invalid","handle");
   $rows=mysql_q("select password_hash from $DB_NAME_USERS WHERE handle='$handle'");
   if($rows->num_rows != 1)
     reply_error("mysql","Expected one user");
   $row=$rows->fetch_assoc();
   $password_hash=$row["password_hash"];
   $bcrypt=new Bcrypt(15);
-  if($bcrypt->verify($password_hash) == false)
+  error_log($password);
+  $hash=$bcrypt->hash($password);
+  error_log($hash . "   " . $password_hash);
+  if($bcrypt->verify($password,$hash))
     reply_error("auth","password");
 }
 
@@ -121,9 +126,28 @@ function mysql_start_session($handle,$password,$expires=null) {
   $timestamp=$date->getTimestamp();
   if($expires == null)
     $expires=$AUTH_SESSION_LENGTH;
-  $expires+=$timestamp;
+  $expires=$expires+$timestamp;
   $session_hash=$bcrypt->hash($user_id . $expires);
-  mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ($user_id,$session_hash,$expires)");
+  mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ('$user_id','$session_hash',FROM_UNIXTIME($expires))");
+  $rows=mysql_q("select session_id from $DB_NAME_USER_SESSIONS WHERE user_id='$user_id' && session_hash='$session_hash'");
+  if($rows->num_rows != 1)
+    reply_error("mysql","Expected one unique session hash/user combination");
+  $row=$rows->fetch_assoc();
+  $session_id=$row["session_id"];
+  return ["session_id"=>$session_id,"session_hash"=>$session_hash,"current_time"=>$timestamp];
 }
+
+function mysql_verify_session($session_id,$session_hash) {
+  global $DB_NAME_USER_SESSIONS;
+  $rows=mysql_q("select session_hash from $DB_NAME_USER_SESSIONS WHERE session_id='$session_id'");
+  if($rows->num_rows != 1)
+    reply_error("invalid","session");
+  $row=$rows->fetch_assoc();
+  if($session_hash == $row["session_hash"])
+    return true;
+  else
+    return false;
+}
+
 
 ?>

@@ -23,11 +23,11 @@ function db_user_exists($handle) {
 }
 
 function db_start_session($handle,$password) {
-  mysql_start_session($handle,$password);
+  return mysql_start_session($handle,$password);
 }
 
 function db_register_user($handle,$password) {
-  mysql_register_user($handle,$password);
+  return mysql_register_user($handle,$password);
 }
 
 ?>
