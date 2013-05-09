@@ -3,6 +3,7 @@
 require("db.php");
 
 function auth_logged_in() {
+  db_init();
   return false;
 }
 

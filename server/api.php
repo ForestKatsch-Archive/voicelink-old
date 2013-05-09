@@ -6,13 +6,21 @@ require("_/form.php");
 require("_/json.php");
 require("_/auth.php");
 
+function info() {
+  global $VOICELINK_VERSION;
+  reply("ok",[
+	      "version"=>implode(".",$VOICELINK_VERSION),
+	      "ip_address"=>$_SERVER["SERVER_ADDR"]
+	      ]);
+}
+
 if(($a=get("action")) == null)
   reply_error("arg","action");
 
 if($a == "info") {
-  reply([
-	 "version"=>$VOICELINK_VERSION
-    ]);
+  info();
+} else if($a == "poke") {
+  info();
 } else if($a == "register") {
   auth_register();
 } else {

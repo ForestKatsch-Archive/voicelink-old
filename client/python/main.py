@@ -12,6 +12,9 @@ COMMANDS={
     "register":["Register for a new VoiceLink account",
                 "<handle> [<password> <repeat_password>]",
                 "Registers for a new VoiceLink account. Unless you enter the new password and repeat it, you will be prompted for it."],
+    "poke":["Checks if the server is alive.",
+            "",
+            "Checks if the server is alive."],
     "quit":["Quits the VoiceLink client and ends the session.",
             "[fast]",
             "Quits the VoiceLink client and ends the current session. If the 'fast' argument is present, don't log out nicely first."]
@@ -42,9 +45,48 @@ def help(args):
     else:
         print(HELP,end="")
 
+def do(c,*args,**kwargs):
+    try:
+        return c(*args,**kwargs)
+    except voicelink.Error as e:
+        if e.location == voicelink.SERVER:
+            ef="Server error"
+        else:
+            ef="Error"
+        print(ef+": '"+e.noun+"': "+e.strerror)
+    except KeyboardInterrupt:
+        print("\rCancelled.")
+
+def quit(args):
+    if vl.session_verified():
+        print("Ending session...")
+        vl.session_end()
+    exit(0)
+
+def register(args):
+    if len(args) < 1:
+        help("register")
+    handle=args[0]
+    if len(args) == 3:
+        password=args[1]
+        repeat_password=args[1]
+    else:
+        password=getpass.getpass("New password: ")
+        repeat_password=getpass.getpass("Repeat password: ")
+        do(vl.register,handle,password,repeat_password)
+
+def poke(args):
+    r=do(vl.poke)
+    if r == None:
+        pass # cancelled
+    elif r == False:
+        print("The VoiceLink server '"+vl.host+"' is down.")
+    else:
+        print("The VoiceLink server '"+vl.host+"' (IP address "+r["ip_address"]+", VoiceLink version "+r["version"]+") is up.")
+
+vl=voicelink.Session()
 
 def go():
-    vl=voicelink.Session()
     print("VoiceLink v"+".".join([str(x) for x in voicelink.VERSION])+"; type 'help' for a list of commands")
     while True:
         cmd=input("> ").split()
@@ -57,33 +99,17 @@ def go():
         if cmd == "help":
             help(args)
         elif cmd == "quit":
-            if vl.session_verified():
-                print("Ending session...")
-                vl.session_end()
-            exit(0)
+            quit(args)
+        elif cmd == "poke":
+            poke(args)
         elif cmd == "register":
-            if len(args) < 1:
-                help("register")
-                continue
-            handle=args[0]
-            if len(args) == 3:
-                password=args[1]
-                repeat_password=args[1]
-            else:
-                password=getpass.getpass("New password: ")
-                repeat_password=getpass.getpass("Repeat password: ")
-            try:
-                vl.register(handle,password,repeat_password)
-            except voicelink.Error as e:
-                if e.location == voicelink.SERVER:
-                    ef="Server error"
-                else:
-                    ef="Error"
-                print(ef+": '"+e.noun+"': "+e.strerror)
-            except KeyboardInterrupt:
-                print("Cancelled.")
+            register(args)
         else:
             print("Invalid command.");
 
 if __name__ == "__main__":
-    go()
+    try:
+        go()
+    except KeyboardInterrupt:
+        print("\r")
+        exit(0);
