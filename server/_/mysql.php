@@ -159,6 +159,7 @@ function mysql_verify_session($session_id,$session_hash) {
   $date=new DateTime();
   $timestamp=$date->getTimestamp();
   $expires=$row["expires"];
+  error_log($expires . "  " . $timestamp);
   if($expires < $timestamp)
     return false;
   if($session_hash != $row["session_hash"]) {
