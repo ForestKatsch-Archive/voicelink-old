@@ -50,12 +50,8 @@ var ui={
 
 function ui_init() {
     ui_create_modals();
-    $("#login-show").bind("click",function() {
-	ui_show_login();
-    });
-    $("#register-show").bind("click",function() {
-	ui_show_register();
-    });
+    $("#login-show").bind("click",ui_show_login);
+    $("#register-show").bind("click",ui_show_register);
     loaded("ui");
 }
 
@@ -151,18 +147,26 @@ function ui_login() {
     });
 }
 
+function ui_logout() {
+    voicelink_end_session(function(r) {
+	ui_logged_out();
+    });
+}
+
 function ui_logged_in() {
     $("#login-show").text("Logout");
     $("#login-show").unbind("click");
+    $("#login-show").bind("click",ui_logout);
     $("#register-show").addClass("hidden");
     ui_hide_login();
     voicelink_pop_error();
 }
 
 function ui_logged_out() {
-    $("#login-show").text("Logout");
+    $("#login-show").text("Login");
     $("#login-show").unbind("click");
-    $("#register-show").addClass("hidden");
+    $("#login-show").bind("click",ui_show_login);
+    $("#register-show").removeClass("hidden");
     ui_hide_login();
     voicelink_pop_error();
 }

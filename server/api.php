@@ -23,6 +23,10 @@ if($a == "info") {
   info();
 } else if($a == "start_session") {
   auth_start_session();
+} else if($a == "verify_session") {
+  auth_verify_session();
+} else if($a == "end_session") {
+  auth_end_session();
 } else if($a == "register") {
   auth_register_user();
 } else {

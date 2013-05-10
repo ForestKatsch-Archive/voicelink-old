@@ -123,7 +123,7 @@ function mysql_start_session($handle,$password,$expires=null) {
   error_log($expires);
   $expires=$expires+$timestamp;
   $session_hash=md5($user_id . $expires);
-  mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ('$user_id','$session_hash',FROM_UNIXTIME($expires))");
+  mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ($user_id,'$session_hash',FROM_UNIXTIME($expires))");
   $rows=mysql_q("select session_id from $DB_NAME_USER_SESSIONS WHERE user_id='$user_id' && session_hash='$session_hash'");
   if($rows->num_rows != 1)
     reply_error("mysql","Expected one unique session hash/user combination");
@@ -132,17 +132,43 @@ function mysql_start_session($handle,$password,$expires=null) {
   return ["session_id"=>$session_id,"session_hash"=>$session_hash,"current_time"=>$timestamp,"expires"=>$expires];
 }
 
+function mysql_end_expired_sessions($user_id) {
+  global $DB_NAME_USER_SESSIONS;
+  mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE user_id=$user_id AND expires<=NOW()");
+}
+
+function mysql_end_all_sessions($user_id) {
+  global $DB_NAME_USER_SESSIONS;
+  mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE user_id=$user_id");
+}
+
+function mysql_end_session($session_id,$session_hash) {
+  global $DB_NAME_USER_SESSIONS;
+  if(mysql_verify_session($session_id,$session_hash) != false)
+    mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE session_id=$session_id AND session_hash='$session_hash'");
+  else
+    reply_error("auth","needed");
+}
+
 function mysql_verify_session($session_id,$session_hash) {
   global $DB_NAME_USER_SESSIONS;
-  $rows=mysql_q("select session_hash from $DB_NAME_USER_SESSIONS WHERE session_id='$session_id'");
+  $rows=mysql_q("select session_hash,user_id,expires from $DB_NAME_USER_SESSIONS WHERE session_id=$session_id");
   if($rows->num_rows != 1)
     reply_error("invalid","session");
   $row=$rows->fetch_assoc();
-  if($session_hash == $row["session_hash"])
-    return true;
-  else
+  $date=new DateTime();
+  $timestamp=$date->getTimestamp();
+  $expires=$row["expires"];
+  if($expires < $timestamp)
     return false;
+  if($session_hash != $row["session_hash"]) {
+    return false;
+  }
+  return [
+	  "active"=>"true",
+	  "current_time"=>$timestamp,
+	  "expires"=>$row["expires"]
+	  ];
 }
-
 
 ?>

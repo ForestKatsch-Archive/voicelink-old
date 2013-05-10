@@ -26,6 +26,14 @@ function db_start_session($handle,$password) {
   return mysql_start_session($handle,$password);
 }
 
+function db_verify_session($session_id,$session_hash) {
+  return mysql_verify_session($session_id,$session_hash);
+}
+
+function db_end_session($session_id,$session_hash) {
+  return mysql_end_session($session_id,$session_hash);
+}
+
 function db_register_user($handle,$password) {
   return mysql_register_user($handle,$password);
 }

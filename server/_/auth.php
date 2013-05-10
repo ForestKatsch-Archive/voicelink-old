@@ -9,7 +9,9 @@ function auth_logged_in() {
     return false;
   if(!($session_hash=post("session_hash")))
     return false;
-  return mysql_logged_in($session_id,$session_hash);
+  if(mysql_verify_session($session_id,$session_hash) != false) // it actually returns a dict object
+    return true;
+  return false;
 }
 
 function auth_needed($needed) {
@@ -52,6 +54,32 @@ function auth_start_session() {
 	      "current_time"=>$session["current_time"],
 	      "expires"=>$session["expires"]
 	      ]);
+}
+
+function auth_verify_session() {
+  auth_needed(true);
+  if(!($session_id=post("session_id")))
+    reply_error("arg","session_id");
+  if(!($session_hash=post("session_hash")))
+    reply_error("arg","session_hash");
+  $data=db_verify_session($session_id,$session_hash);
+  if($data == false)
+    reply("ok",["active"=>"false"]);
+  reply("ok",[
+	      "active"=>$session["active"],
+	      "current_time"=>$session["current_time"],
+	      "expires"=>$session["expires"]
+	      ]);
+}
+
+function auth_end_session() {
+  auth_needed(true);
+  if(!($session_id=post("session_id")))
+    reply_error("arg","session_id");
+  if(!($session_hash=post("session_hash")))
+    reply_error("arg","session_hash");
+  db_end_session($session_id,$session_hash);
+  reply("ok",["active"=>"false"]);
 }
 
 ?>
