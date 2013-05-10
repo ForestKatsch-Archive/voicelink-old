@@ -13,6 +13,7 @@ var Request=function(action,args,callback) {
 	this.args["session_id"]=voicelink.session.session_id;
 	this.args["session_hash"]=voicelink.session.session_hash;
     }
+    console.log(this.args);
     this.go=function(callback) {
 	var that=this;
 	this.waiting=true;
@@ -43,13 +44,24 @@ function voicelink_init() {
     voicelink_push_error(function(r,n) {
 	throw "VoicelinkError: "+r+": "+n+".";
     });
-    if(!voicelink_verified())
-	voicelink_verify_session(function(r) {
-	    if(r.active == "false")
-		ui_logged_out();
-	    else
-		ui_logged_in();
-	});
+    if(!voicelink_verified()) {
+	if(voicelink.session.session_id != -1) {
+	    voicelink_push_error(function() {
+		voicelink.session.verified=false;
+		voicelink.session.session_id=-1;
+		voicelink.session.session_hash=null;
+		voicelink.session.handle=null;
+		voicelink_save_session();
+	    });
+	    voicelink_verify_session(function(r) {
+		if(r.active == "false")
+		    ui_logged_out();
+		else
+		    ui_logged_in();
+		voicelink_pop_error();
+	    });
+	}
+    }
     loaded("voicelink");
 }
 
@@ -74,7 +86,6 @@ function voicelink_requests() {
 function voicelink_save_session() {
     console.log("Saved session information.");
     localStorage["voicelink_session"]=JSON.stringify(voicelink.session);
-    console.log(localStorage["voicelink_session"]);
 }
 
 function voicelink_restore_session() {
@@ -93,7 +104,11 @@ function voicelink_poke(callback) {
 }
 
 function voicelink_verify_session(callback) {
-    voicelink.requests.push(new Request("verify_session",{},callback));
+    voicelink.requests.push(new Request("verify_session",{},function(r) {
+	voicelink.session.verified=false;
+	voicelink_save_session();
+	callback(r);
+    }));
     voicelink_requests();
 }
 
@@ -105,9 +120,9 @@ function voicelink_register(handle,password,repeat_password,callback) {
 function voicelink_start_session(handle,password,callback) {
     voicelink.session.handle=handle;
     voicelink.requests.push(new Request("start_session",{handle:handle,password:password},function(r) {
-	console.log("Whee, we're starting a new session!",r);
 	voicelink.session.session_id=r.session_id;
 	voicelink.session.session_hash=r.session_hash;
+	voicelink.session.verified=true;
 	voicelink_save_session();
 	callback(r);
     }));
@@ -116,6 +131,11 @@ function voicelink_start_session(handle,password,callback) {
 
 function voicelink_end_session(callback) {
     voicelink.requests.push(new Request("end_session",{},function(r) {
+	voicelink.session.verified=false;
+	voicelink.session.session_id=-1;
+	voicelink.session.session_hash=null;
+	voicelink.session.handle=null;
+	voicelink_save_session();
 	callback(r);
     }));
     voicelink_requests();

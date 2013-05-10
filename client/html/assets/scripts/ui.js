@@ -12,7 +12,7 @@ var Modal=function(name,title,content) {
 <a class='close link' title='Close'><img src='assets/img/close.png' alt='close' /></a>\n\
 </header>\n\
 <div class='wrapper'>"+this.content+"</div>");
-	$("#modals").append(this.html);
+	$("#modal").append(this.html);
 	var that=this;
 	this.html.find("header .close").click(function(e) {
 	    ui_hide_modal(that.name);
@@ -27,6 +27,7 @@ var Modal=function(name,title,content) {
 	this.html.fadeIn(ui.modal.fade_time);
 	$("*").blur();
 	this.html.find("[autofocus]")[0].focus();
+	console.log("show");
     };
     this.hide=function() {
 	this.html.fadeOut(ui.modal.fade_time);
@@ -52,10 +53,16 @@ function ui_init() {
     ui_create_modals();
     $("#login-show").bind("click",ui_show_login);
     $("#register-show").bind("click",ui_show_register);
+    $("#settings-show").bind("click",view_settings);
+    $("#folders .inbox").bind("click",view_inbox);
+    $("#folders .sent").bind("click",view_sent);
+    $("#folders .drafts").bind("click",view_drafts);
     loaded("ui");
 }
 
 function ui_show_modal(modal) {
+    if(ui.modal.windows[modal] == undefined)
+	return;
     history.pushState(null,null,view.url+"#"+modal);
     ui_show_modal_final(modal);
 }
@@ -67,6 +74,8 @@ function ui_show_modal_final(modal) {
 }
 
 function ui_hide_modal(modal) {
+    if(ui.modal.windows[modal] == undefined)
+	return;
     history.pushState(null,null,view.url+"#");
     ui_hide_modal_final(modal);
 }
@@ -158,8 +167,9 @@ function ui_logged_in() {
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_logout);
     $("#register-show").addClass("hidden");
+    $("#settings-show").removeClass("hidden");
+    view_set("inbox");
     ui_hide_login();
-    voicelink_pop_error();
 }
 
 function ui_logged_out() {
@@ -167,8 +177,8 @@ function ui_logged_out() {
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_show_login);
     $("#register-show").removeClass("hidden");
-    ui_hide_login();
-    voicelink_pop_error();
+    $("#settings-show").addClass("hidden");
+    view_set("about");
 }
 
 function ui_register() {

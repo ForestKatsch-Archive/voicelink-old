@@ -1,4 +1,12 @@
 
+function activate(jqo,c) {
+    jqo.bind("click",c);
+    jqo.bind("keyup",function(e) {
+	if(e.which == 13)
+	    c();
+    });
+}
+
 function to_points(p) {
     var points=[];
     for(var i=0;i<p.length;i++) {

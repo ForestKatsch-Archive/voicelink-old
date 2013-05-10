@@ -106,7 +106,7 @@ function mysql_verify_user($handle,$password) {
   $row=$rows->fetch_assoc();
   $password_hash=$row["password_hash"];
   $hash=md5($password);
-  if($password == $hash)
+  if($password_hash != $hash)
     reply_error("auth","password");
 }
 
@@ -120,7 +120,6 @@ function mysql_start_session($handle,$password,$expires=null) {
   $timestamp=$date->getTimestamp();
   if($expires == null)
     $expires=$AUTH_SESSION_LENGTH;
-  error_log($expires);
   $expires=$expires+$timestamp;
   $session_hash=md5($user_id . $expires);
   mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ($user_id,'$session_hash',FROM_UNIXTIME($expires))");
@@ -158,7 +157,7 @@ function mysql_verify_session($session_id,$session_hash) {
   $row=$rows->fetch_assoc();
   $date=new DateTime();
   $timestamp=$date->getTimestamp();
-  $expires=$row["expires"];
+  $expires=strtotime($row["expires"]);
   if($expires < $timestamp)
     return false;
   if($session_hash != $row["session_hash"]) {
@@ -167,7 +166,7 @@ function mysql_verify_session($session_id,$session_hash) {
   return [
 	  "active"=>"true",
 	  "current_time"=>$timestamp,
-	  "expires"=>$row["expires"]
+	  "expires"=>$expires
 	  ];
 }
 
