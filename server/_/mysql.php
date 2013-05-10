@@ -111,7 +111,7 @@ function mysql_verify_user($handle,$password) {
 }
 
 function mysql_start_session($handle,$password,$expires=null) {
-  global $DB_NAME_USERS,$DB_NAME_USER_SESSIONS;
+  global $DB_NAME_USERS,$DB_NAME_USER_SESSIONS,$AUTH_SESSION_LENGTH;
   if(!mysql_user_exists($handle))
     reply_error("invalid","handle");
   mysql_verify_user($handle,$password);
@@ -120,6 +120,7 @@ function mysql_start_session($handle,$password,$expires=null) {
   $timestamp=$date->getTimestamp();
   if($expires == null)
     $expires=$AUTH_SESSION_LENGTH;
+  error_log($expires);
   $expires=$expires+$timestamp;
   $session_hash=md5($user_id . $expires);
   mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ('$user_id','$session_hash',FROM_UNIXTIME($expires))");
@@ -128,7 +129,7 @@ function mysql_start_session($handle,$password,$expires=null) {
     reply_error("mysql","Expected one unique session hash/user combination");
   $row=$rows->fetch_assoc();
   $session_id=$row["session_id"];
-  return ["session_id"=>$session_id,"session_hash"=>$session_hash,"current_time"=>$timestamp];
+  return ["session_id"=>$session_id,"session_hash"=>$session_hash,"current_time"=>$timestamp,"expires"=>$expires];
 }
 
 function mysql_verify_session($session_id,$session_hash) {

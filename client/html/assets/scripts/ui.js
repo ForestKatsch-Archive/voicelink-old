@@ -9,7 +9,7 @@ var Modal=function(name,title,content) {
     this.create=function() {
 	this.html.append("<header>\n\
 <h1>"+this.title+"</h1>\n\
-<a class='close link'><img src='assets/img/close.png' alt='close' /></a>\n\
+<a class='close link' title='Close'><img src='assets/img/close.png' alt='close' /></a>\n\
 </header>\n\
 <div class='wrapper'>"+this.content+"</div>");
 	$("#modals").append(this.html);
@@ -50,10 +50,10 @@ var ui={
 
 function ui_init() {
     ui_create_modals();
-    $("#login-show").click(function() {
+    $("#login-show").bind("click",function() {
 	ui_show_login();
     });
-    $("#register-show").click(function() {
+    $("#register-show").bind("click",function() {
 	ui_show_register();
     });
     loaded("ui");
@@ -152,7 +152,17 @@ function ui_login() {
 }
 
 function ui_logged_in() {
-    $("#login-button").text("Logout");
+    $("#login-show").text("Logout");
+    $("#login-show").unbind("click");
+    $("#register-show").addClass("hidden");
+    ui_hide_login();
+    voicelink_pop_error();
+}
+
+function ui_logged_out() {
+    $("#login-show").text("Logout");
+    $("#login-show").unbind("click");
+    $("#register-show").addClass("hidden");
     ui_hide_login();
     voicelink_pop_error();
 }
@@ -188,7 +198,7 @@ function ui_register() {
 	    return false;
 	});
 	voicelink_register(handle,password,repeat_password,function(r) {
-	    console.log("Registered!");
+	    voicelink_start_session(handle,password,ui_logged_in);
 	    ui_hide_register();
 	    voicelink_pop_error();
 	});

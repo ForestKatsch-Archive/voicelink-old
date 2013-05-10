@@ -4,6 +4,13 @@ var Request=function(action,args,callback) {
     this.args=args;
     this.callback=callback;
     this.waiting=false;
+    var session_info=false;
+    if((this.action == "end_session"))
+	session_info=true;
+    if(session_info == true) {
+	this.args["session_id"]=voicelink.session.session_id;
+	this.args["session_hash"]=voicelink.session.session_hash;
+    }
     this.go=function(callback) {
 	var that=this;
 	this.waiting=true;
@@ -62,6 +69,15 @@ function voicelink_register(handle,password,repeat_password,callback) {
 
 function voicelink_start_session(handle,password,callback) {
     voicelink.requests.push(new Request("start_session",{handle:handle,password:password},function(r) {
+	voicelink.session_id=r.session_id;
+	voicelink.session_hash=r.session_hash;
+	callback(r);
+    }));
+    voicelink_requests();
+}
+
+function voicelink_end_session(callback) {
+    voicelink.requests.push(new Request("end_session",{handle:handle,password:password},function(r) {
 	voicelink.session_id=r.session_id;
 	voicelink.session_hash=r.session_hash;
 	callback(r);
