@@ -1,7 +1,7 @@
 
 var VERSION=[0,0,1];
 
-var modules=["main","ui"];
+var modules=["main","ui","voicelink","view"];
 var module_number=0;
 var module_start_time;
 
@@ -31,7 +31,9 @@ function init() {
 function start() {
     init();
     setTimeout(function() {
+	voicelink_init();
 	ui_init();
+	view_init();
 	loaded("main");
     },0);
 }
@@ -49,4 +51,6 @@ function done() {
 
 function done_loading() {
     ui_done();
+    view_done();
+    voicelink_done();
 }

@@ -1,7 +1,5 @@
 <?php
 
-require("bcrypt.php");
-
 $mysql=null;
 
 //$MYSQL_SERVER="link.x10.mx";
@@ -13,19 +11,19 @@ $MYSQL_USER="root";
 $MYSQL_PASSWORD="mysql";
 
 function mysql_init() {
-  global $MYSQL_SERVER,$MYSQL_USER,$MYSQL_PASSWORD,$mysql;
+  global $MYSQL_SERVER,$MYSQL_USER,$MYSQL_PASSWORD,$mysql,$DB_NAME;
   $mysql=new mysqli($MYSQL_SERVER,$MYSQL_USER,$MYSQL_PASSWORD);
   if ($mysql->connect_errno)
     reply_error("mysql",$mysqli->connect_error);
-  mysql_setup_database();
-  mysql_setup_tables();
+  $mysql->select_db($DB_NAME);
+  //  mysql_setup_database();
+  //  mysql_setup_tables();
 }
 
 function mysql_q($q) {
   global $mysql;
   if(!($x=$mysql->query($q)))
     reply_error("mysql",$mysql->error);
-  $mysql->commit();
   return $x;
 }
 
@@ -33,6 +31,7 @@ function mysql_setup_database() {
   global $DB_NAME,$mysql;
   mysql_q("create database if not exists $DB_NAME");
   $mysql->select_db($DB_NAME);
+  $mysql->commit();
 }
 
 function mysql_setup_tables() {
@@ -93,8 +92,7 @@ function mysql_register_user($handle,$password) {
   global $DB_NAME_USERS;
   if(mysql_user_exists($handle))
     reply_error("invalid","handle");
-  $bcrypt = new Bcrypt(15);
-  $password_hash=$bcrypt->hash($password);
+  $password_hash=md5($password);
   mysql_q("insert into $DB_NAME_USERS (handle,password_hash) VALUES ('$handle','$password_hash')");
 }
 
@@ -107,11 +105,8 @@ function mysql_verify_user($handle,$password) {
     reply_error("mysql","Expected one user");
   $row=$rows->fetch_assoc();
   $password_hash=$row["password_hash"];
-  $bcrypt=new Bcrypt(15);
-  error_log($password);
-  $hash=$bcrypt->hash($password);
-  error_log($hash . "   " . $password_hash);
-  if($bcrypt->verify($password,$hash))
+  $hash=md5($password);
+  if($password == $hash)
     reply_error("auth","password");
 }
 
@@ -121,13 +116,12 @@ function mysql_start_session($handle,$password,$expires=null) {
     reply_error("invalid","handle");
   mysql_verify_user($handle,$password);
   $user_id=mysql_get_user_id_from_handle($handle);
-  $bcrypt=new Bcrypt(15);
-  $date = new DateTime();
+  $date=new DateTime();
   $timestamp=$date->getTimestamp();
   if($expires == null)
     $expires=$AUTH_SESSION_LENGTH;
   $expires=$expires+$timestamp;
-  $session_hash=$bcrypt->hash($user_id . $expires);
+  $session_hash=md5($user_id . $expires);
   mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ('$user_id','$session_hash',FROM_UNIXTIME($expires))");
   $rows=mysql_q("select session_id from $DB_NAME_USER_SESSIONS WHERE user_id='$user_id' && session_hash='$session_hash'");
   if($rows->num_rows != 1)

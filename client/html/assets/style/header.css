@@ -18,6 +18,10 @@
     right: 10px;
 }
 
+#h #account-status a {
+    margin-left: 10px;
+}
+
 #h h1 {
     background: transparent url("../img/logo-small.png") center center no-repeat;
     color: transparent;
@@ -27,6 +31,10 @@
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
+}
+
+#h h1:hover {
+    cursor: default;
 }
 
 

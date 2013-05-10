@@ -32,7 +32,7 @@ class Session:
     def __init__(self,host="localhost"):
         self.log=[]
         self.host=host
-        self.handle_re=re.compile("^[\w_\-]+$")
+        self.handle_re=re.compile("^[\w\-\.]{3,65535}$")
         self.session={
             "handle":None,
             "session_id":None,

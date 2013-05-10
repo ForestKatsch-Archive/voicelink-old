@@ -1,8 +1,5 @@
 
-#modal-login {
-
-}
-
+#modal-register input,
 #modal-login input {
     -o-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -11,6 +8,7 @@
     width: 100%;
 }
 
-#modal-login #login-button {
-
+#modal-login #login-button,
+#modal-register #register-button {
+    margin-top: 5px;
 }

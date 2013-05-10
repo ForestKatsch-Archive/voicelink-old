@@ -1,4 +1,23 @@
 
 .error-message {
-    height: 0;
+    color: #f55;
+    font-size: 90%;
+    max-height: 3em;
+    padding: 7px;
+    overflow: hidden;
+    margin-top: -5px;
+    margin-bottom: 3px;
+    -webkit-transition: height 0.1s ease, -webkit-transform 0.1s ease, padding 0.1s ease, margin 0.1s ease;
+    -moz-transition: height 0.1s ease, -webkit-transform 0.1s ease, padding 0.1s ease, margin 0.1s ease;
+    -webkit-transform: scale(1,1);
+    -moz-transform: scale(1,1);
+}
+
+.error-message.hidden {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    -webkit-transform: scale(1,0);
+    -moz-transform: scale(1,0);
 }

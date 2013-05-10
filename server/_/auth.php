@@ -31,6 +31,8 @@ function auth_register_user() {
     reply_error("arg","repeat_password");
   if($password != $repeat_password)
     reply_error("invalid","password");
+  if(!preg_match("/^[\w\-\.]{3,65535}$/",$handle))
+    reply_error("invalid","handle");
   if(db_user_exists($handle))
     reply_error("invalid","handle");
   db_register_user($handle,$password);
