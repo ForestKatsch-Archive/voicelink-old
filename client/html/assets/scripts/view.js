@@ -4,7 +4,7 @@ var View=function(name,content) {
     if(typeof content == typeof []) {
 	this.content="";
 	for(var i=0;i<content.length;i++) {
-	    this.content+="<article>"+content[i]+"</article>";
+	    this.content+="<p>"+content[i]+"</p>";
 	}
     }
     this.name=name;
@@ -70,6 +70,7 @@ function view_create_views() {
 <a class='button delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a>\n\
 </div>\n\
 ");
+    v.html.find(".delete.button").click(ui_delete_account);
     view.views.settings=v;
     v=new View("about",_("about_voicelink_text"));
     view.views.about=v;

@@ -3,14 +3,20 @@ var locale={
     about_voicelink:"About VoiceLink",
     about_voicelink_text:["Phone calls and emails both have their uses; phone calls are good for long conversations,\n\
 and emails provide longer, more delayed conversations. What if you could take the simplicity and speed of phone calls\n\
-and make them as succint as emails? You'll have to take the chance that the other party is next to his phone; otherwise\n\
+and make them as succinct as emails? You'll have to take the chance that the other party is next to his phone; otherwise\n\
 you'll often find yourself responding to voicemail.",
 			  "VoiceLink is a service that makes phone calls as easy as email."],
     account:"Account",
+    after_delete_account:"After you delete your account, you will not be able to recover any\n\
+of your sent or recieved messages. Your messages will not be deleted and anyone who has access\n\
+to them now still will. (You may want to wipe your account instead.)",
     already_taken:"That handle has already been taken.",
+    confirm:"Confirm",
+    confirm_password:"Confirm password",
     close:"Close",
     delete_account:"Delete account",
     drafts:"Drafts",
+    enter_password_to_delete:"Confirm account deletion",
     handle:"Handle",
     help:"Help",
     inbox:"Inbox",

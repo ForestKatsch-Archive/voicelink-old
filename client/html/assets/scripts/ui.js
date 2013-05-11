@@ -22,11 +22,15 @@ var Modal=function(name,title,content) {
 		ui_hide_modal(that.name);
 	});
     };
+    this.set_title=function(t) {
+	this.title=t;
+	this.html.find("h1").text(t);
+    };
     this.create();
     this.show=function() {
 	this.html.fadeIn(ui.modal.fade_time);
 	$("*").blur();
-	this.html.find("[autofocus]")[0].focus();
+	this.html.find("[autofocus]").focus();
 	console.log("show");
     };
     this.hide=function() {
@@ -36,6 +40,7 @@ var Modal=function(name,title,content) {
 };
 
 var ui={
+    confirm_callback:null,
     login:{
 	html:null,
     },
@@ -139,7 +144,36 @@ function ui_create_modals() {
     ui.modal.windows.register.html.find("#register-button").click(function(e) {
 	ui_register();
     });
+    ui.modal.windows.confirm=new Modal("confirm",_("confirm_password"),"\
+<p class='text'></p>\n\
+<input type='password' id='confirm-password' name='password' placeholder='"+_("confirm_password")+"' />\n\
+<div class='error-message hidden'></div>\n\
+<div id='confirm-button' class='button action'>"+_("confirm")+"</button>\n\
+");
+    ui.modal.windows.confirm.html.keydown(function(e) {
+	if(e.which == 13)
+	    ui_confirm();
+    });
+    ui.modal.windows.confirm.html.find("#confirm-button").click(function(e) {
+	ui_confirm();
+    });
     ui_create_overlay();
+}
+
+function ui_delete_account() {
+    ui_show_confirm(_("enter_password_to_delete"),_("after_delete_account"));
+}
+
+function ui_show_confirm(t,p,callback) {
+    ui.confirm_callback=callback;
+    ui.modal.windows.confirm.set_title(t);
+    ui.modal.windows.confirm.html.find("p.text").html(p);
+    ui_show_modal("confirm");
+}
+
+function ui_confirm() {
+    voice
+    ui.confirm_callback=callback;
 }
 
 function ui_create_overlay() {
