@@ -17,10 +17,3 @@ html {
     color: #444;
     font-family: "Roboto Slab",Roboto,sans-serif;
 }
-
-#view h1 {
-    font-size: 125%;
-    font-weight: bold;
-    margin-bottom: 5px;
-    margin-left: 2em;
-}

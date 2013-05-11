@@ -1,26 +1,18 @@
 
-var View=function(name,title,content) {
+var View=function(name,content) {
     this.content=content;
-    if(content == null)
-	this.content=title;
     if(typeof content == typeof []) {
 	this.content="";
 	for(var i=0;i<content.length;i++) {
-	    this.content+="<p>"+content[i]+"</p>";
+	    this.content+="<article>"+content[i]+"</article>";
 	}
     }
     this.name=name;
-    this.title=null;
-    if(content != null)
-	this.title=title;
     this.html=$(document.createElement("div"));
     this.html.attr("id","view-"+this.name);
     this.html.addClass("view");
     this.create=function() {
-	if(this.title != null)
-	    this.html.append("<div class='wrapper'><h1>"+this.title+"</h1>"+this.content+"</div>");
-	else
-	    this.html.append("<div class='wrapper'>"+this.content+"</div>");
+	this.html.append("<div class='wrapper'>"+this.content+"</div>");
 	$("#view>.wrapper").append(this.html);
     };
     this.create();
@@ -71,14 +63,17 @@ function view_create_views() {
     view.views.sent=v;
     v=new View("drafts","HEY DESE BE TINGS YOU 'FRAID TO SEND");
     view.views.drafts=v;
-    v=new View("settings","Settings",[""]);
-    view.views.settings=v;
-    v=new View("about",_("about_voicelink"),_("about_voicelink_text"));
-    view.views.about=v;
-    v=new View("help","<h1>Help</h1>\n\
-<p>Hey, want help? You'd better UPGRADE!!!</p>\n\
-\n\
+    v=new View("settings","\
+<div class='account pane'>\n\
+<header>\n\
+<h1>"+_("account")+"</h1>\n\
+<a class='button delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a>\n\
+</div>\n\
 ");
+    view.views.settings=v;
+    v=new View("about",_("about_voicelink_text"));
+    view.views.about=v;
+    v=new View("help","There's no help.");
     view.views.help=v;
 }
 

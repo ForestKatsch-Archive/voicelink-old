@@ -6,8 +6,10 @@ and emails provide longer, more delayed conversations. What if you could take th
 and make them as succint as emails? You'll have to take the chance that the other party is next to his phone; otherwise\n\
 you'll often find yourself responding to voicemail.",
 			  "VoiceLink is a service that makes phone calls as easy as email."],
+    account:"Account",
     already_taken:"That handle has already been taken.",
     close:"Close",
+    delete_account:"Delete account",
     drafts:"Drafts",
     handle:"Handle",
     help:"Help",
