@@ -110,6 +110,16 @@ function mysql_verify_user($handle,$password) {
     reply_error("auth","password");
 }
 
+function mysql_delete_user($handle,$password) {
+  global $DB_NAME_USERS;
+  if(!mysql_user_exists($handle))
+    reply_error("invalid","handle");
+  $user_id=mysql_get_user_id_from_handle($handle);
+  mysql_end_all_sessions($user_id);
+  mysql_q("delete from $DB_NAME_USERS WHERE user_id=$user_id");
+  return;
+}
+
 function mysql_start_session($handle,$password,$expires=null) {
   global $DB_NAME_USERS,$DB_NAME_USER_SESSIONS,$AUTH_SESSION_LENGTH;
   if(!mysql_user_exists($handle))

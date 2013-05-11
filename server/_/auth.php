@@ -83,4 +83,14 @@ function auth_end_session() {
   reply("ok",["active"=>"false"]);
 }
 
+function auth_delete_user() {
+  auth_needed(true);
+  if(!($handle_id=post("handle")))
+    reply_error("arg","handle");
+  if(!($password=post("password")))
+    reply_error("arg","password");
+  db_delete_user($handle,$password);
+  reply("ok",["active"=>"false"]);
+}
+
 ?>

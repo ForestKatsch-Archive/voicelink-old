@@ -172,7 +172,6 @@ function ui_show_confirm(t,p,callback) {
 }
 
 function ui_confirm() {
-    voice
     ui.confirm_callback=callback;
 }
 

@@ -7,6 +7,7 @@ var Request=function(action,args,callback,error) {
     this.waiting=false;
     var session_info=false;
     if((this.action == "end_session") ||
+       (this.action == "delete_user") ||
        (this.action == "verify_session")
       )
 	session_info=true;
@@ -99,6 +100,14 @@ function voicelink_restore_session() {
 
 function voicelink_poke(callback,error) {
     voicelink.requests.push(new Request("poke",{},callback,error));
+    voicelink_requests();
+}
+
+function voicelink_delete_user(callback,error) {
+    voicelink.requests.push(new Request("delete_user",{},function(r) {
+	voicelink_end_session_final();
+	callback(r);
+    },error));
     voicelink_requests();
 }
 

@@ -38,4 +38,8 @@ function db_register_user($handle,$password) {
   return mysql_register_user($handle,$password);
 }
 
+function db_delete_account($handle,$password) {
+  return mysql_delete_account($handle,$password);
+}
+
 ?>
