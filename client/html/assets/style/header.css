@@ -3,10 +3,14 @@
     background-color: #f6f6f6;
     border: 0 solid #bbb;
     border-width: 1px 0;
+    box-sizing: border-box;
     color: #888;
     padding: 10px;
-    margin-top: 10px;
+    position: absolute;
+    top: 10px;
     vertical-align: middle;
+    width: 100%;
+    z-index: 1000;
 }
 
 #h>* {
@@ -22,16 +26,12 @@
     margin-left: 10px;
 }
 
-#h #register-show.hidden {
-    display: none;
-}
-
 #h h1 {
     background: transparent url("../img/logo-small.png") center center no-repeat;
     color: transparent;
     display: inline-block;
     height: 32px;
-    width: 128px;
+    width: 256px;
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;

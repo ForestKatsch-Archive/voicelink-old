@@ -1,0 +1,18 @@
+
+@import "folders.css";
+
+#view {
+    box-sizing: border-box;
+    padding-right: 10px;
+    position: absolute;
+    top: 80px;
+    width: 100%;
+    z-index: 100;
+}
+
+.view {
+    display: none;
+    margin-top: 10px;
+    padding: 0 50px;
+    position: absolute;
+}

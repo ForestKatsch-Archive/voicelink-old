@@ -1,6 +1,6 @@
 <?php
 
-$AUTH_SESSION_LENGTH=60*60*24*10; // 10 days
+$AUTH_SESSION_LENGTH=60*60*24; // in seconds
 
 require("db.php");
 
@@ -9,13 +9,15 @@ function auth_logged_in() {
     return false;
   if(!($session_hash=post("session_hash")))
     return false;
-  if(mysql_verify_session($session_id,$session_hash) != false) // it actually returns a dict object
-    return true;
-  return false;
+  if(mysql_verify_session($session_id,$session_hash) == false) // it actually returns a dict object
+    return false;
+  return true;
 }
 
 function auth_needed($needed) {
-  if(auth_logged_in()) {
+  if(auth_logged_in() == $needed) {
+    return;
+  } else {
     if($needed)
       reply_error("auth","needed");
     else
@@ -57,7 +59,6 @@ function auth_start_session() {
 }
 
 function auth_verify_session() {
-  auth_needed(true);
   if(!($session_id=post("session_id")))
     reply_error("arg","session_id");
   if(!($session_hash=post("session_hash")))

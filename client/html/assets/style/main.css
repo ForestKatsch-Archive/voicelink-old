@@ -1,12 +1,26 @@
 
-@import "http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300";
+/*@import "http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300";*/
 
 @import "reset.css";
-@import "header.css";
 @import "widgets.css";
+@import "header.css";
+@import "view.css";
+@import "content.css";
+
+html,body {
+    height: 100%;
+    width: 100%;
+}
 
 html {
     background-color: #eee;
     color: #444;
     font-family: "Roboto Slab",Roboto,sans-serif;
+}
+
+#view h1 {
+    font-size: 125%;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-left: 2em;
 }

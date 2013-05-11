@@ -9,7 +9,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="256"
+   width="300"
    height="64"
    id="svg2"
    version="1.1"
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.6852417"
-     inkscape:cx="179.35669"
-     inkscape:cy="33.538496"
+     inkscape:zoom="13.718888"
+     inkscape:cx="59.311486"
+     inkscape:cy="37.481033"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -37,7 +37,9 @@
      inkscape:window-height="1145"
      inkscape:window-x="0"
      inkscape:window-y="27"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -45,6 +47,22 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="8,36"
+       id="guide3812" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="72,56"
+       id="guide3814" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="56,128"
+       id="guide3816" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="48,8"
+       id="guide3818" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -54,7 +72,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -66,13 +84,33 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Roboto Slab;-inkscape-font-specification:Roboto Slab Bold"
-       x="32.21875"
+       x="84"
        y="1035.3915"
        id="text2987"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan2989"
-         x="32.21875"
+         x="84"
          y="1035.3915">VoiceLink</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3930"
+       sodipodi:cx="32"
+       sodipodi:cy="32"
+       sodipodi:rx="24"
+       sodipodi:ry="24"
+       d="M 56,32 A 24,24 0 1 1 8,32 24,24 0 1 1 56,32 z"
+       transform="translate(0,988.36218)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3932"
+       sodipodi:cx="24"
+       sodipodi:cy="24"
+       sodipodi:rx="8"
+       sodipodi:ry="8"
+       d="m 32,24 a 8,8 0 1 1 -16,0 8,8 0 1 1 16,0 z"
+       transform="translate(0,988.36218)" />
   </g>
 </svg>

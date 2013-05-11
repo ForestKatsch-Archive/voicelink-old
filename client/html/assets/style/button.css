@@ -27,10 +27,6 @@
 .button:hover,
 .hidden-button:hover {
     color: #555;
-    cursor: default;
-}
-
-.hidden-button:hover {
     cursor: pointer;
 }
 
@@ -56,13 +52,12 @@
     cursor: pointer;
 }
 
-.button:focus {
-    border-color: #36f;
-    color: #555;
-}
-
 .action {
     padding-left: 20px;
     padding-right: 20px;
 }
 
+.hidden-button.hidden,
+.button.hidden {
+    display: none;
+}

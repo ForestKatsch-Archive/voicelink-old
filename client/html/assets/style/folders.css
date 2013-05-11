@@ -1,0 +1,72 @@
+
+#folders ul {
+    background-color: #eee;
+    background: #eee -webkit-linear-gradient(#eee,#eee,#eee,#e8e8e8);
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    color: #666;
+    display: inline-block;
+    margin-left: 50px;
+    -moz-transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+    -webkit-transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+#folders {
+    height: 3em;
+    overflow: hidden;
+    -webkit-transition: height 0.1s ease;
+}
+
+#folders.hidden {
+    height: 0;
+}
+
+#folders li {
+    border-radius: 0;
+    display: inline-block;
+    padding: 5px 10px;
+}
+
+#folders li:first-child {
+    border-radius: 3px 0 0 3px;
+}
+
+#folders li:last-child {
+    border-radius: 0 3px 3px 0;
+}
+
+#folders li+li {
+    border-left: 1px solid #bbb;
+    margin-left: -4px;
+}
+
+#folders li:hover {
+    background-color: #f2f2f2;
+    background: #f2f2f2 -webkit-linear-gradient(#f2f2f2,#f2f2f2,#f2f2f2,#ededed);
+    box-shadow: 0 2px 1px rgba(0,0,0,0.1);
+}
+
+#folders li:active {
+    background-color: #eee;
+    background: #eee -webkit-linear-gradient(#e8e8e8,#eee,#eee,#eee);
+    background: #ddd -webkit-linear-gradient(#d8d8d8,#ddd,#ddd,#ddd);
+    box-shadow: 0 2px 1px rgba(0,0,0,0.15);
+    color: #222;
+}
+
+#folders li.open,
+#folders li.open:active,
+#folders li.open:hover {
+    background-color: #ddd;
+    background: #ddd -webkit-linear-gradient(#d4d4d4,#d8d8d8,#ddd,#ddd);
+    box-shadow: none;
+    color: #333;
+    cursor: default;
+}
+
+#folders .help {
+    float: right;
+}
