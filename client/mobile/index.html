@@ -5,20 +5,20 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
     <link rel="stylesheet" href="assets/style.css" />
     <link rel="stylesheet" href="assets/themes/voicelink.min.css" />
+    <link rel="stylesheet" href="assets/commadelimited-jQuery-Mobile-Icon-Pack-00ada95/original/jqm-icon-pack-2.0-original.css" />
     <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
     <script src="assets/scripts/voicelink.js"></script>
     <script src="assets/scripts/main.js"></script>
-    <script>$.mobile.page.prototype.options.backBtnTheme="a";</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes" />
   </head>
   <body>
-    <div data-role="page" id="loading">
-      <div data-role="header">
-	<h1>Loading VoiceLink</h1>
-      </div>
-    </div>
+    <!-- <div data-role="page" id="loading"> -->
+    <!--   <div data-role="header"> -->
+    <!-- 	<h1>Loading VoiceLink</h1> -->
+    <!--   </div> -->
+    <!-- </div> -->
     <div data-role="page" id="main">
       <div data-role="header">
 	<h1>VoiceLink</h1>
@@ -28,6 +28,9 @@
 	  <li><a href="#login">Login</a></li>
 	  <li><a href="#register">Register</a></li>
 	</ul>
+	<ul data-role="listview" data-inset="true">
+	  <li><a href="#about">About</a></li>
+	</ul>
       </div>
     </div>
     <div data-role="page" id="menu">
@@ -35,21 +38,22 @@
 	<h1>VoiceLink</h1>
       </div>
       <div data-role="content">
+	<!-- <ul data-role="listview" data-inset="true"> -->
+	<!--   <li data-icon="plus" data-theme="b"><a href="#new">New message</a></li> -->
+	<!-- </ul> -->
 	<ul data-role="listview" data-inset="true">
-	  <li data-icon="plus" data-theme="b"><a href="#new">New message</a></li>
-	</ul>
-	<ul data-role="listview" data-inset="true">
-	  <li><a href="#inbox">Inbox</a></li>
+	  <li><a href="#inbox">Inbox<span class="ui-li-count">1</span></a></li>
 	  <li><a href="#sent">Sent</a></li>
-	  <li><a href="#drafts">Drafts</a></li>
+	  <li><a href="#drafts">Drafts<span class="ui-li-count">1</span></a></li>
 	</ul>
 	<ul data-role="listview" data-inset="true">
+	  <li><a href="#about">About</a></li>
 	  <li><a href="#settings">Settings</a></li>
 	  <li><a href="javascript:logout()">Logout</a></li>
 	</ul>
-	<div data-role="footer" data-position="fixed">
-	  <p style="padding: 0 1em;">Currently logged in as "that spooky guy".</p>
-	</div>
+	<!-- <div data-role="footer" data-position="fixed" data-theme="c"> -->
+	<!--   <p>Currently logged in as <span class="login-name"></span>.</p> -->
+	<!-- </div> -->
       </div>
     </div>
     <div data-role="page" id="new">
@@ -62,6 +66,66 @@
 	<input type="file" accept="audio/*;capture=microphone"></input>
       </div>
     </div>
+    <div data-role="page" id="about">
+      <div data-role="header">
+	<a href="javascript:history.back()" data-role="button" data-inline="true" data-icon="back">Back</a>
+	<h1>About</h1>
+      </div>
+      <div data-role="content">
+	<p>VoiceLink lets you send short messages to make conversations even faster.</p>
+	<h2>Credits</h2>
+	<ul data-role="listview">
+	  <li><a href="http://www.jquery.com">jQuery</a></li>
+	  <li><a href="http://www.jquerymobile.com">jQuery mobile</a></li>
+	  <li><a href="https://github.com/commadelimited/jQuery-Mobile-Icon-Pack">jQuery mobile icon pack</a></li>
+	</ul>
+      </div>
+    </div>
+    <div data-role="page" id="inbox">
+      <div data-role="header">
+	<a href="#menu" data-role="button" data-inline="true" data-icon="back">Back</a>
+	<h1>Inbox</h1>
+      </div>
+      <div data-role="content">
+	<ul data-role="listview">
+	  <li id="message-number-10931">
+	    <a href="javascript:view_message(10931)">
+	      <span class="from">Joe</span>
+	      <span class="date">yesterday at <time>2:31PM</time></span>
+	      <span class="ui-li-count">3</span>
+	    </a>
+	  </li>
+	</ul>
+      </div>
+    </div>
+    <div data-role="page" id="message">
+      <div data-role="header">
+	<a href="javascript:leave_messages()" data-role="button" data-inline="true" data-icon="back">Back</a>
+	<h1>3 messages</h1>
+      </div>
+      <div data-role="content">
+	<ul data-role="listview">
+	  <li data-icon="play" id="play-message-number-10931">
+	    <a href="javascript:play_message(10931)">
+	      <span class="from">Joe</span>
+	      <span class="date">yesterday at <time>2:31PM</time></span>
+	    </a>
+	  </li>
+	  <li data-icon="play" id="play-message-number-10950">
+	    <a href="javascript:play_message(10950)">
+	      <span class="from">me</span>
+	      <span class="date">yesterday at <time>2:35PM</time></span>
+	    </a>
+	  </li>
+	  <li data-icon="play" id="play-message-number-10999">
+	    <a href="javascript:play_message(10999)">
+	      <span class="from">Joe</span>
+	      <span class="date">yesterday at <time>4:02PM</time></span>
+	    </a>
+	  </li>
+	</ul>
+      </div>
+    </div>
     <div data-role="page" id="settings">
       <div data-role="header">
 	<a href="#menu" data-role="button" data-inline="true" data-icon="back">Back</a>
@@ -69,7 +133,8 @@
       </div>
       <div data-role="content">
 	<ul data-role="listview" data-inset="true">
-	  <li data-role="list-divider">Account</li>
+	  <li data-role="list-divider" data-theme="a">Account</li>
+	  <li><a href="#change-name">Change name</a></li>
 	  <li><a href="#delete-account">Delete</a></li>
 	</ul>
       </div>
@@ -87,6 +152,19 @@
 	</form>
 	<a href="#settings" data-role="button">Cancel</a>
 	<p id="delete-account-error" class="error"></p>
+      </div>
+    </div>
+    <div data-role="page" id="change-name">
+      <div data-role="header">
+	<a href="#settings" data-role="button" data-inline="true" data-icon="back">Back</a>
+	<h1>Change name</h1>
+      </div>
+      <div data-role="content">
+	<form action="javascript:change_name()">
+	  <label for="change-name-to">New display name</label>
+	  <input type="text" name="change-name-to" id="change-name-to" placeholder="New display name" />
+	  <input type="submit" value="Change" />
+	</form>
       </div>
     </div>
     <div data-role="page" id="login">

@@ -36,7 +36,7 @@ function mysql_setup_database() {
 
 function mysql_setup_tables() {
   global $DB_NAME_USERS,$DB_NAME_USER_SESSIONS,$DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
-  if(false) {
+  if(true) {
     mysql_q("drop table if exists $DB_NAME_USERS");
     mysql_q("drop table if exists $DB_NAME_USER_SESSIONS");
     mysql_q("drop table if exists $DB_NAME_MESSAGES");
@@ -60,6 +60,7 @@ function mysql_setup_tables() {
   message_id BIGINT PRIMARY KEY AUTO_INCREMENT,
   from_user_id BIGINT,
   wav_data LONGBLOB,
+  reply_to BIGINT,
   draft TINYINT(1) DEFAULT 1,
   expires TIMESTAMP)");
   mysql_q("create table if not exists $DB_NAME_MESSAGE_RECIPIENTS (
@@ -70,8 +71,14 @@ function mysql_setup_tables() {
   archived TINYINT(1) DEFAULT 0)");
 }
 
+function mysql_escape($t) {
+  global $mysql;
+  return $mysql->real_escape_string($t);
+}
+
 function mysql_user_exists($handle) {
   global $DB_NAME_USERS;
+  $handle=mysql_escape($handle);
   $rows=mysql_q("select user_id from $DB_NAME_USERS where handle='$handle'");
   if($rows->num_rows == 1)
     return true;
@@ -81,6 +88,7 @@ function mysql_user_exists($handle) {
 
 function mysql_get_user_id_from_handle($handle) {
   global $DB_NAME_USERS;
+  $handle=mysql_escape($handle);
   $rows=mysql_q("select user_id from $DB_NAME_USERS where handle='$handle'");
   if($rows->num_rows != 1)
     reply_error("mysql","Expected one user");
@@ -90,6 +98,7 @@ function mysql_get_user_id_from_handle($handle) {
 
 function mysql_register_user($handle,$password) {
   global $DB_NAME_USERS;
+  $handle=mysql_escape($handle);
   if(mysql_user_exists($handle))
     reply_error("invalid","handle");
   $password_hash=md5($password);
@@ -98,6 +107,7 @@ function mysql_register_user($handle,$password) {
 
 function mysql_verify_user($handle,$password) {
   global $DB_NAME_USERS;
+  $handle=mysql_escape($handle);
   if(!mysql_user_exists($handle))
     reply_error("invalid","handle");
   $rows=mysql_q("select password_hash from $DB_NAME_USERS WHERE handle='$handle'");
@@ -110,8 +120,17 @@ function mysql_verify_user($handle,$password) {
     reply_error("auth","password");
 }
 
+function mysql_get_name($user_id) {
+  global $DB_NAME_USERS;
+  $rows=mysql_q("select name from $DB_NAME_USERS WHERE user_id=$user_id");
+  if($rows->num_rows != 1)
+    return "";
+  return $rows->fetch_assoc()["name"];
+}
+
 function mysql_delete_user($handle,$password) {
   global $DB_NAME_USERS;
+  $handle=mysql_escape($handle);
   if(!mysql_user_exists($handle))
     reply_error("invalid","handle");
   mysql_verify_user($handle,$password);
@@ -123,10 +142,12 @@ function mysql_delete_user($handle,$password) {
 
 function mysql_start_session($handle,$password,$expires=null) {
   global $DB_NAME_USERS,$DB_NAME_USER_SESSIONS,$AUTH_SESSION_LENGTH;
+  $handle=mysql_escape($handle);
   if(!mysql_user_exists($handle))
     reply_error("invalid","handle");
   mysql_verify_user($handle,$password);
   $user_id=mysql_get_user_id_from_handle($handle);
+  $name=mysql_get_name($user_id);
   mysql_end_expired_sessions($user_id);
   $date=new DateTime();
   $timestamp=$date->getTimestamp();
@@ -140,7 +161,12 @@ function mysql_start_session($handle,$password,$expires=null) {
     reply_error("mysql","Expected one unique session hash/user combination");
   $row=$rows->fetch_assoc();
   $session_id=$row["session_id"];
-  return ["session_id"=>$session_id,"session_hash"=>$session_hash,"current_time"=>$timestamp,"expires"=>$expires];
+  return [
+	  "name"=>$name,
+	  "session_id"=>$session_id,
+	  "session_hash"=>$session_hash,
+	  "current_time"=>$timestamp,
+	  "expires"=>$expires];
 }
 
 function mysql_end_expired_sessions($user_id) {
@@ -148,13 +174,20 @@ function mysql_end_expired_sessions($user_id) {
   mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE user_id=$user_id AND expires<=NOW()");
 }
 
-function mysql_end_expired_sessions_from_id($session_id,$session_hash) {
+function mysql_get_user_id_from_session_id($session_id,$session_hash) {
   global $DB_NAME_USER_SESSIONS;
   $rows=mysql_q("select user_id from $DB_NAME_USER_SESSIONS WHERE session_id=$session_id and session_hash='$session_hash'");
   if($rows->num_rows < 1)
+    return false;
+  return $rows->fetch_assoc()["user_id"];
+}
+
+function mysql_end_expired_sessions_from_id($session_id,$session_hash) {
+  global $DB_NAME_USER_SESSIONS;
+  $user_id=mysql_get_user_id_from_session_id($session_id,$session_hash);
+  if(!$user_id)
     return;
-  $row=$rows->fetch_assoc();
-  mysql_end_expired_sessions($row["user_id"]);
+  mysql_end_expired_sessions($user_id);
 }
 
 function mysql_end_all_sessions($user_id) {
@@ -191,6 +224,13 @@ function mysql_verify_session($session_id,$session_hash) {
 	  "current_time"=>$timestamp,
 	  "expires"=>$expires
 	  ];
+}
+
+function mysql_change_name($user_id,$name) {
+  $name=mysql_escape($name);
+  global $DB_NAME_USERS;
+  error_log($name);
+  mysql_q("update $DB_NAME_USERS set name='$name' where user_id=$user_id");
 }
 
 ?>

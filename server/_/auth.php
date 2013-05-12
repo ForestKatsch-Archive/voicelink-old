@@ -61,6 +61,7 @@ function auth_start_session() {
     reply_error("arg","password");
   $session=db_start_session($handle,$password);
   reply("ok",[
+	      "name"=>$session["name"],
 	      "session_id"=>$session["session_id"],
 	      "session_hash"=>$session["session_hash"],
 	      "current_time"=>$session["current_time"],
@@ -101,6 +102,18 @@ function auth_delete_user() {
     reply_error("arg","password");
   db_delete_user($handle,$password);
   reply("ok",["active"=>"false"]);
+}
+
+function auth_change_name() {
+  auth_needed(true);
+  if(!($session_id=post("session_id")))
+    reply_error("arg","session_id");
+  if(!($session_hash=post("session_hash")))
+    reply_error("arg","session_hash");
+  if(!($name=post("name")))
+    reply_error("arg","name");
+  db_change_name(db_get_user_id_from_session_id($session_id,$session_hash),$name);
+  reply("ok",[]);
 }
 
 ?>

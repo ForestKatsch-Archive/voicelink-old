@@ -24,21 +24,26 @@ $(document).ready(function() {
 	logged_in();
     });
     voicelink.bind("verify_session",function(r) {
-	console.log("Session verified!");
+//	logged_in();
     });
     voicelink.bind("end_session",function(r) {
 	logged_out();
     });
     voicelink.bind("session_dead",function(r) {
-//	logged_out();
+	logged_out();
     });
     voicelink.bind("register",function(r) {
 	logged_in();
+    });
+    voicelink.bind("change_name",function(r) {
+	$("#change-name-to").val(voicelink.session.name);
+	$(".login-name").text(voicelink.session.name);
     });
     voicelink.init();
 });
 
 function logged_in() {
+    console.log("Changing page");
     $.mobile.changePage("#menu");
 }
 
@@ -122,7 +127,6 @@ function delete_account() {
 	logged_out();
 	loading_stop();
     },function(r,n) {
-	loading_stop();
 	if(r == "invalid") {
 	    if(n == "password-length")
 		error("delete-account","You must enter a password.");
@@ -133,4 +137,48 @@ function delete_account() {
 	}
 	loading_stop();
     });
+}
+
+function change_name() {
+    var name=$("#change-name-to").val();
+    loading_start();
+    voicelink.change_name(name,function() {
+	$.mobile.changePage("#settings");
+	loading_stop();
+    },function(r,n) {
+	console.log("HOW DID THIS HAPPEN???");
+	loading_stop();
+    });
+}
+
+function view_message(m) {
+    $.mobile.changePage("#message");
+}
+
+function start_playing_message(m) {
+    if(currently_playing != null) {
+	stop_playing_message(currently_playing);
+    }
+    $("#play-message-number-"+m).buttonMarkup({icon:"pause"});
+    currently_playing=m;
+}
+
+function stop_playing_message(m) {
+    $("#play-message-number-"+m).buttonMarkup({icon:"play"});
+    currently_playing=null;
+}
+
+var currently_playing=null;
+
+function leave_messages() {
+    history.back();
+    stop_playing_message(currently_playing);
+}
+
+function play_message(m) {
+    $("#play-message-number-"+m).toggleClass("playing");
+    if($("#play-message-number-"+m).hasClass("playing"))
+	start_playing_message(m);
+    else
+	stop_playing_message(m);
 }

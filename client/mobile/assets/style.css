@@ -2,6 +2,23 @@
 
 p.footer{bottom:0; position:absolute !important; top: auto !important;}  
 
+[data-role=footer] p {
+    color: #555;
+    padding: 0 1em;
+}
+
+.login-name {
+    color: #000;
+}
+
 .error {
     color: #f55;
+}
+
+.duration {
+    font-weight: normal;
+}
+
+.date{
+    float: right;
 }

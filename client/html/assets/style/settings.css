@@ -10,22 +10,11 @@
 }
 
 #view-settings .delete.button {
-    background-color: #ffd0d0;
-    background: #ffd0d0 -webkit-linear-gradient(#ffd0d0,#ffd0d0,#ffd0d0,#ffcaca);
-    border-color: #dbb;
+    background-color: #faa;
+    border-color: #a77;
+    color: #000;
 }
 
-#view-settings .delete.button:hover {
-    background-color: #ffd5d5;
-    background: #ffd5d5 -webkit-linear-gradient(#ffd5d5,#ffd5d5,#ffd5d5,#ffd0d0);
-    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-    cursor: pointer;
-}
-
-#view-settings .delete.button:active {
-    background-color: #daa;
-    background: #daa -webkit-linear-gradient(#daa,#daa,#daa,#ebb);
-    border-color: #999;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.15);
-    color: #222;
+#view-settings li {
+    margin-top: 0.5em;
 }

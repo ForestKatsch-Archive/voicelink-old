@@ -1,7 +1,7 @@
 
 var VERSION=[0,0,1];
 
-var modules=["main","ui","voicelink","view"];
+var modules=["main","ui","view"];
 var module_number=0;
 var module_start_time;
 
@@ -31,7 +31,7 @@ function init() {
 function start() {
     init();
     setTimeout(function() {
-	voicelink_init();
+	voicelink.init();
 	ui_init();
 	view_init();
 	loaded("main");
@@ -47,10 +47,26 @@ function done() {
     var time=new Date().getTime()-module_start_time;
     time=(time/1000).toFixed(3);
     console.log("Loaded "+module_number+" module"+s(module_number)+" in "+time+" second"+s(time))
+    update();
+    setInterval(update,10000);
+}
+
+function update() {
+    if(!voicelink.verified())
+	return;
+    voicelink.update(function(r) {
+	if(r.folders.inbox > 0)
+	    voicelink.get_messages("inbox");
+	if(r.folders.sent > 0)
+	    voicelink.get_messages("sent");
+	if(r.folders.drafts > 0)
+	    voicelink.get_messages("drafts");
+    },function(r,n) {
+	console.log(r,n);
+    });
 }
 
 function done_loading() {
     ui_done();
     view_done();
-    voicelink_done();
 }

@@ -3,7 +3,7 @@
 .hidden-button {
     background: transparent;
     border: 1px solid transparent;
-    border-radius: 3px;
+    border-radius: 2px;
     color: #666;
     display: inline-block;
     padding: 5px 10px;
@@ -14,47 +14,22 @@
     -webkit-user-select: none;
 }
 
-.hidden-button {
-    border-width: 0;
-}
-
 .button {
-    background-color: #eee;
-    background: #eee -webkit-linear-gradient(#eee,#eee,#eee,#e8e8e8);
-    border-color: #bbb;
-}
-
-.button:hover,
-.hidden-button:hover {
-    color: #555;
-    cursor: pointer;
+    background: #eee;
+    border: 1px solid #bbb;
 }
 
 .button:hover {
-    background-color: #f2f2f2;
-    background: #f2f2f2 -webkit-linear-gradient(#f2f2f2,#f2f2f2,#f2f2f2,#ededed);
-    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-}
-
-.button:active,
-.hidden-button:active {
-    color: #222;
+    background-color: #f6f6f6;
 }
 
 .button:active {
-    background-color: #ddd;
-    background: #ddd -webkit-linear-gradient(#d8d8d8,#ddd,#ddd,#ddd);
-    border-color: #999;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    background: #ddd;
 }
 
-.action:hover {
+.hidden-button:hover,
+.button:hover {
     cursor: pointer;
-}
-
-.action {
-    padding-left: 20px;
-    padding-right: 20px;
 }
 
 .hidden-button.hidden,

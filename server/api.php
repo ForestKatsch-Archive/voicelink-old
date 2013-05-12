@@ -4,6 +4,7 @@ $VOICELINK_VERSION=[0,0,1];
 
 require("_/form.php");
 require("_/json.php");
+require("_/messages.php");
 require("_/auth.php");
 
 function info() {
@@ -29,8 +30,12 @@ if($a == "info") {
   auth_end_session();
 } else if($a == "register") {
   auth_register_user();
+} else if($a == "update") {
+  messages_update();
 } else if($a == "verify_user") {
   auth_verify_user();
+} else if($a == "change_name") {
+  auth_change_name();
 } else if($a == "delete_user") {
   auth_delete_user();
 } else {

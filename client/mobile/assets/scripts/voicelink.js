@@ -5,33 +5,43 @@ var voicelink={
 	    "end_session",
 	    "verify_session",
 	    "verify_user",
+	    "update",
+	    "change_name",
 	    "delete_user",
 	]
     },
     api:"http://localhost/api.php",
     events:{
-	"start_session":[],
-	"end_session":[],
-	"session_dead":[],
-	"delete_user":[],
-	"poke":[],
-	"register":[],
-	"verify_user":[],
-	"verify_session":[],
     },
     regexp:{
 	handle:/^[\w\-\.]+$/
     },
     requests:[],
+    folders:{
+	inbox:[],
+	sent:[],
+	drafts:[]
+    },
     session:{
 	handle:null,
+	name:null,
 	session_id:-1,
 	session_hash:null,
 	verified:false
     }
 }
 
+voicelink.Message=function(message_id,from_handle,to_handle,reply_to,date,duration) {
+    this.message_id=message_id;
+    this.from_handle=from_handle;
+    this.to_handle=to_handle;
+    this.date=date;
+    this.duration=duration;
+};
+
 voicelink.bind=function(e,c) {
+    if(voicelink.events[e] == undefined)
+	voicelink.events[e]=[];
     voicelink.events[e].push(c);
 };
 
@@ -87,6 +97,7 @@ voicelink.Request=function(action,args,callback,error) {
 };
 
 voicelink.init=function() {
+    $(document).unload(voicelink.save);
     voicelink.restore_session();
     if(voicelink.session.session_id != -1)
 	voicelink.verify_session();
@@ -124,6 +135,7 @@ voicelink.restore_session=function() {
     } else {
 	voicelink.save_session();
     }
+    voicelink.event("change_name");
 };
 
 voicelink.poke=function(callback,error) {
@@ -146,14 +158,33 @@ voicelink.delete_user=function(password,callback,error) {
     voicelink.process_requests();
 }
 
+voicelink.update=function(callback,error) {
+    voicelink.requests.push(new voicelink.Request("update",{},function(r) {
+	callback(r);
+	if(r.user != undefined) {
+	    if(r.user.name != undefined) {
+		voicelink.session.name=r.user.name;
+		voicelink.event("change_name");
+	    }
+	}
+    },error));
+    voicelink.process_requests();
+}
+
+voicelink.change_name=function(name,callback,error) {
+    voicelink.requests.push(new voicelink.Request("change_name",{name:name},function(r) {
+	callback(r);
+	voicelink.session.name=name;
+	voicelink.save_session();
+    },error));
+    voicelink.process_requests();
+}
+
 voicelink.verify_user=function(password,callback,error) {
-    console.log("verify");
-    console.log(voicelink.session.handle);
     voicelink.requests.push(new voicelink.Request("verify_user",{
 	handle:voicelink.session.handle,
 	password:password
     },function(r) {
-	console.log("callback",r);
 	if(callback)
 	    callback(r);
     },error));
@@ -166,6 +197,7 @@ voicelink.verify_session=function(callback,error) {
 	voicelink.save_session();
 	if(callback)
 	    callback(r);
+	voicelink.event("change_name");
     },error));
     voicelink.process_requests();
 }
@@ -174,7 +206,7 @@ voicelink.register=function(handle,password,repeat_password,callback,error) {
     if(handle.length <= 2) {
 	error("invalid","handle-length");
     } else if(voicelink.regexp.handle.test(handle) == false) {
-	error("invalid","handle");
+	error("invalid","handle-chars");
     } else if(password.length == 0) {
 	error("invalid","password-length");
     } else if(password != repeat_password) {
@@ -198,12 +230,16 @@ voicelink.start_session=function(handle,password,callback,error) {
 	error("invalid","password-length");
     } else {
 	voicelink.requests.push(new voicelink.Request("start_session",{handle:handle,password:password},function(r) {
+	    if((r.session_id == undefined) || (r.session_hash == undefined))
+		error("server","args");
 	    voicelink.session.session_id=r.session_id;
 	    voicelink.session.session_hash=r.session_hash;
 	    voicelink.session.verified=true;
 	    voicelink.session.handle=handle,
+	    voicelink.session.name=r.name;
 	    voicelink.save_session();
 	    callback(r);
+	    voicelink.event("change_name");
 	},error));
 	voicelink.process_requests();
     }

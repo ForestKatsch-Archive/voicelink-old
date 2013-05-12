@@ -36,7 +36,19 @@ var view={
     },
 };
 
+function view_generate_message(m) {
+    return "From "+m.from_handle+" timestamp "+m.date+", "+m.duration+" seconds long.";
+}
+
+function view_set_messages(folder,message_list) {
+    $("#view-"+folder+" .wrapper ul").empty();
+    for(var i=0;i<message_list.length;i++) {
+	$("#view-"+folder+" .wrapper ul").append("<li>"+view_generate_message(message_list[i])+"</li>");
+    }
+}
+
 function view_init() {
+    view_create_views();
     $(window).bind("popstate",function(e) {
 	var url=parseUri(location.href);
 	var hash="";
@@ -48,7 +60,6 @@ function view_init() {
 	var v=url.query;
 	view_set_final(v);
     });
-    view_create_views();
     loaded("view");
 }
 
@@ -57,20 +68,24 @@ function view_done() {
 }
 
 function view_create_views() {
-    var v=new View("inbox","DIS IS DA INBOX");
+    var v=new View("inbox","<ul></ul>");
     view.views.inbox=v;
-    v=new View("sent","YOU SENT THESE YOU DUMBASS");
+    v=new View("sent","<ul></ul>");
     view.views.sent=v;
-    v=new View("drafts","HEY DESE BE TINGS YOU 'FRAID TO SEND");
+    v=new View("drafts","<ul></ul>");
     view.views.drafts=v;
     v=new View("settings","\
 <div class='account pane'>\n\
 <header>\n\
 <h1>"+_("account")+"</h1>\n\
-<a class='button delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a>\n\
+<ul>\n\
+<li><a class='button change-name' title='"+_("change_name")+"'>"+_("change_name")+"</a></li>\n\
+<li><a class='button delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a></li>\n\
+</ul>\n\
 </div>\n\
 ");
     v.html.find(".delete.button").click(ui_delete_user);
+    v.html.find(".change-name.button").click(ui_change_name);
     view.views.settings=v;
     v=new View("about",_("about_voicelink_text"));
     view.views.about=v;
@@ -93,21 +108,17 @@ function view_push_url(v) {
 }
 
 function view_before_switch(v) {
-    if(!voicelink_verified()) {
+    if(!voicelink.verified()) {
 	if((v == "inbox") ||
 	   (v == "sent") ||
 	   (v == "drafts") ||
 	   (v == "settings"))
-	    v="about";
+//	    v="about";
+	    ;
     }
-    if((v == "inbox") ||
-       (v == "sent") ||
-       (v == "drafts") ||
-       (v == "help") ||
-       (v == "settings")) {
-	$("#folders *").removeClass("open");
+    $("#folders *").removeClass("open");
+    if($("#folders").find("."+v).length != 0)
 	$("#folders ."+v).addClass("open");
-    }
     if(v == "about") {
 	$("#folders").addClass("hidden");
     } else {

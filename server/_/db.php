@@ -18,6 +18,11 @@ function db_init() {
 
 db_init();
 
+function db_get_user_id_from_session_id($session_id,$session_hash) {
+  auth_needed(true);
+  return mysql_get_user_id_from_session_id($session_id,$session_hash);
+}
+
 function db_user_exists($handle) {
   return mysql_user_exists($handle);
 }
@@ -44,6 +49,10 @@ function db_register_user($handle,$password) {
 
 function db_delete_user($handle,$password) {
   return mysql_delete_user($handle,$password);
+}
+
+function db_change_name($user_id,$name) {
+  return mysql_change_name($user_id,$name);
 }
 
 ?>

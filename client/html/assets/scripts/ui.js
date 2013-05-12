@@ -30,8 +30,8 @@ var Modal=function(name,title,content) {
     this.show=function() {
 	this.html.fadeIn(ui.modal.fade_time);
 	$("*").blur();
+	this.html.find("input").val("");
 	this.html.find("[autofocus]").focus();
-	console.log("show");
     };
     this.hide=function() {
 	this.html.fadeOut(ui.modal.fade_time);
@@ -40,7 +40,6 @@ var Modal=function(name,title,content) {
 };
 
 var ui={
-    confirm_delete_callback:null,
     login:{
 	html:null,
     },
@@ -57,6 +56,12 @@ var ui={
 function ui_init() {
     ui_create_modals();
     ui_locale_init();
+    voicelink.bind("start_session",ui_logged_in);
+    voicelink.bind("end_session",ui_logged_out);
+    voicelink.bind("verify_session",ui_logged_in);
+    voicelink.bind("change_name",function() {
+
+    });
     $("#login-show").bind("click",ui_show_login);
     $("#register-show").bind("click",ui_show_register);
     $("#folders .settings").bind("click",view_settings);
@@ -157,30 +162,34 @@ function ui_create_modals() {
     ui.modal.windows["confirm-delete"].html.find("#confirm-button").click(function(e) {
 	ui_confirm_delete();
     });
+    ui.modal.windows["change-name"]=new Modal("change-name",_("change_name"),"\
+<input type='text' id='change-name-to' name='change-name-to' placeholder='"+_("change_name")+"' autofocus />\n\
+<div id='change-name-button' class='button action'>"+_("change_name")+"</button>\n\
+");
+    ui.modal.windows["change-name"].html.keydown(function(e) {
+	if(e.which == 13)
+	    ui_change_name_final();
+    });
+    ui.modal.windows["change-name"].html.find("#change-name-button").click(function(e) {
+	ui_change_name_final();
+    });
     ui_create_overlay();
 }
 
 function ui_delete_user() {
-    ui_show_confirm_delete(function() {
-	ui_delete_user_final();
-    });
+    ui_show_confirm_delete();
 }
 
-function ui_delete_user_final() {
-    ui_hide_modal("*");
-}
-
-function ui_show_confirm_delete(callback) {
-    ui.confirm_delete_callback=callback;
+function ui_show_confirm_delete() {
     ui_show_modal("confirm-delete");
 }
 
 function ui_confirm_delete() {
     var password=$("#modal-confirm-delete #confirm-delete-password").val();
-    voicelink_verify_user(password,function(r) {
-	$("#modal-confirm-delete .error-message").addClass("hidden");
-	voicelink_delete_user(password,ui.confirm_delete_callback);
-    },function() {
+    voicelink.delete_user(password,function(r) {
+	ui_logged_out();
+    },function(r,n) {
+	console.log(r,n);
 	$("#modal-confirm-delete .error-message").removeClass("hidden");
 	$("#modal-confirm-delete .error-message").text(_("incorrect_password"))
     });
@@ -198,36 +207,33 @@ function ui_create_overlay() {
 function ui_login() {
     var handle=$("#modal-login #login-handle").val();
     var password=$("#modal-login #login-password").val();
-    if(handle.length <= 2) {
+    voicelink.start_session(handle,password,function(r) {
+	view_inbox();
+	ui_logged_in();
+    },function(r,n) {
+	console.log(r,n);
 	$("#modal-login .error-message").removeClass("hidden");
-	$("#modal-login .error-message").text(_("incorrect_handle_or_password"));
-    } else if(voicelink.handle_re.test(handle) == false) {
-	$("#modal-login .error-message").removeClass("hidden");
-	$("#modal-login .error-message").text(_("only_alphanumeric"));
-    } else if(password.length == 0) {
-	$("#modal-login .error-message").removeClass("hidden");
-	$("#modal-login .error-message").text(_("password_too_short"));
-    } else {
-	voicelink_start_session(handle,password,function(r) {
-	    view_inbox();
-	    ui_logged_in();
-	},function(r,n) {
-	    console.log(r,n);
-	    $("#modal-login .error-message").removeClass("hidden");
-	    if(r == "invalid" && n == "handle") {
+	if(r == "invalid") {
+	    if(n == "handle")
 		$("#modal-login .error-message").text(_("incorrect_handle_or_password"));
-	    } else if(r == "auth") {
-		$("#modal-login .error-message").text(_("incorrect_handle_or_password"));
-	    } else {
-		$("#modal-login .error-message").text(_("this_is_bad"));
-	    }
-	    return false;
-	});
-    }
+	    else if(n == "handle-chars")
+		$("#modal-login .error-message").text(_("only_alphanumeric"));
+	    else if(n == "handle-length")
+		$("#modal-login .error-message").text(_("handle_too_short"));
+	    else if(n == "password-length")
+		$("#modal-login .error-message").text(_("password_too_short"));
+	} else if(r == "auth") {
+	    $("#modal-login .error-message").text(_("incorrect_handle_or_password"));
+	} else {
+	    console.log("THIS IS BAD: ",r,n);
+	    $("#modal-login .error-message").text(_("this_is_bad"));
+	}
+	return false;
+    });
 }
 
 function ui_logout() {
-    voicelink_end_session(function(r) {
+    voicelink.end_session(function(r) {
 	ui_logged_out();
     });
 }
@@ -236,36 +242,43 @@ function ui_register() {
     var handle=$("#modal-register #register-handle").val();
     var password=$("#modal-register #register-password").val();
     var repeat_password=$("#modal-register #register-repeat-password").val();
-    if(handle.length <= 2) {
-	$("#modal-login .error-message").removeClass("hidden");
-	$("#modal-register .error-message").text(_("three_or_more"));
-    } else if(voicelink.handle_re.test(handle) == false) {
+    voicelink.register(handle,password,repeat_password,function(r) {
+	voicelink.start_session(handle,password,ui_logged_in);
+	ui_hide_register();
+	view_inbox();
+    },function(r,n) {
 	$("#modal-register .error-message").removeClass("hidden");
-	$("#modal-register .error-message").text(_("only_alphanumeric"));
-    } else if(password != repeat_password) {
-	$("#modal-register .error-message").removeClass("hidden");
-	$("#modal-register .error-message").text(_("passwords_dont_match"));
-    } else if(password.length == 0) {
-	$("#modal-register .error-message").removeClass("hidden");
-	$("#modal-register .error-message").text(_("password_too_short"));
-    } else {
-	ui.modal.windows.register.html.find(".error-message").addClass("hidden");
-	voicelink_register(handle,password,repeat_password,function(r) {
-	    voicelink_start_session(handle,password,ui_logged_in);
-	    ui_hide_register();
-	    view_inbox();
-	},function(r,n) {
-	    $("#modal-register .error-message").removeClass("hidden");
-	    if(r == "invalid" && n == "handle") {
-		$("#modal-register .error-message").text(_("already_taken"));
-	    } else if(r == "invalid" && n == "password") {
-		$("#modal-register .error-message").text(_("passwords_dont_match"));
-	    } else {
-		$("#modal-register .error-message").text(_("this_is_bad"));
-	    }
-	    return false;
-	});
-    }
+	if(r == "invalid" && n == "handle") {
+	    $("#modal-register .error-message").text(_("already_taken"));
+	} else if(n == "handle-chars") {
+	    $("#modal-register .error-message").text(_("only_alphanumeric"));
+	} else if(r == "invalid" && n == "handle-length") {
+	    $("#modal-register .error-message").text(_("handle_too_short"));
+	} else if(r == "invalid" && n == "password") {
+	    $("#modal-register .error-message").text(_("passwords_dont_match"));
+	} else if(r == "invalid" && n == "password-length") {
+	    $("#modal-register .error-message").text(_("password_too_short"));
+	} else {
+	    console.log("THIS IS BAD: ",r,n);
+	    $("#modal-register .error-message").text(_("this_is_bad"));
+	}
+	return false;
+    });
+}
+
+function ui_change_name() {
+    if(voicelink.session.name != null)
+	$("#modal-change-name #change-name-to").val(voicelink.session.name);
+    ui_show_modal("change-name");
+}
+
+function ui_change_name_final() {
+    var name=$("#modal-change-name #change-name-to").val();
+    voicelink.change_name(name,function(r) {
+	ui_hide_modal("change-name");
+    },function(r,n) {
+	console.log(r,n);
+    });
 }
 
 function ui_logged_in() {
@@ -274,6 +287,7 @@ function ui_logged_in() {
     $("#login-show").bind("click",ui_logout);
     $("#register-show").addClass("hidden");
     $("#folders .settings").removeClass("hidden");
+    view_inbox();
     ui_hide_login();
 }
 
@@ -286,6 +300,7 @@ function ui_logged_out() {
     $("#modal-login input").each(function() {
 	$(this).val("");
     });
+    ui_hide_modal_final("*");
     view_about();
 }
 
@@ -308,5 +323,5 @@ function ui_hide_register() {
 function ui_done() {
     $("title").text(_("voicelink"));
 //    view.views.about.show_immediate();
-    view_restore_immediate();
+//    view_restore_immediate();
 }
