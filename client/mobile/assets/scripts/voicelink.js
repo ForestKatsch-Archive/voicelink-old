@@ -1,0 +1,265 @@
+
+var voicelink={
+    actions:{
+	session_needed:[
+	    "end_session",
+	    "verify_session",
+	    "verify_user",
+	    "delete_user",
+	]
+    },
+    api:"http://localhost/api.php",
+    events:{
+	"start_session":[],
+	"end_session":[],
+	"session_dead":[],
+	"delete_user":[],
+	"poke":[],
+	"register":[],
+	"verify_user":[],
+	"verify_session":[],
+    },
+    regexp:{
+	handle:/^[\w\-\.]+$/
+    },
+    requests:[],
+    session:{
+	handle:null,
+	session_id:-1,
+	session_hash:null,
+	verified:false
+    }
+}
+
+voicelink.bind=function(e,c) {
+    voicelink.events[e].push(c);
+};
+
+voicelink.unbind=function(e) {
+    voicelink.events[e]=[];
+};
+
+voicelink.event=function(e,d) {
+    if(e in voicelink.events) {
+	for(var i=0;i<voicelink.events[e].length;i++) {
+	    voicelink.events[e][i](d);
+	}
+    }
+};
+
+voicelink.Request=function(action,args,callback,error) {
+    this.action=action;
+    this.args=args;
+    this.callback=callback;
+    this.error=error;
+    this.waiting=false;
+    var session_info=false;
+    for(var i=0;i<voicelink.actions.session_needed.length;i++)
+	if(voicelink.actions.session_needed[i] == this.action)
+	    session_info=true;
+    if(session_info == true) {
+	this.args["session_id"]=voicelink.session.session_id;
+	this.args["session_hash"]=voicelink.session.session_hash;
+    }
+    this.go=function(callback) {
+	var that=this;
+	this.waiting=true;
+	console.log("Sending "+this.action+" with",this.args)
+	voicelink.post_request(this.action,this.args,function(r) {
+	    console.log("Done: ",r);
+	    if(callback)
+		callback(r);
+	    if(that.callback)
+		that.callback(r);
+	    that.waiting=false;
+	    voicelink.event(that.action,r);
+	},function(r,n) {
+	    console.log("Error: ",r,n);
+	    if(((r == "invalid") && (n == "session")) ||
+	       ((r == "auth") && (n == "needed"))) {
+		voicelink.end_session_final();
+	    } else {
+		if(that.error)
+		    that.error(r,n);
+	    }
+	});
+    };
+};
+
+voicelink.init=function() {
+    voicelink.restore_session();
+    if(voicelink.session.session_id != -1)
+	voicelink.verify_session();
+    else
+	voicelink.event("session_dead");
+};
+
+voicelink.verified=function() {
+    return voicelink.session.verified;
+};
+
+voicelink.process_requests=function() {
+    for(var i=0;i<voicelink.requests.length;i++) {
+	if(voicelink.requests[i].waiting)
+	    return;
+    }
+    if(voicelink.requests.length != 0) {
+	var v=voicelink.requests[0];
+	voicelink.requests.splice(0,1);
+	v.go(function() {
+	    voicelink.process_requests();
+	});
+    }
+};
+
+voicelink.save_session=function() {
+    localStorage["voicelink_session"]=JSON.stringify(voicelink.session);
+};
+
+voicelink.restore_session=function() {
+    if("voicelink_session" in localStorage) {
+	var verified=voicelink.session.verified;
+	voicelink.session=JSON.parse(localStorage["voicelink_session"]);
+	voicelink.session.verified=verified;
+    } else {
+	voicelink.save_session();
+    }
+};
+
+voicelink.poke=function(callback,error) {
+    voicelink.requests.push(new voicelink.Request("poke",{},callback,error));
+    voicelink.process_requests();
+};
+
+voicelink.delete_user=function(password,callback,error) {
+    if(password.length == 0)
+	error("invalid","password-length");
+    voicelink.requests.push(new voicelink.Request("delete_user",{
+	handle:voicelink.session.handle,
+	password:password
+    },function(r) {
+	voicelink.end_session_final();
+	callback(r);
+    },function(r,n) {
+	error(r,n);
+    }));
+    voicelink.process_requests();
+}
+
+voicelink.verify_user=function(password,callback,error) {
+    console.log("verify");
+    console.log(voicelink.session.handle);
+    voicelink.requests.push(new voicelink.Request("verify_user",{
+	handle:voicelink.session.handle,
+	password:password
+    },function(r) {
+	console.log("callback",r);
+	if(callback)
+	    callback(r);
+    },error));
+    voicelink.process_requests();
+}
+
+voicelink.verify_session=function(callback,error) {
+    voicelink.requests.push(new voicelink.Request("verify_session",{},function(r) {
+	voicelink.session.verified=false;
+	voicelink.save_session();
+	if(callback)
+	    callback(r);
+    },error));
+    voicelink.process_requests();
+}
+
+voicelink.register=function(handle,password,repeat_password,callback,error) {
+    if(handle.length <= 2) {
+	error("invalid","handle-length");
+    } else if(voicelink.regexp.handle.test(handle) == false) {
+	error("invalid","handle");
+    } else if(password.length == 0) {
+	error("invalid","password-length");
+    } else if(password != repeat_password) {
+	error("invalid","repeat_password");
+    } else {
+	voicelink.requests.push(new voicelink.Request("register",{
+	    handle:handle,
+	    password:password,
+	    repeat_password:password
+	},callback,error));
+	voicelink.process_requests();
+    }
+}
+
+voicelink.start_session=function(handle,password,callback,error) {
+    if(handle.length <= 2) {
+	error("invalid","handle-length");
+    } else if(voicelink.regexp.handle.test(handle) == false) {
+	error("invalid","handle");
+    } else if(password.length == 0) {
+	error("invalid","password-length");
+    } else {
+	voicelink.requests.push(new voicelink.Request("start_session",{handle:handle,password:password},function(r) {
+	    voicelink.session.session_id=r.session_id;
+	    voicelink.session.session_hash=r.session_hash;
+	    voicelink.session.verified=true;
+	    voicelink.session.handle=handle,
+	    voicelink.save_session();
+	    callback(r);
+	},error));
+	voicelink.process_requests();
+    }
+}
+
+voicelink.end_session_final=function() {
+    voicelink.session.verified=false;
+    voicelink.session.session_id=-1;
+    voicelink.session.session_hash=null;
+    voicelink.session.handle=null;
+    voicelink.save_session();
+}
+
+voicelink.end_session=function(callback,error) {
+    voicelink.requests.push(new voicelink.Request("end_session",{},function(r) {
+	voicelink.end_session_final();
+	callback(r);
+    },function(r,n) {
+	if(r == "auth")
+	    voicelink.end_session_final();
+	if(error)
+	    error(r,n);
+    }));
+    voicelink.process_requests();
+}
+
+voicelink.post_request=function(action,args,callback,error) {
+    $.post(voicelink.api+"?action="+encodeURIComponent(action),args,function(r) {
+	r=JSON.parse(r);
+	if(r.status == "error") {
+	    if(error)
+		error(r.reason,r.noun);
+	    else
+		throw "VoicelinkError: "+r.reason+": "+r.noun;
+	} else {
+	    callback(r);
+	}
+    }).error(function(e,status) {
+	if(status != "error")
+	    error("http",status)
+	else
+	    error("http",e.statusCode().status);
+    });
+}
+
+voicelink.new_message=function(callback,error) {
+    var fd=new FormData();
+    fd.append("fname","message.wav");
+    fd.append("data",sound_blob);
+    $.ajax({
+	type:"POST",
+	url:"/api",
+	data: fd,
+	processData: false,
+	contentType: false
+    }).done(function(data) {
+	console.log(data);
+    });
+};
