@@ -8,7 +8,8 @@ var Request=function(action,args,callback,error) {
     var session_info=false;
     if((this.action == "end_session") ||
        (this.action == "delete_user") ||
-       (this.action == "verify_session")
+       (this.action == "verify_session") ||
+       (this.action == "verify_user")
       )
 	session_info=true;
     if(session_info == true) {
@@ -103,10 +104,27 @@ function voicelink_poke(callback,error) {
     voicelink_requests();
 }
 
-function voicelink_delete_user(callback,error) {
-    voicelink.requests.push(new Request("delete_user",{},function(r) {
+function voicelink_delete_user(password,callback,error) {
+    voicelink.requests.push(new Request("delete_user",{
+	handle:voicelink.session.handle,
+	password:password
+    },function(r) {
 	voicelink_end_session_final();
 	callback(r);
+    },function(r,n) {
+	console.log(r,n);
+    }));
+    voicelink_requests();
+}
+
+function voicelink_verify_user(password,callback,error) {
+    console.log("verify");
+    console.log(voicelink.session.handle);
+    voicelink.requests.push(new Request("verify_user",{handle:voicelink.session.handle,
+						       password:password},function(r) {
+	console.log("callback",r);
+	if(callback)
+	    callback(r);
     },error));
     voicelink_requests();
 }

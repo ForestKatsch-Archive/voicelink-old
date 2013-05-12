@@ -43,6 +43,16 @@ function auth_register_user() {
   reply("ok",[]);
 }
 
+function auth_verify_user() {
+  auth_needed(true);
+  if(!($handle=post("handle")))
+    reply_error("arg","handle");
+  if(!($password=post("password")))
+    reply_error("arg","password");
+  db_verify_user($handle,$password);
+  reply("ok",[]);
+}
+
 function auth_start_session() {
   auth_needed(false);
   if(!($handle=post("handle")))
@@ -67,9 +77,9 @@ function auth_verify_session() {
   if($data == false)
     reply("ok",["active"=>"false"]);
   reply("ok",[
-	      "active"=>$session["active"],
-	      "current_time"=>$session["current_time"],
-	      "expires"=>$session["expires"]
+	      "active"=>$data["active"],
+	      "current_time"=>$data["current_time"],
+	      "expires"=>$data["expires"]
 	      ]);
 }
 
@@ -85,7 +95,7 @@ function auth_end_session() {
 
 function auth_delete_user() {
   auth_needed(true);
-  if(!($handle_id=post("handle")))
+  if(!($handle=post("handle")))
     reply_error("arg","handle");
   if(!($password=post("password")))
     reply_error("arg","password");

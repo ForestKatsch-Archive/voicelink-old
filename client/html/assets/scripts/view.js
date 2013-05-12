@@ -70,7 +70,7 @@ function view_create_views() {
 <a class='button delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a>\n\
 </div>\n\
 ");
-    v.html.find(".delete.button").click(ui_delete_account);
+    v.html.find(".delete.button").click(ui_delete_user);
     view.views.settings=v;
     v=new View("about",_("about_voicelink_text"));
     view.views.about=v;
@@ -93,6 +93,13 @@ function view_push_url(v) {
 }
 
 function view_before_switch(v) {
+    if(!voicelink_verified()) {
+	if((v == "inbox") ||
+	   (v == "sent") ||
+	   (v == "drafts") ||
+	   (v == "settings"))
+	    v="about";
+    }
     if((v == "inbox") ||
        (v == "sent") ||
        (v == "drafts") ||
@@ -110,16 +117,17 @@ function view_before_switch(v) {
     for(var i in view.views) {
 	view.views[i].hide();
     }
+    return v;
 }
 
 function view_set_final(v) {
-    view_before_switch(v);
+    v=view_before_switch(v);
     view.views[v].show();
     view.url="?"+v;
 }
 
 function view_set_final_immediate(v) {
-    view_before_switch(v);
+    v=view_before_switch(v);
     view.views[v].show_immediate();
     view.url="?"+v;
 }

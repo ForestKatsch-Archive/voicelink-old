@@ -34,12 +34,16 @@ function db_end_session($session_id,$session_hash) {
   return mysql_end_session($session_id,$session_hash);
 }
 
+function db_verify_user($handle,$password) {
+  return mysql_verify_user($handle,$password);
+}
+
 function db_register_user($handle,$password) {
   return mysql_register_user($handle,$password);
 }
 
-function db_delete_account($handle,$password) {
-  return mysql_delete_account($handle,$password);
+function db_delete_user($handle,$password) {
+  return mysql_delete_user($handle,$password);
 }
 
 ?>

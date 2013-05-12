@@ -40,7 +40,7 @@ var Modal=function(name,title,content) {
 };
 
 var ui={
-    confirm_callback:null,
+    confirm_delete_callback:null,
     login:{
 	html:null,
     },
@@ -144,35 +144,46 @@ function ui_create_modals() {
     ui.modal.windows.register.html.find("#register-button").click(function(e) {
 	ui_register();
     });
-    ui.modal.windows.confirm=new Modal("confirm",_("confirm_password"),"\
-<p class='text'></p>\n\
-<input type='password' id='confirm-password' name='password' placeholder='"+_("confirm_password")+"' />\n\
+    ui.modal.windows["confirm-delete"]=new Modal("confirm-delete",_("enter_password_to_delete"),"\
+<p class='text'>"+_("after_delete_account")+"</p>\n\
+<input type='password' id='confirm-delete-password' name='password' placeholder='"+_("confirm_password")+"' autofocus />\n\
 <div class='error-message hidden'></div>\n\
 <div id='confirm-button' class='button action'>"+_("confirm")+"</button>\n\
 ");
-    ui.modal.windows.confirm.html.keydown(function(e) {
+    ui.modal.windows["confirm-delete"].html.keydown(function(e) {
 	if(e.which == 13)
-	    ui_confirm();
+	    ui_confirm_delete();
     });
-    ui.modal.windows.confirm.html.find("#confirm-button").click(function(e) {
-	ui_confirm();
+    ui.modal.windows["confirm-delete"].html.find("#confirm-button").click(function(e) {
+	ui_confirm_delete();
     });
     ui_create_overlay();
 }
 
-function ui_delete_account() {
-    ui_show_confirm(_("enter_password_to_delete"),_("after_delete_account"));
+function ui_delete_user() {
+    ui_show_confirm_delete(function() {
+	ui_delete_user_final();
+    });
 }
 
-function ui_show_confirm(t,p,callback) {
-    ui.confirm_callback=callback;
-    ui.modal.windows.confirm.set_title(t);
-    ui.modal.windows.confirm.html.find("p.text").html(p);
-    ui_show_modal("confirm");
+function ui_delete_user_final() {
+    ui_hide_modal("*");
 }
 
-function ui_confirm() {
-    ui.confirm_callback=callback;
+function ui_show_confirm_delete(callback) {
+    ui.confirm_delete_callback=callback;
+    ui_show_modal("confirm-delete");
+}
+
+function ui_confirm_delete() {
+    var password=$("#modal-confirm-delete #confirm-delete-password").val();
+    voicelink_verify_user(password,function(r) {
+	$("#modal-confirm-delete .error-message").addClass("hidden");
+	voicelink_delete_user(password,ui.confirm_delete_callback);
+    },function() {
+	$("#modal-confirm-delete .error-message").removeClass("hidden");
+	$("#modal-confirm-delete .error-message").text(_("incorrect_password"))
+    });
 }
 
 function ui_create_overlay() {

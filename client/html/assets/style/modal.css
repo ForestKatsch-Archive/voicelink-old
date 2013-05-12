@@ -1,6 +1,11 @@
 
 @import "overlay.css";
 
+.modal p {
+    color: #888;
+    font-size: 80%;
+}
+
 .modal input {
     -o-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -19,10 +24,10 @@
     border-radius: 3px;
     display: none;
     position: absolute;
-    margin-left: -10em;
+    margin-left: -15em;
     min-width: 10em;
     left: 50%;
-    width: 20em;
+    width: 30em;
     top: 5em;
     z-index: 5000;
 }

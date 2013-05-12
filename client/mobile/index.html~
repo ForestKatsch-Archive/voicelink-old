@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>VoiceLink - Loading...</title>
+    <link rel="stylesheet" href="assets/style/main.css" />
+    <script src="assets/scripts/jquery.min.js"></script>
+    <script src="assets/scripts/parseuri.js"></script>
+    <script src="assets/scripts/locale.js"></script>
+    <script src="assets/scripts/util.js"></script>
+    <script src="assets/scripts/ui.js"></script>
+    <script src="assets/scripts/view.js"></script>
+    <script src="assets/scripts/voicelink.js"></script>
+    <script src="assets/scripts/main.js"></script>
+  </head>
+  <body>
+    <header id="h"> 
+     <h1>VoiceLink</h1>
+     <div id="account-status">
+       <a id="register-show" tabindex="100" class="hidden-button">Register</a>
+       <a id="login-show" tabindex="200" class="button action">Login</a>
+     </div>
+    </header>
+    <div id="view">
+      <div id="folders" class="hidden">
+	<ul>
+	  <li class="inbox hidden-button open">Inbox</li>
+	  <li class="sent hidden-button">Sent</li>
+	  <li class="drafts hidden-button">Drafts</li>
+	</ul>
+	<a class="settings hidden-button hidden">Settings</a>
+	<a class="help button">Help</a>
+      </div>
+      <div class="wrapper">
+      </div>
+    </div>
+    <div id="modal">
+    </div>
+  </body>
+</html>

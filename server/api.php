@@ -29,6 +29,8 @@ if($a == "info") {
   auth_end_session();
 } else if($a == "register") {
   auth_register_user();
+} else if($a == "verify_user") {
+  auth_verify_user();
 } else if($a == "delete_user") {
   auth_delete_user();
 } else {

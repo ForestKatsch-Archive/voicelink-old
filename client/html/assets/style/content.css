@@ -4,3 +4,7 @@
 .view p {
     margin-top: 10px;
 }
+
+a:link {
+    color: #38f;
+}
