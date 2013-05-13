@@ -1,0 +1,33 @@
+
+#new {
+    box-sizing: border-box;
+    height: 100%;
+    position: absolute;
+    padding-top: 103px;
+    left: 0;
+    width: 0;
+    opacity: 0;
+    -webkit-transition: opacity 0.1s ease, width 0.1s ease;
+}
+
+.logged-in #new {
+    width: 20%;
+    opacity: 1;
+}
+
+#new .wrapper {
+    background-color: #f6f6f6;
+    border-top: 1px solid #f6f6f6;
+    border-right: 1px solid #bbb;
+    box-sizing: border-box;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    z-index: 500;
+}
+
+#record-new-message {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+}

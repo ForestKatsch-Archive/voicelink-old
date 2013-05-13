@@ -60,9 +60,10 @@ function mysql_setup_tables() {
   message_id BIGINT PRIMARY KEY AUTO_INCREMENT,
   from_user_id BIGINT,
   wav_data LONGBLOB,
-  reply_to BIGINT,
+  reply_to BIGINT DEFAULT 0,
+  duration INT,
   draft TINYINT(1) DEFAULT 1,
-  expires TIMESTAMP)");
+  sent TIMESTAMP)");
   mysql_q("create table if not exists $DB_NAME_MESSAGE_RECIPIENTS (
   message_recipient_id BIGINT PRIMARY KEY AUTO_INCREMENT,
   message_id BIGINT,
@@ -94,6 +95,15 @@ function mysql_get_user_id_from_handle($handle) {
     reply_error("mysql","Expected one user");
   $row=$rows->fetch_assoc();
   return $row["user_id"];
+}
+
+function mysql_get_handle_from_user_id($user_id) {
+  global $DB_NAME_USERS;
+  $rows=mysql_q("select handle from $DB_NAME_USERS where user_id=$user_id");
+  if($rows->num_rows != 1)
+    return false;
+  $row=$rows->fetch_assoc();
+  return $row["handle"];
 }
 
 function mysql_register_user($handle,$password) {
@@ -229,8 +239,36 @@ function mysql_verify_session($session_id,$session_hash) {
 function mysql_change_name($user_id,$name) {
   $name=mysql_escape($name);
   global $DB_NAME_USERS;
-  error_log($name);
   mysql_q("update $DB_NAME_USERS set name='$name' where user_id=$user_id");
+}
+
+function mysql_get_inbox_messages($user_id,$number) {
+  $number=mysql_escape($number);
+  global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
+  $messages=[];
+  $result=mysql_q("select messages.message_id,messages.duration,messages.from_user_id,messages.sent 
+from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
+where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
+&& $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id) 
+ORDER BY messages.sent DESC LIMIT $number");
+  error_log("select messages.message_id,messages.duration,messages.from_user_id,messages.sent 
+from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
+where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
+&& $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id) 
+ORDER BY messages.sent DESC LIMIT $number");
+  while($row=mysql_fetch_array($result)) {
+    $from=mysql_get_handle_from_user_id($row["from_user_id"]);
+    $messages[]=[
+		 "message_id"=>$row["message_id"],
+		 "duration"=>$row["duration"],
+		 "sent"=>$row["sent"],
+		 "from"=>$from
+		 ];
+  }
+  return [
+	  "messages"=>$messages,
+	  "number"=>$result->num_rows
+	  ];
 }
 
 ?>

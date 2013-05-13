@@ -39,6 +39,14 @@ function start() {
 }
 
 $(document).ready(function() {
+    voicelink.bind("verify_session",function() {
+	update();
+	setInterval(update,10000);
+    });
+    voicelink.bind("start_session",function() {
+	update();
+	setInterval(update,10000);
+    });
     start();
 });
 
@@ -47,13 +55,17 @@ function done() {
     var time=new Date().getTime()-module_start_time;
     time=(time/1000).toFixed(3);
     console.log("Loaded "+module_number+" module"+s(module_number)+" in "+time+" second"+s(time))
-    update();
-    setInterval(update,10000);
 }
 
 function update() {
-    if(!voicelink.verified())
+    view_update_messages("inbox",[]);
+    view_update_messages("sent",[]);
+    view_update_messages("drafts",[]);
+    if(!voicelink.verified()) {
+	console.log("Not verified.");
 	return;
+    }
+    console.log("updating...");
     voicelink.update(function(r) {
 	if(r.folders.inbox > 0)
 	    voicelink.get_messages("inbox");

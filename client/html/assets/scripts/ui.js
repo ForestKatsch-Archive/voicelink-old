@@ -59,8 +59,9 @@ function ui_init() {
     voicelink.bind("start_session",ui_logged_in);
     voicelink.bind("end_session",ui_logged_out);
     voicelink.bind("verify_session",ui_logged_in);
+    voicelink.bind("session_dead",ui_logged_out);
     voicelink.bind("change_name",function() {
-
+	
     });
     $("#login-show").bind("click",ui_show_login);
     $("#register-show").bind("click",ui_show_register);
@@ -69,6 +70,7 @@ function ui_init() {
     $("#folders .sent").bind("click",view_sent);
     $("#folders .drafts").bind("click",view_drafts);
     $("#folders .help").bind("click",view_help);
+    $("#record-new-message").bind("click",ui_record_new_message);
     loaded("ui");
 }
 
@@ -80,6 +82,7 @@ function ui_locale_init() {
     $("#folders .drafts").text(_("drafts"));
     $("#folders .settings").text(_("settings"));
     $("#folders .help").text(_("help"));
+    $("#record-new-message").text(_("record_new_message"));
 }
 
 
@@ -282,26 +285,25 @@ function ui_change_name_final() {
 }
 
 function ui_logged_in() {
+    $("body").addClass("logged-in");
     $("#login-show").text(_("logout"));
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_logout);
-    $("#register-show").addClass("hidden");
-    $("#folders .settings").removeClass("hidden");
+    console.log("logged in!");
     view_inbox();
     ui_hide_login();
 }
 
 function ui_logged_out() {
+    $("body").removeClass("logged-in");
     $("#login-show").text(_("login"));
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_show_login);
-    $("#register-show").removeClass("hidden");
-    $("#folders .settings").addClass("hidden");
     $("#modal-login input").each(function() {
 	$(this).val("");
     });
     ui_hide_modal_final("*");
-    view_about();
+    view_help();
 }
 
 function ui_show_login() {

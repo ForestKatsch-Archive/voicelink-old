@@ -17,6 +17,7 @@
 .button {
     background: #eee;
     border: 1px solid #bbb;
+    margin: 0 10px;
 }
 
 .button:hover {
@@ -30,9 +31,4 @@
 .hidden-button:hover,
 .button:hover {
     cursor: pointer;
-}
-
-.hidden-button.hidden,
-.button.hidden {
-    display: none;
 }

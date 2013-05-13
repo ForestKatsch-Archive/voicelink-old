@@ -30,7 +30,7 @@ var View=function(name,content) {
 var view={
     fade_time:200,
     url:"",
-    view:"about",
+    view:"help",
     views:{
 
     },
@@ -40,8 +40,13 @@ function view_generate_message(m) {
     return "From "+m.from_handle+" timestamp "+m.date+", "+m.duration+" seconds long.";
 }
 
-function view_set_messages(folder,message_list) {
-    $("#view-"+folder+" .wrapper ul").empty();
+function view_update_messages(folder,message_list) {
+    $("#view-"+folder+" .wrapper").empty();
+    if(message_list.length == 0) {
+	$("#view-"+folder+" .wrapper").append("<div class='no-messages'>No messages.</div>")
+    } else {
+	$("#view-"+folder+" .wrapper").append("<ul></ul>");
+    }
     for(var i=0;i<message_list.length;i++) {
 	$("#view-"+folder+" .wrapper ul").append("<li>"+view_generate_message(message_list[i])+"</li>");
     }
@@ -87,8 +92,6 @@ function view_create_views() {
     v.html.find(".delete.button").click(ui_delete_user);
     v.html.find(".change-name.button").click(ui_change_name);
     view.views.settings=v;
-    v=new View("about",_("about_voicelink_text"));
-    view.views.about=v;
     v=new View("help","There's no help.");
     view.views.help=v;
 }
@@ -108,22 +111,20 @@ function view_push_url(v) {
 }
 
 function view_before_switch(v) {
+    if(v == "")
+	v="help";
     if(!voicelink.verified()) {
-	if((v == "inbox") ||
-	   (v == "sent") ||
-	   (v == "drafts") ||
-	   (v == "settings"))
-//	    v="about";
-	    ;
+	$("#folders li.login").addClass("hidden");
+	if(v != "help") {
+	    v="help";
+	    history.pushState(null,null,"?help#");
+	}
+    } else {
+	$("#folders li.login").removeClass("hidden");
     }
     $("#folders *").removeClass("open");
     if($("#folders").find("."+v).length != 0)
 	$("#folders ."+v).addClass("open");
-    if(v == "about") {
-	$("#folders").addClass("hidden");
-    } else {
-	$("#folders").removeClass("hidden");
-    }
     view.view=v;
     for(var i in view.views) {
 	view.views[i].hide();
@@ -177,10 +178,6 @@ function view_sent() {
 
 function view_drafts() {
     view_set("drafts");
-}
-
-function view_about() {
-    view_set("about");
 }
 
 function view_help() {

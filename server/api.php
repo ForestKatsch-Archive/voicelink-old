@@ -32,6 +32,8 @@ if($a == "info") {
   auth_register_user();
 } else if($a == "update") {
   messages_update();
+} else if($a == "get_folder") {
+  messages_get_folder();
 } else if($a == "verify_user") {
   auth_verify_user();
 } else if($a == "change_name") {

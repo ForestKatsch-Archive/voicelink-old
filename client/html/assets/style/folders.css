@@ -4,15 +4,8 @@
     border: 0 solid #bbb;
     border-width: 1px 0;
     color: #888;
-    max-height: 3em;
-    padding-left: 2em;
-    overflow: hidden;
-    -webkit-transition: max-height 0.1s ease, opacity 0.1s ease;
-}
-
-#folders.hidden {
-    opacity: 0;
-    max-height: 0;
+    padding-left: 22%;
+    overflow: visible;
 }
 
 #folders li {
@@ -20,13 +13,16 @@
     border-width: 0 1px;
     border-radius: 0;
     padding: 7px 20px;
-    overflow: visible;
     -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#folders li.hidden {
+    -webkit-transform: scale(1,0);
 }
 
 #folders li.open {
     border-color: #bbb;
-    background-color: #ddd;
+    background-color: #eee;
 }
 
 #folders ul {

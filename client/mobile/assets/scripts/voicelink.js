@@ -4,6 +4,7 @@ var voicelink={
 	session_needed:[
 	    "end_session",
 	    "verify_session",
+	    "get_folder",
 	    "verify_user",
 	    "update",
 	    "change_name",
@@ -18,9 +19,18 @@ var voicelink={
     },
     requests:[],
     folders:{
-	inbox:[],
-	sent:[],
-	drafts:[]
+	inbox:{
+	    "messages":[],
+	    "unread_messages":0,
+	},
+	sent:{
+	    "messages":[],
+	    "unread_messages":0,
+	},
+	drafts:{
+	    "messages":[],
+	    "unread_messages":0,
+	},
     },
     session:{
 	handle:null,
@@ -161,12 +171,34 @@ voicelink.delete_user=function(password,callback,error) {
 voicelink.update=function(callback,error) {
     voicelink.requests.push(new voicelink.Request("update",{},function(r) {
 	callback(r);
+	if(r.folders != undefined) {
+	    if(r.folders.inbox != undefined) {
+		if(r.folders.inbox.total_messages != voicelink.folders.inbox.messages.length) {
+		    console.log("Fetchin' inbox!");
+		    voicelink.get_folder("inbox",function(r) {
+			console.log(r);
+		    },function(r,n) {
+			console.log(r,n);
+		    });
+		}
+	    }
+	}
 	if(r.user != undefined) {
 	    if(r.user.name != undefined) {
 		voicelink.session.name=r.user.name;
 		voicelink.event("change_name");
 	    }
 	}
+    },error));
+    voicelink.process_requests();
+}
+
+voicelink.get_folder=function(folder,callback,error) {
+    voicelink.requests.push(new voicelink.Request("get_folder",{
+	folder:folder,
+	number:100
+    },function(r) {
+	callback(r);
     },error));
     voicelink.process_requests();
 }
@@ -193,7 +225,7 @@ voicelink.verify_user=function(password,callback,error) {
 
 voicelink.verify_session=function(callback,error) {
     voicelink.requests.push(new voicelink.Request("verify_session",{},function(r) {
-	voicelink.session.verified=false;
+	voicelink.session.verified=true;
 	voicelink.save_session();
 	if(callback)
 	    callback(r);

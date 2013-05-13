@@ -23,6 +23,10 @@
     margin-left: 10px;
 }
 
+.logged-in #register-show {
+    display: none;
+}
+
 #h h1 {
     background: transparent url("../img/logo-small.png") center center no-repeat;
     color: transparent;
