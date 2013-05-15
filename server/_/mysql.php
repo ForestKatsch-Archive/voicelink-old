@@ -224,7 +224,7 @@ function mysql_verify_session($session_id,$session_hash) {
   $timestamp=$date->getTimestamp();
   $expires=$row["expires"];
   $expires=strtotime($row["expires"]);
-  error_log($expires . "  " . $timestamp);
+  //  error_log($expires . "  " . $timestamp);
   if($session_hash != $row["session_hash"])
     return false;
   if($expires < $timestamp)
@@ -251,12 +251,12 @@ from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS
 where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
 && $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id) 
 ORDER BY messages.sent DESC LIMIT $number");
-  error_log("select messages.message_id,messages.duration,messages.from_user_id,messages.sent 
-from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
-where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
-&& $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id) 
-ORDER BY messages.sent DESC LIMIT $number");
-  while($row=mysql_fetch_array($result)) {
+/*   error_log("select messages.message_id,messages.duration,messages.from_user_id,messages.sent  */
+/* from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS  */
+/* where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id  */
+/* && $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id)  */
+/* ORDER BY messages.sent DESC LIMIT $number"); */
+  while($row=$result->fetch_assoc()) {
     $from=mysql_get_handle_from_user_id($row["from_user_id"]);
     $messages[]=[
 		 "message_id"=>$row["message_id"],
@@ -270,5 +270,11 @@ ORDER BY messages.sent DESC LIMIT $number");
 	  "number"=>$result->num_rows
 	  ];
 }
+
+function mysql_upload_message($user_id) {
+  global $DB_NAME_MESSAGES;
+  mysql_q("insert into $DB_NAME_MESSAGES (from_user_id) VALUES ($user_id)");
+}
+
 
 ?>

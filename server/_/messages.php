@@ -53,4 +53,16 @@ function messages_get_folder() {
 	      ]);
 }
 
+function messages_upload() {
+  auth_needed(true);
+  if(!($session_id=post("session_id")))
+    reply_error("arg","session_id");
+  if(!($session_hash=post("session_hash")))
+    reply_error("arg","session_hash");
+  $user_id=db_get_user_id_from_session_id($session_id,$session_hash);
+  reply("ok",[
+	      "audio_file"=>$_POST
+	      ]);
+}
+
 ?>

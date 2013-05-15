@@ -11,7 +11,7 @@
 }
 
 .logged-in #new {
-    width: 20%;
+    width: 15em;
     opacity: 1;
 }
 
@@ -26,7 +26,7 @@
     z-index: 500;
 }
 
-#record-new-message {
+#record-button {
     display: block;
     margin-top: 10px;
     text-align: center;

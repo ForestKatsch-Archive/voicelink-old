@@ -84,9 +84,9 @@ voicelink.Request=function(action,args,callback,error) {
     this.go=function(callback) {
 	var that=this;
 	this.waiting=true;
-	console.log("Sending "+this.action+" with",this.args)
+//	console.log("Sending "+this.action+" with",this.args)
 	voicelink.post_request(this.action,this.args,function(r) {
-	    console.log("Done: ",r);
+//	    console.log("Done: ",r);
 	    if(callback)
 		callback(r);
 	    if(that.callback)
@@ -174,11 +174,11 @@ voicelink.update=function(callback,error) {
 	if(r.folders != undefined) {
 	    if(r.folders.inbox != undefined) {
 		if(r.folders.inbox.total_messages != voicelink.folders.inbox.messages.length) {
-		    console.log("Fetchin' inbox!");
+//		    console.log("Fetchin' inbox!");
 		    voicelink.get_folder("inbox",function(r) {
-			console.log(r);
+//			console.log(r);
 		    },function(r,n) {
-			console.log(r,n);
+//			console.log(r,n);
 		    });
 		}
 	    }
@@ -317,16 +317,20 @@ voicelink.post_request=function(action,args,callback,error) {
     });
 }
 
-voicelink.new_message=function(callback,error) {
+voicelink.new_message=function(blob,callback,error) {
     var fd=new FormData();
-    fd.append("fname","message.wav");
-    fd.append("data",sound_blob);
+    fd.append("session_id",voicelink.session.session_id);
+    fd.append("session_hash",voicelink.session.session_hash);
+    fd.append("data",blob);
+    var args={session_id:voicelink.session.session_id,
+	      session_hash:voicelink.session.session_hash};
+    console.log(args);
     $.ajax({
 	type:"POST",
-	url:"/api",
-	data: fd,
-	processData: false,
-	contentType: false
+	url:"/api.php?action=upload",
+	data:fd,
+	processData:false,
+	contentType:false
     }).done(function(data) {
 	console.log(data);
     });

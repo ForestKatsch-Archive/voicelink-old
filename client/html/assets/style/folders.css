@@ -4,7 +4,7 @@
     border: 0 solid #bbb;
     border-width: 1px 0;
     color: #888;
-    padding-left: 22%;
+    padding-left: 16em;
     overflow: visible;
 }
 
@@ -21,8 +21,9 @@
 }
 
 #folders li.open {
-    border-color: #bbb;
     background-color: #eee;
+    border-color: #bbb;
+    color: #000;
 }
 
 #folders ul {
@@ -30,7 +31,7 @@
 }
 
 #folders .settings {
-
+    
 }
 
 #folders .help {

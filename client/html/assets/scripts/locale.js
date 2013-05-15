@@ -34,6 +34,8 @@ to them now still will. (You may want to <a href='#wipe-user'>wipe</a> your acco
     repeat_password:"Repeat password",
     sent:"Sent",
     settings:"Settings",
+    start_record:"New message",
+    stop_record:"Stop recording",
     this_is_bad:"ERRORS. THIS IS BAD. (Check out the dev console.)",
     three_or_more:"The handle must be three or more characters long.",
     voicelink:"VoiceLink"

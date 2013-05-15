@@ -1,7 +1,7 @@
 
 var VERSION=[0,0,1];
 
-var modules=["main","ui","view"];
+var modules=["main","ui","view","mic"];
 var module_number=0;
 var module_start_time;
 
@@ -32,6 +32,7 @@ function start() {
     init();
     setTimeout(function() {
 	voicelink.init();
+	mic_init();
 	ui_init();
 	view_init();
 	loaded("main");
@@ -65,8 +66,9 @@ function update() {
 	console.log("Not verified.");
 	return;
     }
-    console.log("updating...");
+//    console.log("updating...");
     voicelink.update(function(r) {
+	return;
 	if(r.folders.inbox > 0)
 	    voicelink.get_messages("inbox");
 	if(r.folders.sent > 0)

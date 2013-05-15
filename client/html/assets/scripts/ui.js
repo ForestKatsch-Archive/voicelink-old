@@ -56,10 +56,22 @@ var ui={
 function ui_init() {
     ui_create_modals();
     ui_locale_init();
-    voicelink.bind("start_session",ui_logged_in);
-    voicelink.bind("end_session",ui_logged_out);
-    voicelink.bind("verify_session",ui_logged_in);
-    voicelink.bind("session_dead",ui_logged_out);
+    voicelink.bind("start_session",function() {
+	console.log("Start session");
+	ui_logged_in();
+    });
+    voicelink.bind("end_session",function() {
+	console.log("End session");
+	ui_logged_out();
+    });
+    voicelink.bind("verify_session",function() {
+	console.log("Session verified");
+	ui_logged_in();
+    });
+    voicelink.bind("session_dead",function() {
+	console.log("Session dead");
+	ui_logged_out();
+    });
     voicelink.bind("change_name",function() {
 	
     });
@@ -70,7 +82,7 @@ function ui_init() {
     $("#folders .sent").bind("click",view_sent);
     $("#folders .drafts").bind("click",view_drafts);
     $("#folders .help").bind("click",view_help);
-    $("#record-new-message").bind("click",ui_record_new_message);
+    $("#record-button").bind("click",ui_start_record);
     loaded("ui");
 }
 
@@ -82,7 +94,7 @@ function ui_locale_init() {
     $("#folders .drafts").text(_("drafts"));
     $("#folders .settings").text(_("settings"));
     $("#folders .help").text(_("help"));
-    $("#record-new-message").text(_("record_new_message"));
+    $("#record-button").text(_("start_record"));
 }
 
 
@@ -289,7 +301,6 @@ function ui_logged_in() {
     $("#login-show").text(_("logout"));
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_logout);
-    console.log("logged in!");
     view_inbox();
     ui_hide_login();
 }
@@ -326,4 +337,22 @@ function ui_done() {
     $("title").text(_("voicelink"));
 //    view.views.about.show_immediate();
 //    view_restore_immediate();
+}
+
+function ui_start_record() {
+    mic_record_start(function(data) {
+	voicelink.new_message(data.url,function() {
+	    console.log("done");
+	});
+    });
+    $("#record-button").text(_("stop_record"));
+    $("#record-button").unbind("click");
+    $("#record-button").bind("click",ui_stop_record);
+}
+
+function ui_stop_record() {
+    mic_record_stop();
+    $("#record-button").text(_("start_record"));
+    $("#record-button").unbind("click");
+    $("#record-button").bind("click",ui_start_record);
 }
