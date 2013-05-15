@@ -341,17 +341,20 @@ function ui_done() {
 
 function ui_start_record() {
     mic_record_start(function(data) {
-	voicelink.new_message(data.url,function() {
-	    console.log("done");
-	});
+	$("#record-button").text(_("stop_record"));
+    },function() {
+	$("#record-button").text(_("record_allow"));
     });
-    $("#record-button").text(_("stop_record"));
     $("#record-button").unbind("click");
     $("#record-button").bind("click",ui_stop_record);
 }
 
 function ui_stop_record() {
-    mic_record_stop();
+    mic_record_stop(function(data) {
+	voicelink.new_message(data.url,function() {
+	    console.log("done");
+	});
+    });
     $("#record-button").text(_("start_record"));
     $("#record-button").unbind("click");
     $("#record-button").bind("click",ui_start_record);

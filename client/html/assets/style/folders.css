@@ -1,19 +1,32 @@
 
 #folders {
-    background-color: #f6f6f6;
-    border: 0 solid #bbb;
-    border-width: 1px 0;
-    color: #888;
-    padding-left: 16em;
+    background-color: #fff;
+    border-bottom: 1px solid #bbb;
+    box-shadow: inset 0 -10px 3px -10px rgba(0,0,0,0.2);
+    padding-left: 10%;
+    position: absolute;
+    left: -10%;
+    width: 120%;
     overflow: visible;
+    z-index: 400;
+}
+
+#folders ul {
+    padding-left: 17em;
 }
 
 #folders li {
     border: 1px solid transparent;
-    border-width: 0 1px;
-    border-radius: 0;
-    padding: 7px 20px;
-    -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+    color: #aaa;
+    margin-bottom: -1px;
+    padding: 5px 20px;
+    -webkit-transition: color 0.1s ease, border-color 0.1s ease, text-shadow 0.1s ease;
+}
+
+#folders li:hover {
+    color: #888;
 }
 
 #folders li.hidden {
@@ -24,18 +37,9 @@
     background-color: #eee;
     border-color: #bbb;
     color: #000;
+    text-shadow: 0 1px 1px #ddd;
 }
 
 #folders ul {
     display: inline-block;
-}
-
-#folders .settings {
-    
-}
-
-#folders .help {
-    position: absolute;
-    top: 1px;
-    right: 10px;
 }

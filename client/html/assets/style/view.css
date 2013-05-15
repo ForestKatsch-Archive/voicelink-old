@@ -5,7 +5,6 @@
 #view {
     box-sizing: border-box;
     position: absolute;
-    top: 70px;
     height: auto;
     width: 100%;
     z-index: 100;
@@ -14,7 +13,7 @@
 .view {
     box-sizing: border-box;
     display: none;
-    margin-top: 10px;
+    margin-top: 50px;
     height: auto;
     padding: 0 2em;
     position: absolute;
@@ -22,7 +21,7 @@
 }
 
 .logged-in .view {
-    padding-left: 17em;
+    padding-left: 18em;
 }
 
 .view * {

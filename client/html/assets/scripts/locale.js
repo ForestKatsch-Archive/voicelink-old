@@ -30,6 +30,7 @@ to them now still will. (You may want to <a href='#wipe-user'>wipe</a> your acco
     password:"Password",
     passwords_dont_match:"The passwords don't match.",
     password_too_short:"The password must be one or more characters long.",
+    record_allow:"Allow mic access",
     register:"Register",
     repeat_password:"Repeat password",
     sent:"Sent",
