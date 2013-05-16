@@ -8,6 +8,7 @@
     height: auto;
     width: 100%;
     z-index: 100;
+    vertical-align: top;
 }
 
 .view {
@@ -16,8 +17,10 @@
     margin-top: 20px;
     height: auto;
     padding: 0 2em;
+    padding-right: 20em;
     position: absolute;
     z-index: 0;
+    width: 100%;
 }
 
 .logged-in #view {
@@ -28,3 +31,16 @@
 .view * {
 
 }
+
+.view .pane {
+    display: inline-block;
+    padding: 1em;
+    width: 33%;
+}
+
+.view .pane h1 {
+    font-weight: bold;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+

@@ -269,7 +269,7 @@ function ui_register() {
 	    $("#modal-register .error-message").text(_("only_alphanumeric"));
 	} else if(r == "invalid" && n == "handle-length") {
 	    $("#modal-register .error-message").text(_("handle_too_short"));
-	} else if(r == "invalid" && n == "password") {
+	} else if(r == "invalid" && n == "password-repeat") {
 	    $("#modal-register .error-message").text(_("passwords_dont_match"));
 	} else if(r == "invalid" && n == "password-length") {
 	    $("#modal-register .error-message").text(_("password_too_short"));

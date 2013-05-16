@@ -81,9 +81,7 @@ function view_create_views() {
     view.views.drafts=v;
     v=new View("settings","\
 <div class='account pane'>\n\
-<header>\n\
 <h1>"+_("account")+"</h1>\n\
-<ul>\n\
 <li><a class='link change-name' title='"+_("change_name")+"'>"+_("change_name")+"</a></li>\n\
 <li><a class='link delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a></li>\n\
 </ul>\n\

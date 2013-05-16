@@ -2,11 +2,16 @@
 
 function messages_update() {
   auth_needed(true);
+  if(!($session_id=post("session_id")))
+    reply_error("arg","session_id");
+  if(!($session_hash=post("session_hash")))
+    reply_error("arg","session_hash");
+  $user_id=db_get_user_id_from_session_id($session_id,$session_hash);
   reply("ok",[
 	      "folders"=>[
 			  "inbox"=>[
-				    "unread_messages"=>10,
-				    "total_messages"=>10,
+				    "unread_messages"=>0,
+				    "total_messages"=>0,
 				    "archived_messages"=>0
 				    ],
 			  "sent"=>[
@@ -16,7 +21,7 @@ function messages_update() {
 				    ],
 			  "drafts"=>[
 				    "unread_messages"=>0,
-				    "total_messages"=>0,
+				    "total_messages"=>db_get_draft_message_number($user_id),
 				    "archived_messages"=>0
 				    ],
 			  ],

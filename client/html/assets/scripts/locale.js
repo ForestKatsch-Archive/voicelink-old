@@ -16,8 +16,15 @@ to them now still will. (You may want to <a href='#wipe-user'>wipe</a> your acco
     handle:"Handle",
     handle_too_short:"The handle must be three or more characters long.",
     help:"Help",
-    help_text:"Welcome to VoiceLink. To get started,\
- <a href='#register' title='Register with VoiceLink'>register</a>.",
+    help_text:"\<div class='pane'>\
+<h1>Getting started</h1>\
+<p>Welcome to VoiceLink. To get started,\
+ <a href='#register' title='Register with VoiceLink'>register</a>.</p>\
+</div>\
+<div class='pane'>\
+<h1>Browser support</h1>\
+<p>Unfortunately, the HTML5 technology to record messages needs Chrome 28 or higher. We're planning to add support\
+for older browsers (using a</p></div>",
     inbox:"Inbox",
     incorrect_handle_or_password:"Incorrect handle or password.",
     incorrect_password:"Incorrect password.",

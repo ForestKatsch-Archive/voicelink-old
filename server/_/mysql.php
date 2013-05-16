@@ -17,7 +17,7 @@ function mysql_init() {
     reply_error("mysql",$mysqli->connect_error);
   $mysql->select_db($DB_NAME);
   //  mysql_setup_database();
-  //  mysql_setup_tables();
+  //    mysql_setup_tables();
 }
 
 function mysql_q($q) {
@@ -59,10 +59,12 @@ function mysql_setup_tables() {
   mysql_q("create table if not exists $DB_NAME_MESSAGES (
   message_id BIGINT PRIMARY KEY AUTO_INCREMENT,
   from_user_id BIGINT,
+  duration INT,
   wav_data LONGBLOB,
   reply_to BIGINT DEFAULT 0,
   draft TINYINT(1) DEFAULT 1,
-  sent TIMESTAMP)");
+  composed TIMESTAMP,
+  sent TIMESTAMP DEFAULT 0)");
   mysql_q("create table if not exists $DB_NAME_MESSAGE_RECIPIENTS (
   message_recipient_id BIGINT PRIMARY KEY AUTO_INCREMENT,
   message_id BIGINT,
@@ -264,6 +266,34 @@ ORDER BY messages.sent DESC LIMIT $number";
 	  "messages"=>$messages,
 	  "number"=>$result->num_rows
 	  ];
+}
+
+function mysql_get_draft_messages($user_id,$number) {
+  $number=mysql_escape($number);
+  global $DB_NAME_MESSAGES;
+  $messages=[];
+  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id ORDER BY composed DESC LIMIT $number";
+  $result=mysql_q($q);
+  while($row=$result->fetch_assoc()) {
+    $from=mysql_get_handle_from_user_id($row["from_user_id"]);
+    $messages[]=[
+		 "message_id"=>$row["message_id"],
+		 "duration"=>$row["duration"],
+		 "composed"=>$row["composed"]
+		 ];
+  }
+  return [
+	  "messages"=>$messages,
+	  "number"=>$result->num_rows
+	  ];
+}
+
+function mysql_get_draft_message_number($user_id) {
+  global $DB_NAME_MESSAGES;
+  $messages=[];
+  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id";
+  $result=mysql_q($q);
+  return $result->num_rows;
 }
 
 function mysql_add_message($user_id,$file) {
