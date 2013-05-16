@@ -1,0 +1,34 @@
+
+var page_stack=[];
+var open_page="";
+
+function nav_show_page(p) {
+    page_stack.push(p);
+    $(".page").css({left:-$(window).width()});
+    $("#"+p+"-page").css({left:$(window).width()});
+    $("#"+p+"-page").animate({left:0},200);
+    open_page=p;
+}
+
+function nav_back() {
+    console.log("FOO");
+    var p=page_stack.pop();
+    $(".page").css({left:-$(window).width()});
+    $(".page").removeClass("open");
+    $("#"+p+"-page").css({left:-$(window).width()});
+    $("#"+p+"-page").animate({left:0},200);
+    $("#"+p+"-page").addClass("open");
+    open_page=p;
+}
+
+$(document).ready(function() {
+    $(".page").css({left:-$(window).width()});
+    $("#main-page").css({left:0});
+    $("a:link").each(function() {
+	$(this).click(function(e) {
+	    var href=$(this).attr("href");
+	    nav_show_page(href.substr(1,href.indexOf("-page")-1));
+	    e.preventDefault();
+	});
+    });
+});

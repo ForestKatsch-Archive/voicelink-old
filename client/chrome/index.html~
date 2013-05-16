@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="assets/style/main.css" />
+    <script src="assets/scripts/jquery.min.js"></script>
+    <script src="assets/scripts/log.js"></script>
+    <script src="assets/scripts/locale.js"></script>
+    <script src="assets/scripts/voicelink.js"></script>
+    <script src="assets/scripts/navigation.js"></script>
+    <script src="assets/scripts/main.js"></script>
+  </head>
+  <body>
+    <div id="main-page" class="page">
+      <ul class="actions">
+	<li><a href="#login-page" id="login-page-link" class="translate">login</a></li>
+	<li><a href="#register-page" id="register-page-link" class="translate">register</a></li>
+      </ul>
+    </div>
+    <div id="login-page" class="page">
+      <ul class="actions">
+	<li><a href="javascript:nav_back();" class="translate">back</a></li>
+      </ul>
+    </div>
+  </body>
+</html>

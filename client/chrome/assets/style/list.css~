@@ -1,0 +1,21 @@
+
+ul.actions {
+    
+}
+
+ul.actions li+li {
+
+}
+
+ul.actions li a {
+    color: inherit;
+    display: block;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-decoratinon: none;
+}
+
+ul.actions li a:hover {
+    background-color: #eee;
+    color: #333;
+}
