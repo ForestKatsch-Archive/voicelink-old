@@ -178,7 +178,7 @@ function ui_create_modals() {
 	ui_confirm_delete();
     });
     ui.modal.windows["change-name"]=new Modal("change-name",_("change_name"),"\
-<input type='text' id='change-name-to' name='change-name-to' placeholder='"+_("change_name")+"' autofocus />\n\
+<input type='text' id='change-name-to' name='change-name-to' placeholder='"+_("new_name")+"' autofocus />\n\
 <div id='change-name-button' class='button action'>"+_("change_name")+"</button>\n\
 ");
     ui.modal.windows["change-name"].html.keydown(function(e) {
@@ -282,9 +282,9 @@ function ui_register() {
 }
 
 function ui_change_name() {
+    ui_show_modal("change-name");
     if(voicelink.session.name != null)
 	$("#modal-change-name #change-name-to").val(voicelink.session.name);
-    ui_show_modal("change-name");
 }
 
 function ui_change_name_final() {
@@ -301,7 +301,7 @@ function ui_logged_in() {
     $("#login-show").text(_("logout"));
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_logout);
-    view_inbox();
+    view_restore("inbox");
     ui_hide_login();
 }
 
@@ -343,7 +343,7 @@ function ui_start_record() {
     mic_record_start(function(data) {
 	$("#record-button").text(_("stop_record"));
     },function() {
-	$("#record-button").text(_("record_allow"));
+	console.log("Hey, you denied VoiceLink microphone access!");
     });
     $("#record-button").unbind("click");
     $("#record-button").bind("click",ui_stop_record);
@@ -351,7 +351,7 @@ function ui_start_record() {
 
 function ui_stop_record() {
     mic_record_stop(function(data) {
-	voicelink.new_message(data.url,function() {
+	voicelink.new_message(data.blob,function() {
 	    console.log("done");
 	});
     });

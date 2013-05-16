@@ -84,9 +84,9 @@ voicelink.Request=function(action,args,callback,error) {
     this.go=function(callback) {
 	var that=this;
 	this.waiting=true;
-//	console.log("Sending "+this.action+" with",this.args)
+	console.log("Sending "+this.action+" with",this.args)
 	voicelink.post_request(this.action,this.args,function(r) {
-//	    console.log("Done: ",r);
+	    console.log("Done: ",r);
 	    if(callback)
 		callback(r);
 	    if(that.callback)
@@ -318,20 +318,17 @@ voicelink.post_request=function(action,args,callback,error) {
 }
 
 voicelink.new_message=function(blob,callback,error) {
+    console.log(blob);
+    var xhr=new XMLHttpRequest();
+    xhr.onload=function(e) {
+	if(this.readyState === 4) {
+	    console.log(JSON.parse(e.target.responseText));
+	}
+    };
     var fd=new FormData();
     fd.append("session_id",voicelink.session.session_id);
     fd.append("session_hash",voicelink.session.session_hash);
     fd.append("data",blob);
-    var args={session_id:voicelink.session.session_id,
-	      session_hash:voicelink.session.session_hash};
-    console.log(args);
-    $.ajax({
-	type:"POST",
-	url:"/api.php?action=upload",
-	data:fd,
-	processData:false,
-	contentType:false
-    }).done(function(data) {
-	console.log(data);
-    });
+    xhr.open("POST","/api.php?action=upload",true);
+    xhr.send(fd);
 };

@@ -19,7 +19,7 @@ function mic_record_stop(callback) {
     mic.recorder.exportWAV(function(blob) {
 	var url=URL.createObjectURL(blob);
 	callback({
-	    url:url
+	    blob:blob
 	});
     });
     mic.stream.stop();

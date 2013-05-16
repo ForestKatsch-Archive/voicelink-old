@@ -61,7 +61,6 @@ function mysql_setup_tables() {
   from_user_id BIGINT,
   wav_data LONGBLOB,
   reply_to BIGINT DEFAULT 0,
-  duration INT,
   draft TINYINT(1) DEFAULT 1,
   sent TIMESTAMP)");
   mysql_q("create table if not exists $DB_NAME_MESSAGE_RECIPIENTS (
@@ -246,16 +245,12 @@ function mysql_get_inbox_messages($user_id,$number) {
   $number=mysql_escape($number);
   global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
   $messages=[];
-  $result=mysql_q("select messages.message_id,messages.duration,messages.from_user_id,messages.sent 
+  $q="select messages.message_id,messages.from_user_id,messages.sent 
 from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
 where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
 && $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id) 
-ORDER BY messages.sent DESC LIMIT $number");
-/*   error_log("select messages.message_id,messages.duration,messages.from_user_id,messages.sent  */
-/* from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS  */
-/* where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id  */
-/* && $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id)  */
-/* ORDER BY messages.sent DESC LIMIT $number"); */
+ORDER BY messages.sent DESC LIMIT $number";
+  $result=mysql_q($q);
   while($row=$result->fetch_assoc()) {
     $from=mysql_get_handle_from_user_id($row["from_user_id"]);
     $messages[]=[
@@ -271,9 +266,17 @@ ORDER BY messages.sent DESC LIMIT $number");
 	  ];
 }
 
-function mysql_upload_message($user_id) {
+function mysql_add_message($user_id,$file) {
   global $DB_NAME_MESSAGES;
-  mysql_q("insert into $DB_NAME_MESSAGES (from_user_id) VALUES ($user_id)");
+  $data=file_get_contents($file);
+  error_log($data);
+  mysql_q("insert into $DB_NAME_MESSAGES (from_user_id,wav_data) VALUES ($user_id,'$data')");
+  $rows=mysql_q("select message_id from $DB_NAME_MESSAGES where from_user_id=$user_id and wav_data='$data'");
+  if($rows->num_rows != 1)
+    reply_error("invalid","rows");
+  $row=$rows->fetch_assoc();
+  $message_id=$row["message_id"];
+  return $message_id;
 }
 
 

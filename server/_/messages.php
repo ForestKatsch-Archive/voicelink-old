@@ -59,9 +59,14 @@ function messages_upload() {
     reply_error("arg","session_id");
   if(!($session_hash=post("session_hash")))
     reply_error("arg","session_hash");
+  if(!isset($_FILES["data"]["tmp_name"]))
+    reply_error("arg","file");
+  $file=$_FILES["data"]["tmp_name"];
   $user_id=db_get_user_id_from_session_id($session_id,$session_hash);
+  $message_id=db_add_message($user_id,$file);
+  rename($file,"/tmp/audio.wav");
   reply("ok",[
-	      "audio_file"=>$_POST
+	      "message_id"=>$message_id
 	      ]);
 }
 

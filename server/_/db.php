@@ -59,4 +59,8 @@ function db_get_inbox_messages($user_id,$number) {
   return mysql_get_inbox_messages($user_id,$number);
 }
 
+function db_add_message($user_id,$filename) {
+  return mysql_add_message($user_id,$filename);
+}
+
 ?>

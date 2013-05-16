@@ -84,15 +84,15 @@ function view_create_views() {
 <header>\n\
 <h1>"+_("account")+"</h1>\n\
 <ul>\n\
-<li><a class='button change-name' title='"+_("change_name")+"'>"+_("change_name")+"</a></li>\n\
-<li><a class='button delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a></li>\n\
+<li><a class='link change-name' title='"+_("change_name")+"'>"+_("change_name")+"</a></li>\n\
+<li><a class='link delete' title='"+_("delete_account")+"'>"+_("delete_account")+"</a></li>\n\
 </ul>\n\
 </div>\n\
 ");
-    v.html.find(".delete.button").click(ui_delete_user);
-    v.html.find(".change-name.button").click(ui_change_name);
+    v.html.find(".delete").click(ui_delete_user);
+    v.html.find(".change-name").click(ui_change_name);
     view.views.settings=v;
-    v=new View("help","There's no help.");
+    v=new View("help",_("help_text"));
     view.views.help=v;
 }
 
@@ -149,8 +149,10 @@ function view_save() {
 }
 
 function view_restore() {
-    if(!("view" in localStorage))
+    if(!("view" in localStorage)) {
+	view.view="inbox";
 	view_save();
+    }
     view.view=localStorage["view"];
     view_push_url(view.view);
     view_set_final(view.view);

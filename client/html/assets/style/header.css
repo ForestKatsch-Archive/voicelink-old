@@ -11,6 +11,7 @@
 
 #h>* {
     display: inline-block;
+    z-index: 490;
 }
 
 #h #account-status {

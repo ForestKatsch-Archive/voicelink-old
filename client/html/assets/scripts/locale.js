@@ -1,11 +1,6 @@
 
 var locale={
     about_voicelink:"About VoiceLink",
-    about_voicelink_text:["Phone calls and emails both have their uses; phone calls are good for long conversations,\n\
-and emails provide longer, more delayed conversations. What if you could take the simplicity and speed of phone calls\n\
-and make them as succinct as emails? You'll have to take the chance that the other party is next to his phone; otherwise\n\
-you'll often find yourself responding to voicemail.",
-			  "VoiceLink is a service that makes phone calls as easy as email."],
     account:"Account",
     after_delete_account:"After you delete your account, you will not be able to recover any\n\
 of your sent or recieved messages. Your messages will not be deleted and anyone who has access\n\
@@ -21,16 +16,18 @@ to them now still will. (You may want to <a href='#wipe-user'>wipe</a> your acco
     handle:"Handle",
     handle_too_short:"The handle must be three or more characters long.",
     help:"Help",
+    help_text:"Welcome to VoiceLink. To get started,\
+ <a href='#register' title='Register with VoiceLink'>register</a>.",
     inbox:"Inbox",
     incorrect_handle_or_password:"Incorrect handle or password.",
     incorrect_password:"Incorrect password.",
     login:"Login",
     logout:"Logout",
+    new_name:"New name",
     only_alphanumeric:"The handle must consist only of alphanumeric characters, underscores, hyphens, and periods.",
     password:"Password",
     passwords_dont_match:"The passwords don't match.",
     password_too_short:"The password must be one or more characters long.",
-    record_allow:"Allow mic access",
     register:"Register",
     repeat_password:"Repeat password",
     sent:"Sent",

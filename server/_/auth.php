@@ -111,7 +111,7 @@ function auth_change_name() {
   if(!($session_hash=post("session_hash")))
     reply_error("arg","session_hash");
   if(!($name=post("name")))
-    reply_error("arg","name");
+    $name="";
   db_change_name(db_get_user_id_from_session_id($session_id,$session_hash),$name);
   reply("ok",[]);
 }

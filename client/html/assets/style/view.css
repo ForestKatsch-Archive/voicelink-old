@@ -13,15 +13,16 @@
 .view {
     box-sizing: border-box;
     display: none;
-    margin-top: 50px;
+    margin-top: 20px;
     height: auto;
     padding: 0 2em;
     position: absolute;
-    width: 100%;
+    z-index: 0;
 }
 
-.logged-in .view {
+.logged-in #view {
     padding-left: 18em;
+    width: 100%;
 }
 
 .view * {

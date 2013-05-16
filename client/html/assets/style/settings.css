@@ -1,18 +1,16 @@
 
 #view-settings .pane {
-
+    
 }
 
 #view-settings .account.pane h1 {
     font-weight: bold;
     margin-left: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-#view-settings .delete.button {
-    background-color: #faa;
-    border-color: #a77;
-    color: #000;
+#view-settings .delete {
+    color: #f43;
 }
 
 #view-settings li {

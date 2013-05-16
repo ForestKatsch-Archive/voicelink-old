@@ -5,7 +5,13 @@
     margin-top: 10px;
 }
 
+a.link,
 a:link {
+    color: #38f;
+    text-decoration: underline;
+}
+
+a:visited {
     color: #38f;
 }
 
