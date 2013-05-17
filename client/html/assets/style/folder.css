@@ -1,0 +1,49 @@
+
+#view .folder {
+
+}
+
+#view .folder li {
+    padding: 10px;
+}
+
+#view .folder li+li {
+    border-top: 1px solid #bbb;
+}
+
+#view .folder li .from {
+    color: #000;
+    font-weight: bold;
+    margin-right: 1em;
+}
+
+#view .folder li .date {
+    color: #333;
+}
+
+#view .folder li .date:before {
+    color: #888;
+    content: "composed on";
+    margin-right: 0.3em;
+}
+
+#view .folder li .time {
+    color: #333;
+}
+
+#view .folder li .time:before {
+    color: #888;
+    content: "at";
+    margin: 0 0.3em;
+}
+
+#view .folder li .duration {
+    color: #000;
+    float: right;
+}
+
+#view .folder li .duration:after {
+    color: #666;
+    content: "seconds long";
+    margin-left: 0.3em;
+}
