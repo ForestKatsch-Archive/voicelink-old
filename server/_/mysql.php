@@ -267,7 +267,7 @@ ORDER BY messages.sent DESC";
 function mysql_get_draft_messages($user_id) {
   global $DB_NAME_MESSAGES;
   $messages=[];
-  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id ORDER BY composed DESC";
+  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1 ORDER BY composed DESC";
   $result=mysql_q($q);
   while($row=$result->fetch_assoc()) {
     $messages[]=[
@@ -282,9 +282,8 @@ function mysql_get_draft_messages($user_id) {
 function mysql_get_draft_message_number($user_id) {
   global $DB_NAME_MESSAGES;
   $messages=[];
-  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id";
+  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1";
   $result=mysql_q($q);
-  error_log($result->num_rows);
   return $result->num_rows;
 }
 
@@ -305,6 +304,17 @@ function mysql_add_message($user_id,$file) {
   $row=$rows->fetch_assoc();
   $message_id=$row["message_id"];
   return $message_id;
+}
+
+function mysql_play_message($message_id) {
+  global $DB_NAME_MESSAGES;
+  $rows=mysql_q("select wav_data from $DB_NAME_MESSAGES WHERE message_id=$message_id");
+  if($rows->num_rows != 1)
+    reply_error("invalid","rows");
+  error_log($message_id);
+  $row=$rows->fetch_assoc();
+  print($row["wav_data"]);
+  exit(0);
 }
 
 

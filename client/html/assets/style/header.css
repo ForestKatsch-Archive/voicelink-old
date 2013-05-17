@@ -27,6 +27,22 @@
     margin-left: 10px;
 }
 
+#h #account-status #handle {
+    color: #333;
+    display: none;
+}
+
+#h #account-status #handle:before {
+    color: #aaa;
+    content: "logged in as";
+    margin: 0 0.3em;
+}
+
+.logged-in #h #account-status #handle {
+    display: inline;
+    margin: 0 2em;
+}
+
 .logged-in #register-show {
     display: none;
 }

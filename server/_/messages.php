@@ -68,4 +68,12 @@ function messages_upload() {
 	      ]);
 }
 
+function message_play() {
+  auth_get_needed(true);
+  if(!($message_id=get("message_id")))
+    reply_error("arg","message_id");
+  header("Content-type: audio/wav");
+  db_play_message($message_id);
+}
+
 ?>

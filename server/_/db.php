@@ -71,4 +71,8 @@ function db_add_message($user_id,$filename) {
   return mysql_add_message($user_id,$filename);
 }
 
+function db_play_message($message_id) {
+  return mysql_play_message($message_id);
+}
+
 ?>

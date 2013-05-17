@@ -87,9 +87,9 @@ voicelink.Request=function(action,args,callback,error) {
     this.go=function(callback) {
 	var that=this;
 	this.waiting=true;
-//	console.log("Sending "+this.action+" with",this.args)
+	//	console.log("Sending "+this.action+" with",this.args)
 	voicelink.post_request(this.action,this.args,function(r) {
-//	    console.log("Done: ",r);
+	    //	    console.log("Done: ",r);
 	    if(callback)
 		callback(r);
 	    if(that.callback)
@@ -97,7 +97,7 @@ voicelink.Request=function(action,args,callback,error) {
 	    that.waiting=false;
 	    voicelink.event(that.action,r);
 	},function(r,n) {
-//	    console.log("Error: ",r,n);
+	    //	    console.log("Error: ",r,n);
 	    if(((r == "invalid") && (n == "session")) ||
 	       ((r == "auth") && (n == "needed"))) {
 		voicelink.end_session_final();
@@ -184,7 +184,7 @@ voicelink.update=function(callback,error) {
 		if(r.folders.inbox.number != voicelink.folders.inbox.messages.length) {
 		    console.log("Fetching inbox.");
 		    voicelink.get_folder("inbox",function(r) {
-//			console.log(r);
+			//			console.log(r);
 		    },function(r,n) {
 			console.log(r,n);
 		    });
@@ -192,9 +192,9 @@ voicelink.update=function(callback,error) {
 		if(r.folders.drafts.number != voicelink.folders.drafts.messages.length) {
 		    console.log("Fetching drafts.");
 		    voicelink.get_folder("drafts",function(r) {
-//			console.log("Contents of drafts: ",r);
+			//			console.log("Contents of drafts: ",r);
 		    },function(r,n) {
-//			console.log(r,n);
+			//			console.log(r,n);
 		    });
 		}
 	    }
@@ -364,4 +364,13 @@ voicelink.new_message=function(blob,callback,error) {
     fd.append("data",blob);
     xhr.open("POST","/api.php?action=upload",true);
     xhr.send(fd);
+};
+
+voicelink.get_name=function() {
+    return (voicelink.session.name?voicelink.session.name:voicelink.session.handle);
+};
+
+voicelink.get_message_url=function(id) {
+    return "/api.php?action=message&message_id="+id+"&session_id="+voicelink.session.session_id+
+	"&session_hash="+voicelink.session.session_hash;
 };

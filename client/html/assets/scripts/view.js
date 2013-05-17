@@ -50,13 +50,11 @@ function view_generate_message(m,folder) {
 	    d="<span class='date'>"+date+"</span><span class='time'>"+time+"</span>";
 	}
 	var time_title=date.format("l\\, F j, Y \\a\\t h\\:i\\:s a");
-	var from=m.from_handle;
-	if(voicelink.session.name)
-	    from=voicelink.session.name;
+	var from=voicelink.get_name();
 	var duration=m.duration;
-	return "<span><span class='from' title='"+m.from_handle+"'>"+from+"</span>\
+	return "<a class='link play' onclick='javascript:ui_play_message("+m.message_id+")'>Play</a> <span class='from' title='"+m.from_handle+"'>"+from+"</span>\
 <span class='sent' title='"+time_title+"'>"+d+"</span>\
-<span class='duration'>"+duration+"</span></span>";
+<span class='duration'>"+duration+"</span>";
     } else {
 	return "errors. this is BAD!!!";
     }
@@ -71,7 +69,8 @@ function view_update_messages(folder) {
 	$("#view-"+folder+" .wrapper").append("<ul class='folder'></ul>");
     }
     for(var i=0;i<messages.length;i++) {
-	$("#view-"+folder+" .wrapper ul").append("<li>"+view_generate_message(messages[i],folder)+"</li>");
+	var m=messages[i];
+	$("#view-"+folder+" .wrapper ul").append("<li id='message-number-"+m.message_id+"'>"+view_generate_message(m,folder)+"</li>");
     }
 }
 

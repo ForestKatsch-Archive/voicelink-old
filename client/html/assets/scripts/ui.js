@@ -73,7 +73,8 @@ function ui_init() {
 	ui_logged_out();
     });
     voicelink.bind("change_name",function() {
-	
+	$("#handle").text(voicelink.get_name());
+	$("#handle").attr("title",voicelink.session.handle);
     });
     $("#login-show").bind("click",ui_show_login);
     $("#register-show").bind("click",ui_show_register);
@@ -82,7 +83,7 @@ function ui_init() {
     $("#folders .sent").bind("click",view_sent);
     $("#folders .drafts").bind("click",view_drafts);
     $("#folders .help").bind("click",view_help);
-    $("#record-button").bind("click",ui_start_record);
+    $("#new #record-button").bind("click",ui_start_record);
     loaded("ui");
 }
 
@@ -94,7 +95,7 @@ function ui_locale_init() {
     $("#folders .drafts").text(_("drafts"));
     $("#folders .settings").text(_("settings"));
     $("#folders .help").text(_("help"));
-    $("#record-button").text(_("start_record"));
+    $("#new #record-button").text(_("start_record"));
 }
 
 
@@ -341,9 +342,9 @@ function ui_done() {
 
 function ui_start_record() {
     mic_record_start(function(data) {
-	$("#record-button").text(_("stop_record"));
-	$("#record-button").unbind("click");
-	$("#record-button").bind("click",ui_stop_record);
+	$("#new #record-button").text(_("stop_record"));
+	$("#new #record-button").unbind("click");
+	$("#new #record-button").bind("click",ui_stop_record);
     },function() {
 	console.log("Hey, you denied VoiceLink microphone access!");
     });
@@ -351,11 +352,21 @@ function ui_start_record() {
 
 function ui_stop_record() {
     mic_record_stop(function(data) {
-	$("#record-button").text(_("start_record"));
-	$("#record-button").unbind("click");
-	$("#record-button").bind("click",ui_start_record);
-	voicelink.new_message(data.blob,function() {
-	    
+	$("#new #record-button").text(_("start_record"));
+	$("#new #record-button").unbind("click");
+	$("#new #record-button").bind("click",ui_start_record);
+	voicelink.new_message(data.blob,function(data) {
+	    voicelink.recipients(data.message_id,$("#new #recipients-input").val(),function(r) {
+
+	    },function(r,n) {
+
+	    });
 	});
+	console.log(data);
     });
+}
+
+function ui_play_message(id) {
+    var url=voicelink.get_message_url(id);
+    location.href=url;
 }

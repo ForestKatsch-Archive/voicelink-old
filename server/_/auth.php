@@ -14,8 +14,29 @@ function auth_logged_in() {
   return true;
 }
 
+function auth_get_logged_in() {
+  if(!($session_id=get("session_id")))
+    return false;
+  if(!($session_hash=get("session_hash")))
+    return false;
+  if(mysql_verify_session($session_id,$session_hash) == false) // it actually returns a dict object
+    return false;
+  return true;
+}
+
 function auth_needed($needed) {
   if(auth_logged_in() == $needed) {
+    return;
+  } else {
+    if($needed)
+      reply_error("auth","needed");
+    else
+      reply_error("auth","not_needed");
+  }
+}
+
+function auth_get_needed($needed) {
+  if(auth_get_logged_in() == $needed) {
     return;
   } else {
     if($needed)

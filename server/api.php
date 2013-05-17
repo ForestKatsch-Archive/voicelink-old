@@ -34,6 +34,8 @@ if($a == "info") {
   messages_update();
 } else if($a == "upload") {
   messages_upload();
+} else if($a == "message") {
+  message_play();
 } else if($a == "get_folder") {
   messages_get_folder();
 } else if($a == "verify_user") {

@@ -10,15 +10,15 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="300"
-   height="64"
+   width="16"
+   height="16"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/logo-small.png"
-   inkscape:export-xdpi="45"
-   inkscape:export-ydpi="45">
+   sodipodi:docname="favicon.svg"
+   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/favicon.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <linearGradient
@@ -45,14 +45,6 @@
        x2="245.11719"
        y2="1020.3622"
        gradientUnits="userSpaceOnUse" />
-    <filter
-       inkscape:collect="always"
-       id="filter3884">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.68"
-         id="feGaussianBlur3886" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -61,9 +53,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="13.718888"
-     inkscape:cx="66.155883"
-     inkscape:cy="27.411629"
+     inkscape:zoom="30.975656"
+     inkscape:cx="20.822852"
+     inkscape:cy="6.4000597"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -73,7 +65,9 @@
      inkscape:window-y="27"
      inkscape:window-maximized="1"
      showguides="true"
-     inkscape:guide-bbox="true">
+     inkscape:guide-bbox="true"
+     inkscape:snap-center="false"
+     inkscape:snap-bbox="true">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -114,49 +108,47 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-988.36218)">
+     transform="translate(0,-1036.3622)">
     <path
-       transform="translate(0,988.36218)"
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:0.50196081;stroke:none"
+       id="path3835"
+       sodipodi:cx="32"
+       sodipodi:cy="32"
+       sodipodi:rx="27.428686"
+       sodipodi:ry="27.428686"
+       d="M 59.428686,32 A 27.428686,27.428686 0 1 1 4.5713139,32 27.428686,27.428686 0 1 1 59.428686,32 z"
+       transform="matrix(0.29166667,0,0,0.29166667,-1.3333333,1035.0289)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3060"
+       sodipodi:cx="8"
+       sodipodi:cy="8"
+       sodipodi:rx="8"
+       sodipodi:ry="8"
+       d="M 16,8 A 8,8 0 1 1 0,8 8,8 0 1 1 16,8 z"
+       transform="translate(0,1036.3622)" />
+    <path
+       transform="matrix(0.29166667,0,0,0.29166667,-1.3333333,1035.0289)"
        d="M 56,32 A 24,24 0 1 1 8,32 24,24 0 1 1 56,32 z"
        sodipodi:ry="24"
        sodipodi:rx="24"
        sodipodi:cy="32"
        sodipodi:cx="32"
        id="path3866"
-       style="fill:#000000;fill-opacity:0.50196081000000004;stroke:none;filter:url(#filter3884)"
-       sodipodi:type="arc" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#404040;fill-opacity:1;stroke:none;font-family:Roboto Slab;-inkscape-font-specification:Roboto Slab Bold"
-       x="81.215218"
-       y="1035.3915"
-       id="text2987"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan2989"
-         x="81.215218"
-         y="1035.3915"
-         style="fill:#404040;fill-opacity:1">VoiceLink</tspan></text>
-    <path
-       sodipodi:type="arc"
        style="fill:#404040;fill-opacity:1;stroke:none"
-       id="path3846"
-       sodipodi:cx="32"
-       sodipodi:cy="32"
-       sodipodi:rx="24"
-       sodipodi:ry="24"
-       d="M 56,32 A 24,24 0 1 1 8,32 24,24 0 1 1 56,32 z"
-       transform="translate(0,988.36218)" />
+       sodipodi:type="arc" />
     <path
        sodipodi:nodetypes="ccccc"
        inkscape:connector-curvature="0"
        id="path3854"
-       d="m 54,1016.3622 c -8,8 -36,8 -44,0 l 0,8 c 8,8 36,8 44,0 z"
+       d="m 14,1043.3622 c -2.333333,2.3334 -9.6666666,2.3334 -12,0 l 0,2 c 2.3333334,2.3333 9.666667,2.3333 12,0 z"
        style="fill:#ffffff;fill-opacity:1;stroke:none" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 36,1042.3622 c -8,-8 -8,-36 0,-44.00002 l -8,0 c -8,8.00002 -8,36.00002 0,44.00002 z"
-       id="path3860"
+       d="m 9,1050.3622 c -2.3334,-2.3333 -2.3334,-9.6667 0,-12 l -2,0 c -2.3333,2.3333 -2.3333,9.6667 0,12 z"
+       id="path3833"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
   </g>
