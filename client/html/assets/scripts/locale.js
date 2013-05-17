@@ -12,6 +12,7 @@ to them now still will. (You may want to <a href='#wipe-user'>wipe</a> your acco
     close:"Close",
     delete_account:"Delete account",
     drafts:"Drafts",
+    edit_message:"Edit message",
     enter_password_to_delete:"Confirm account deletion",
     handle:"Handle",
     handle_too_short:"The handle must be three or more characters long.",

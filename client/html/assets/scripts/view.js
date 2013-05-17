@@ -38,26 +38,35 @@ var view={
 
 function view_generate_message(m,folder) {
     if(folder == "drafts") {
-	var date=new Date(m.composed*1000);
-	var difference=day_difference(date,new Date());
-	var d="";
-	if(difference < 1) {
-	    var time=date.format("h\\:i a");
-	    d="<span class='time'>"+time+"</span>";
-	} else {
-	    var date=date.format("l\\, F j, Y");
-	    var time=date.format("h\\:i a");
-	    d="<span class='date'>"+date+"</span><span class='time'>"+time+"</span>";
-	}
-	var time_title=date.format("l\\, F j, Y \\a\\t h\\:i\\:s a");
+	var d=ui_format_date(m.composed);
+	if(d.day)
+	    d="<span class='time'>"+d.time+"</span>";
+	else
+	    d="<span class='date'>"+d.date+"</span><span class='time'>"+d.time+"</span>";
+	var time_title=d.full_time;
 	var from=voicelink.get_name();
 	var duration=m.duration;
-	return "<a class='link play' onclick='javascript:ui_play_message("+m.message_id+")'>Play</a> <span class='from' title='"+m.from_handle+"'>"+from+"</span>\
+	return "<a class='link open' onclick='javascript:ui_edit_message("+m.message_id+")'>\
+<img src='assets/img/edit.png' alt='"+_("edit_message")+"' title='"+_("edit_message")+"' /></a>\
+<a class='link play' onclick='javascript:ui_play_message("+m.message_id+")'>\
+<img src='assets/img/play.png' alt='Play' title='Play message' /></a>\
+<span class='from' title='"+m.from_handle+"'>"+from+"</span>\
 <span class='sent' title='"+time_title+"'>"+d+"</span>\
-<span class='duration'>"+duration+"</span>";
+<span class='duration'>"+duration+"</span>\
+<a class='link delete' onclick='javascript:ui_delete_message("+m.message_id+")'>\
+<img src='assets/img/close.png' alt='Delete' title='Delete' /></a>";
     } else {
 	return "errors. this is BAD!!!";
     }
+}
+
+function view_update() {
+    if(view.view == "inbox")
+	view_update_messages("inbox");
+    else if(view.view == "sent")
+	view_update_messages("sent");
+    else if(view.view == "drafts")
+	view_update_messages("drafts");
 }
 
 function view_update_messages(folder) {

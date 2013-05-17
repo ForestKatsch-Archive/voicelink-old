@@ -28,22 +28,29 @@ if($a == "info") {
   auth_verify_session();
 } else if($a == "end_session") {
   auth_end_session();
-} else if($a == "register") {
-  auth_register_user();
-} else if($a == "update") {
-  messages_update();
-} else if($a == "upload") {
-  messages_upload();
-} else if($a == "message") {
-  message_play();
-} else if($a == "get_folder") {
-  messages_get_folder();
+
 } else if($a == "verify_user") {
   auth_verify_user();
 } else if($a == "change_name") {
   auth_change_name();
 } else if($a == "delete_user") {
   auth_delete_user();
+
+} else if($a == "register") {
+  auth_register_user();
+
+} else if($a == "update") {
+  messages_update();
+} else if($a == "message") {
+  message_play();
+} else if($a == "get_folder") {
+  messages_get_folder();
+} else if($a == "delete_message") {
+  message_delete();
+
+} else if($a == "upload") {
+  messages_upload();
+
 } else {
   reply_error("arg","action");
 }

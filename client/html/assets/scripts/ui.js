@@ -367,6 +367,51 @@ function ui_stop_record() {
 }
 
 function ui_play_message(id) {
+    if(!voicelink.is_message(id))
+	return;
     var url=voicelink.get_message_url(id);
     location.href=url;
+}
+
+function ui_format_date(timestamp) {
+    var date=new Date(timestamp*1000);
+    var difference=day_difference(date,new Date());
+    var t=date.format("h\\:i a");
+    var d=date.format("l\\, F j, Y");
+    return {
+	date:d,
+	time:t,
+	day:(difference>1?false:true),
+	full_time:date.format("l\\, F j, Y \\a\\t h\\:i\\:s a")
+    };
+}
+
+function ui_edit_message(id) {
+    if(!voicelink.is_message(id))
+	return;
+    if(voicelink.message_folder(id) != "drafts")
+	return;
+    var m=voicelink.get_message(id);
+    $("#new .from").text(voicelink.get_name());
+    console.log(m.duration);
+    $("#new .duration").text(m.duration);
+    var d=ui_format_date(m.composed);
+    var title_time=d.full_time;
+    if(d.day)
+	d="<span class='time'>"+d.time+"</span>";
+    else
+	d="<span class='date'>"+date+"</span><span class='time'>"+d.time+"</span>";
+    $("#new .composed").attr("title",title_time);
+    $("#new .composed").empty();
+    $("#new .composed").append(d);
+}
+
+function ui_delete_message(id) {
+    if(!voicelink.is_message(id))
+	return;
+    voicelink.delete_message(id,function(r) {
+	view_update();
+    },function(r,n) {
+	
+    });
 }

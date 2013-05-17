@@ -2,9 +2,9 @@
 
 function messages_update() {
   auth_needed(true);
-  if(!($session_id=post("session_id")))
+  if(!($session_id=get("session_id")))
     reply_error("arg","session_id");
-  if(!($session_hash=post("session_hash")))
+  if(!($session_hash=get("session_hash")))
     reply_error("arg","session_hash");
   $user_id=db_get_user_id_from_session_id($session_id,$session_hash);
   reply("ok",[
@@ -27,9 +27,9 @@ function messages_update() {
 
 function messages_get_folder() {
   auth_needed(true);
-  if(!($session_id=post("session_id")))
+  if(!($session_id=get("session_id")))
     reply_error("arg","session_id");
-  if(!($session_hash=post("session_hash")))
+  if(!($session_hash=get("session_hash")))
     reply_error("arg","session_hash");
   if(!($folder=post("folder")))
     reply_error("arg","folder");
@@ -53,9 +53,9 @@ function messages_get_folder() {
 
 function messages_upload() {
   auth_needed(true);
-  if(!($session_id=post("session_id")))
+  if(!($session_id=get("session_id")))
     reply_error("arg","session_id");
-  if(!($session_hash=post("session_hash")))
+  if(!($session_hash=get("session_hash")))
     reply_error("arg","session_hash");
   if(!isset($_FILES["data"]["tmp_name"]))
     reply_error("arg","file");
@@ -69,11 +69,20 @@ function messages_upload() {
 }
 
 function message_play() {
-  auth_get_needed(true);
+  auth_needed(true);
   if(!($message_id=get("message_id")))
     reply_error("arg","message_id");
   header("Content-type: audio/wav");
   db_play_message($message_id);
+}
+
+function message_delete() {
+  auth_needed(true);
+  if(!($message_id=post("message_id")))
+    reply_error("arg","message_id");
+  error_log("Deleting the f**k'n message");
+  db_delete_message($message_id);
+  reply("ok",[]);
 }
 
 ?>

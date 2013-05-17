@@ -75,4 +75,8 @@ function db_play_message($message_id) {
   return mysql_play_message($message_id);
 }
 
+function db_delete_message($message_id) {
+  return mysql_delete_message($message_id);
+}
+
 ?>

@@ -292,11 +292,11 @@ function mysql_add_message($user_id,$file) {
   $data=file_get_contents($file);
   $data=mysql_escape($data);
   $fp=fopen($file,"r");
-  $size_in_bytes=filesize($file);
+  $size=filesize($file)*1000;
   fseek($fp,20);
   $rawheader=fread($fp, 16);
   $header=unpack("vtype/vchannels/Vsamplerate/Vbytespersec/valignment/vbits",$rawheader);
-  $duration=ceil($size_in_bytes/$header['bytespersec']);
+  $duration=ceil($size/$header['bytespersec']);
   mysql_q("insert into $DB_NAME_MESSAGES (from_user_id,wav_data,duration) VALUES ($user_id,'$data',$duration)");
   $rows=mysql_q("select message_id from $DB_NAME_MESSAGES where from_user_id=$user_id and wav_data='$data'");
   if($rows->num_rows != 1)
@@ -306,8 +306,25 @@ function mysql_add_message($user_id,$file) {
   return $message_id;
 }
 
+function mysql_verify_message($message_id) {
+  global $DB_NAME_MESSAGES;
+  if(!($session_id=get("session_id")))
+    reply_error("auth","needed");
+  if(!($session_hash=get("session_hash")))
+    reply_error("auth","needed");
+  $user_id=mysql_get_user_id_from_session_id($session_id,$session_hash);
+  $rows=mysql_q("select from_user_id from $DB_NAME_MESSAGES WHERE message_id=$message_id");
+  if($rows->num_rows != 1)
+    reply_error("invalid","rows");
+  $row=$rows->fetch_assoc();
+  if($row["from_user_id"] == $user_id)
+    return true;
+  reply_error("auth","message");
+}
+
 function mysql_play_message($message_id) {
   global $DB_NAME_MESSAGES;
+  mysql_verify_message($message_id);
   $rows=mysql_q("select wav_data from $DB_NAME_MESSAGES WHERE message_id=$message_id");
   if($rows->num_rows != 1)
     reply_error("invalid","rows");
@@ -317,5 +334,12 @@ function mysql_play_message($message_id) {
   exit(0);
 }
 
+function mysql_delete_message($message_id) {
+  global $DB_NAME_MESSAGES;
+  mysql_verify_message($message_id);
+  error_log("DELETING MESSAGE!!!");
+  mysql_q("delete from $DB_NAME_MESSAGES WHERE message_id=$message_id");
+  return;
+}
 
 ?>

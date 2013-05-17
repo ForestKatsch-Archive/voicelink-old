@@ -5,16 +5,6 @@ $AUTH_SESSION_LENGTH=60*60*24; // in seconds
 require("db.php");
 
 function auth_logged_in() {
-  if(!($session_id=post("session_id")))
-    return false;
-  if(!($session_hash=post("session_hash")))
-    return false;
-  if(mysql_verify_session($session_id,$session_hash) == false) // it actually returns a dict object
-    return false;
-  return true;
-}
-
-function auth_get_logged_in() {
   if(!($session_id=get("session_id")))
     return false;
   if(!($session_hash=get("session_hash")))
@@ -26,17 +16,6 @@ function auth_get_logged_in() {
 
 function auth_needed($needed) {
   if(auth_logged_in() == $needed) {
-    return;
-  } else {
-    if($needed)
-      reply_error("auth","needed");
-    else
-      reply_error("auth","not_needed");
-  }
-}
-
-function auth_get_needed($needed) {
-  if(auth_get_logged_in() == $needed) {
     return;
   } else {
     if($needed)
@@ -91,9 +70,9 @@ function auth_start_session() {
 }
 
 function auth_verify_session() {
-  if(!($session_id=post("session_id")))
+  if(!($session_id=get("session_id")))
     reply_error("arg","session_id");
-  if(!($session_hash=post("session_hash")))
+  if(!($session_hash=get("session_hash")))
     reply_error("arg","session_hash");
   $data=db_verify_session($session_id,$session_hash);
   if($data == false)
@@ -107,9 +86,9 @@ function auth_verify_session() {
 
 function auth_end_session() {
   auth_needed(true);
-  if(!($session_id=post("session_id")))
+  if(!($session_id=get("session_id")))
     reply_error("arg","session_id");
-  if(!($session_hash=post("session_hash")))
+  if(!($session_hash=get("session_hash")))
     reply_error("arg","session_hash");
   db_end_session($session_id,$session_hash);
   reply("ok",["active"=>"false"]);
@@ -127,9 +106,9 @@ function auth_delete_user() {
 
 function auth_change_name() {
   auth_needed(true);
-  if(!($session_id=post("session_id")))
+  if(!($session_id=get("session_id")))
     reply_error("arg","session_id");
-  if(!($session_hash=post("session_hash")))
+  if(!($session_hash=get("session_hash")))
     reply_error("arg","session_hash");
   if(!($name=post("name")))
     $name="";
