@@ -55,8 +55,12 @@ function db_change_name($user_id,$name) {
   return mysql_change_name($user_id,$name);
 }
 
-function db_get_inbox_messages($user_id,$number) {
-  return mysql_get_inbox_messages($user_id,$number);
+function db_get_inbox_messages($user_id) {
+  return mysql_get_inbox_messages($user_id);
+}
+
+function db_get_draft_messages($user_id) {
+  return mysql_get_draft_messages($user_id);
 }
 
 function db_get_draft_message_number($user_id) {

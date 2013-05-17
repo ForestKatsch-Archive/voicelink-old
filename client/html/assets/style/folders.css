@@ -1,12 +1,9 @@
 
 #folders {
-    background-color: #fff;
-    border-bottom: 1px solid #bbb;
-    top: -30px;
     position: absolute;
     left: 0;
+    bottom: 0;
     width: 100%;
-    overflow: visible;
     z-index: 400;
 }
 
@@ -18,7 +15,7 @@
     border: none;
     border-bottom: 3px solid transparent;
     border-radius: 0;
-    color: #aaa;
+    color: #888;
     margin-bottom: -1px;
     padding: 5px 20px;
     -webkit-transition: color 0.1s ease, border-color 0.1s ease, text-shadow 0.1s ease,
@@ -37,7 +34,7 @@
 }
 
 #folders li.open {
-    border-color: #3af;
+    border-color: #555;
     color: #000;
 }
 

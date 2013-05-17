@@ -38,6 +38,9 @@ var voicelink={
 	session_id:-1,
 	session_hash:null,
 	verified:false
+    },
+    users:{
+	
     }
 }
 
@@ -84,9 +87,9 @@ voicelink.Request=function(action,args,callback,error) {
     this.go=function(callback) {
 	var that=this;
 	this.waiting=true;
-	console.log("Sending "+this.action+" with",this.args)
+//	console.log("Sending "+this.action+" with",this.args)
 	voicelink.post_request(this.action,this.args,function(r) {
-	    console.log("Done: ",r);
+//	    console.log("Done: ",r);
 	    if(callback)
 		callback(r);
 	    if(that.callback)
@@ -94,7 +97,7 @@ voicelink.Request=function(action,args,callback,error) {
 	    that.waiting=false;
 	    voicelink.event(that.action,r);
 	},function(r,n) {
-	    console.log("Error: ",r,n);
+//	    console.log("Error: ",r,n);
 	    if(((r == "invalid") && (n == "session")) ||
 	       ((r == "auth") && (n == "needed"))) {
 		voicelink.end_session_final();
@@ -135,6 +138,7 @@ voicelink.process_requests=function() {
 
 voicelink.save_session=function() {
     localStorage["voicelink_session"]=JSON.stringify(voicelink.session);
+    localStorage["voicelink_users"]=JSON.stringify(voicelink.users);
 };
 
 voicelink.restore_session=function() {
@@ -142,6 +146,7 @@ voicelink.restore_session=function() {
 	var verified=voicelink.session.verified;
 	voicelink.session=JSON.parse(localStorage["voicelink_session"]);
 	voicelink.session.verified=verified;
+	voicelink.users=JSON.parse(localStorage["voicelink_users"]);
     } else {
 	voicelink.save_session();
     }
@@ -161,22 +166,33 @@ voicelink.delete_user=function(password,callback,error) {
 	password:password
     },function(r) {
 	voicelink.end_session_final();
-	callback(r);
+	if(callback)
+	    callback(r);
     },function(r,n) {
-	error(r,n);
+	if(error)
+	    error(r,n);
     }));
     voicelink.process_requests();
 }
 
 voicelink.update=function(callback,error) {
     voicelink.requests.push(new voicelink.Request("update",{},function(r) {
-	callback(r);
+	if(callback)
+	    callback(r);
 	if(r.folders != undefined) {
 	    if(r.folders.inbox != undefined) {
-		if(r.folders.inbox.total_messages != voicelink.folders.inbox.messages.length) {
-//		    console.log("Fetchin' inbox!");
+		if(r.folders.inbox.number != voicelink.folders.inbox.messages.length) {
+		    console.log("Fetching inbox.");
 		    voicelink.get_folder("inbox",function(r) {
 //			console.log(r);
+		    },function(r,n) {
+			console.log(r,n);
+		    });
+		}
+		if(r.folders.drafts.number != voicelink.folders.drafts.messages.length) {
+		    console.log("Fetching drafts.");
+		    voicelink.get_folder("drafts",function(r) {
+//			console.log("Contents of drafts: ",r);
 		    },function(r,n) {
 //			console.log(r,n);
 		    });
@@ -198,14 +214,27 @@ voicelink.get_folder=function(folder,callback,error) {
 	folder:folder,
 	number:100
     },function(r) {
-	callback(r);
+	r.folder=folder;
+	if(folder == "drafts") {
+	    if(r.messages != undefined) {
+		voicelink.folders.drafts.messages=[];
+		for(var i=0;i<r.messages.length;i++) {
+		    var m=r.messages[i];
+		    m.from_handle=voicelink.session.handle;
+		    voicelink.folders.drafts.messages.push(m);
+		}
+	    }
+	}
+	if(callback)
+	    callback(r);
     },error));
     voicelink.process_requests();
 }
 
 voicelink.change_name=function(name,callback,error) {
     voicelink.requests.push(new voicelink.Request("change_name",{name:name},function(r) {
-	callback(r);
+	if(callback)
+	    callback(r);
 	voicelink.session.name=name;
 	voicelink.save_session();
     },error));
@@ -270,7 +299,8 @@ voicelink.start_session=function(handle,password,callback,error) {
 	    voicelink.session.handle=handle,
 	    voicelink.session.name=r.name;
 	    voicelink.save_session();
-	    callback(r);
+	    if(callback)
+		callback(r);
 	    voicelink.event("change_name");
 	},error));
 	voicelink.process_requests();
@@ -288,7 +318,8 @@ voicelink.end_session_final=function() {
 voicelink.end_session=function(callback,error) {
     voicelink.requests.push(new voicelink.Request("end_session",{},function(r) {
 	voicelink.end_session_final();
-	callback(r);
+	if(callback)
+	    callback(r);
     },function(r,n) {
 	if(r == "auth")
 	    voicelink.end_session_final();
@@ -307,7 +338,8 @@ voicelink.post_request=function(action,args,callback,error) {
 	    else
 		throw "VoicelinkError: "+r.reason+": "+r.noun;
 	} else {
-	    callback(r);
+	    if(callback)
+		callback(r);
 	}
     }).error(function(e,status) {
 	if(status != "error")
@@ -323,6 +355,7 @@ voicelink.new_message=function(blob,callback,error) {
     xhr.onload=function(e) {
 	if(this.readyState === 4) {
 	    console.log(JSON.parse(e.target.responseText));
+	    voicelink.update();
 	}
     };
     var fd=new FormData();

@@ -17,7 +17,7 @@ function mysql_init() {
     reply_error("mysql",$mysqli->connect_error);
   $mysql->select_db($DB_NAME);
   //  mysql_setup_database();
-  //    mysql_setup_tables();
+  //  mysql_setup_tables();
 }
 
 function mysql_q($q) {
@@ -243,49 +243,40 @@ function mysql_change_name($user_id,$name) {
   mysql_q("update $DB_NAME_USERS set name='$name' where user_id=$user_id");
 }
 
-function mysql_get_inbox_messages($user_id,$number) {
-  $number=mysql_escape($number);
+function mysql_get_inbox_messages($user_id) {
   global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
   $messages=[];
   $q="select messages.message_id,messages.from_user_id,messages.sent 
 from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
 where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
 && $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id) 
-ORDER BY messages.sent DESC LIMIT $number";
+ORDER BY messages.sent DESC";
   $result=mysql_q($q);
   while($row=$result->fetch_assoc()) {
     $from=mysql_get_handle_from_user_id($row["from_user_id"]);
     $messages[]=[
 		 "message_id"=>$row["message_id"],
 		 "duration"=>$row["duration"],
-		 "sent"=>$row["sent"],
+		 "sent"=>strtotime($row["sent"]),
 		 "from"=>$from
 		 ];
   }
-  return [
-	  "messages"=>$messages,
-	  "number"=>$result->num_rows
-	  ];
+  return $messages;
 }
 
-function mysql_get_draft_messages($user_id,$number) {
-  $number=mysql_escape($number);
+function mysql_get_draft_messages($user_id) {
   global $DB_NAME_MESSAGES;
   $messages=[];
-  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id ORDER BY composed DESC LIMIT $number";
+  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id ORDER BY composed DESC";
   $result=mysql_q($q);
   while($row=$result->fetch_assoc()) {
-    $from=mysql_get_handle_from_user_id($row["from_user_id"]);
     $messages[]=[
 		 "message_id"=>$row["message_id"],
 		 "duration"=>$row["duration"],
-		 "composed"=>$row["composed"]
+		 "composed"=>strtotime($row["composed"]),
 		 ];
   }
-  return [
-	  "messages"=>$messages,
-	  "number"=>$result->num_rows
-	  ];
+  return $messages;
 }
 
 function mysql_get_draft_message_number($user_id) {
@@ -293,14 +284,21 @@ function mysql_get_draft_message_number($user_id) {
   $messages=[];
   $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id";
   $result=mysql_q($q);
+  error_log($result->num_rows);
   return $result->num_rows;
 }
 
 function mysql_add_message($user_id,$file) {
   global $DB_NAME_MESSAGES;
   $data=file_get_contents($file);
-  error_log($data);
-  mysql_q("insert into $DB_NAME_MESSAGES (from_user_id,wav_data) VALUES ($user_id,'$data')");
+  $data=mysql_escape($data);
+  $fp=fopen($file,"r");
+  $size_in_bytes=filesize($file);
+  fseek($fp,20);
+  $rawheader=fread($fp, 16);
+  $header=unpack("vtype/vchannels/Vsamplerate/Vbytespersec/valignment/vbits",$rawheader);
+  $duration=ceil($size_in_bytes/$header['bytespersec']);
+  mysql_q("insert into $DB_NAME_MESSAGES (from_user_id,wav_data,duration) VALUES ($user_id,'$data',$duration)");
   $rows=mysql_q("select message_id from $DB_NAME_MESSAGES where from_user_id=$user_id and wav_data='$data'");
   if($rows->num_rows != 1)
     reply_error("invalid","rows");

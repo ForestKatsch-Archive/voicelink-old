@@ -17,14 +17,24 @@
     margin-top: 20px;
     height: auto;
     padding: 0 2em;
-    padding-right: 20em;
+    padding-right: 2em;
     position: absolute;
     z-index: 0;
     width: 100%;
+    max-width: 60em;
+}
+
+#view-settings,
+#view-help {
+    max-width: none;
+}
+
+.logged-in .view {
+    padding-right: 22em;
 }
 
 .logged-in #view {
-    padding-left: 18em;
+    padding-left: 16em;
     width: 100%;
 }
 

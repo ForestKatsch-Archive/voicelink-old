@@ -19,10 +19,8 @@
 }
 
 .modal {
-    background-color: #f6f6f6;
-    border: 1px solid #bbb;
-    border-radius: 3px;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    background-color: #fff;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
     display: none;
     position: absolute;
     margin-left: -15em;

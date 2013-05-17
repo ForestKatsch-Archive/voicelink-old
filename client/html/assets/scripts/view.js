@@ -36,19 +36,42 @@ var view={
     },
 };
 
-function view_generate_message(m) {
-    return "From "+m.from_handle+" timestamp "+m.date+", "+m.duration+" seconds long.";
+function view_generate_message(m,folder) {
+    if(folder == "drafts") {
+	var date=new Date(m.composed*1000);
+	var difference=day_difference(date,new Date());
+	var d="";
+	if(difference < 1) {
+	    var time=date.format("h\\:i a");
+	    d="<span class='time'>"+time+"</span>";
+	} else {
+	    var date=date.format("l\\, F j, Y");
+	    var time=date.format("h\\:i a");
+	    d="<span class='date'>"+date+"</span><span class='time'>"+time+"</span>";
+	}
+	var title=date.format("l\\, F j, Y \\a\\t h\\:i\\:s a");
+	var from=m.from_handle;
+	if(voicelink.session.name)
+	    from=voicelink.session.name;
+	var duration=m.duration;
+	return "<span title='"+title+"'><span class='from'>"+from+"</span>\
+"+d+"\
+<span class='duration'>"+duration+"</span></span>";
+    } else {
+	return "errors. this is BAD!!!";
+    }
 }
 
-function view_update_messages(folder,message_list) {
+function view_update_messages(folder) {
+    var messages=voicelink.folders[folder].messages;
     $("#view-"+folder+" .wrapper").empty();
-    if(message_list.length == 0) {
-	$("#view-"+folder+" .wrapper").append("<div class='no-messages'>No messages.</div>")
+    if(messages.length == 0) {
+	$("#view-"+folder+" .wrapper").append("<div class='folder no-messages'>"+_("no_messages")+"</div>")
     } else {
-	$("#view-"+folder+" .wrapper").append("<ul></ul>");
+	$("#view-"+folder+" .wrapper").append("<ul class='folder'></ul>");
     }
-    for(var i=0;i<message_list.length;i++) {
-	$("#view-"+folder+" .wrapper ul").append("<li>"+view_generate_message(message_list[i])+"</li>");
+    for(var i=0;i<messages.length;i++) {
+	$("#view-"+folder+" .wrapper ul").append("<li>"+view_generate_message(messages[i],folder)+"</li>");
     }
 }
 
@@ -64,6 +87,10 @@ function view_init() {
 	    ui_show_modal(hash);
 	var v=url.query;
 	view_set_final(v);
+    });
+    voicelink.bind("get_folder",function(f) {
+	if(f.folder == view.view)
+	    view_update_messages(f.folder);
     });
     loaded("view");
 }
@@ -127,6 +154,8 @@ function view_before_switch(v) {
     for(var i in view.views) {
 	view.views[i].hide();
     }
+    if(v in voicelink.folders)
+	view_update_messages(v);
     return v;
 }
 

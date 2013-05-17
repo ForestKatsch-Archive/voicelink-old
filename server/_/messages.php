@@ -10,19 +10,13 @@ function messages_update() {
   reply("ok",[
 	      "folders"=>[
 			  "inbox"=>[
-				    "unread_messages"=>0,
-				    "total_messages"=>0,
-				    "archived_messages"=>0
+				    "number"=>0
 				    ],
 			  "sent"=>[
-				    "unread_messages"=>0,
-				    "total_messages"=>0,
-				    "archived_messages"=>0
+				    "number"=>0
 				    ],
 			  "drafts"=>[
-				    "unread_messages"=>0,
-				    "total_messages"=>db_get_draft_message_number($user_id),
-				    "archived_messages"=>0
+				    "number"=>db_get_draft_message_number($user_id)
 				    ],
 			  ],
 	      "user"=>[
@@ -44,17 +38,16 @@ function messages_get_folder() {
   $messages=null;
   $user_id=db_get_user_id_from_session_id($session_id,$session_hash);
   if($folder == "inbox") {
-    $m=db_get_inbox_messages($user_id,$number);
+    $messages=db_get_inbox_messages($user_id);
     //  } else if($folder == "sent") {
     //    $messages=db_get_sent_messages($number);
-    //  } else if($folder == "drafts") {
-    //    $messages=db_get_draft_messages($number);
+  } else if($folder == "drafts") {
+    $messages=db_get_draft_messages($user_id);
   } else {
     reply_error("invalid","folder");
   }
   reply("ok",[
-	      "messages"=>$m["messages"],
-	      "number"=>$m["number"]
+	      "messages"=>$messages
 	      ]);
 }
 
