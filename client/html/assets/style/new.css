@@ -27,8 +27,19 @@
     z-index: 1000;
 }
 
-#record-button {
+#new #record-button {
     display: block;
     margin-top: 10px;
+    padding: 7px 5px;
     text-align: center;
+}
+
+#new input {
+    background-color: transparent;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#new input:focus {
+    background-color: #eee;
 }

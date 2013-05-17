@@ -49,13 +49,13 @@ function view_generate_message(m,folder) {
 	    var time=date.format("h\\:i a");
 	    d="<span class='date'>"+date+"</span><span class='time'>"+time+"</span>";
 	}
-	var title=date.format("l\\, F j, Y \\a\\t h\\:i\\:s a");
+	var time_title=date.format("l\\, F j, Y \\a\\t h\\:i\\:s a");
 	var from=m.from_handle;
 	if(voicelink.session.name)
 	    from=voicelink.session.name;
 	var duration=m.duration;
-	return "<span title='"+title+"'><span class='from'>"+from+"</span>\
-"+d+"\
+	return "<span><span class='from' title='"+m.from_handle+"'>"+from+"</span>\
+<span class='sent' title='"+time_title+"'>"+d+"</span>\
 <span class='duration'>"+duration+"</span></span>";
     } else {
 	return "errors. this is BAD!!!";
