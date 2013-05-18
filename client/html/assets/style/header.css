@@ -2,6 +2,7 @@
 #h {
     background-color: #fff;
     box-sizing: border-box;
+    -moz-box-sizing: border-box;
     box-shadow: 0 0 4px rgba(0,0,0,0.1);
     color: #888;
     height: 52px;

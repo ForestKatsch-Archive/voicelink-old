@@ -12,6 +12,7 @@ $MYSQL_PASSWORD="mysql";
 
 function mysql_init() {
   global $MYSQL_SERVER,$MYSQL_USER,$MYSQL_PASSWORD,$mysql,$DB_NAME;
+  date_default_timezone_set("UTC");
   $mysql=new mysqli($MYSQL_SERVER,$MYSQL_USER,$MYSQL_PASSWORD);
   if ($mysql->connect_errno)
     reply_error("mysql",$mysqli->connect_error);
@@ -113,7 +114,8 @@ function mysql_register_user($handle,$password) {
   if(mysql_user_exists($handle))
     reply_error("invalid","handle");
   $password_hash=md5($password);
-  mysql_q("insert into $DB_NAME_USERS (handle,password_hash) VALUES ('$handle','$password_hash')");
+  $timestamp=date("Y-m-d H:i:s",time()); 
+  mysql_q("insert into $DB_NAME_USERS (handle,password_hash,created_date) VALUES ('$handle','$password_hash','$timestamp')");
 }
 
 function mysql_verify_user($handle,$password) {
@@ -297,7 +299,8 @@ function mysql_add_message($user_id,$file) {
   $rawheader=fread($fp, 16);
   $header=unpack("vtype/vchannels/Vsamplerate/Vbytespersec/valignment/vbits",$rawheader);
   $duration=ceil($size/$header['bytespersec']);
-  mysql_q("insert into $DB_NAME_MESSAGES (from_user_id,wav_data,duration) VALUES ($user_id,'$data',$duration)");
+  $timestamp=date("Y-m-d H:i:s",time()); 
+  mysql_q("insert into $DB_NAME_MESSAGES (from_user_id,wav_data,duration,composed) VALUES ($user_id,'$data',$duration,'$timestamp')");
   $rows=mysql_q("select message_id from $DB_NAME_MESSAGES where from_user_id=$user_id and wav_data='$data'");
   if($rows->num_rows != 1)
     reply_error("invalid","rows");

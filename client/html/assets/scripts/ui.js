@@ -374,7 +374,7 @@ function ui_play_message(id) {
 }
 
 function ui_format_date(timestamp) {
-    var date=new Date(timestamp*1000);
+    var date=new Date((timestamp)*1000);
     var difference=day_difference(date,new Date());
     var t=date.format("h\\:i a");
     var d=date.format("l\\, F j, Y");
