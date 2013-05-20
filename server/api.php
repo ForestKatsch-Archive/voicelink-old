@@ -41,6 +41,8 @@ if($a == "info") {
 
 } else if($a == "update") {
   messages_update();
+} else if($a == "send_message") {
+  message_send_message();
 } else if($a == "get_messages") {
   messages_get_messages();
 } else if($a == "message") {

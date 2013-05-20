@@ -57,10 +57,33 @@ function message_delete() {
 
 function message_set_recipients() {
   auth_needed(true);
+  if(!($message_id=post("message_id")))
+    reply_error("arg","message_id");
   if(!($recipients=post("recipients")))
     reply_error("arg","recipients");
   $recipients=explode(",",$recipients);
-  reply_error("niy","set_recipient");
+  if(count($recipients) == 0) {
+    reply_error("arg","recipients");
+  }
+  foreach($recipients as $handle) {
+    if(!preg_match("/^[\w\-\.]{3,65535}$/",$handle))
+      reply_error("invalid","handle");
+    if(!db_user_exists($handle))
+      reply_error("invalid","handle");
+  }
+  db_clear_recipients($message_id);
+  foreach($recipients as $handle) {
+    db_add_recipient($message_id,$handle);
+  }
+  reply("ok",[]);
+}
+
+function message_send_message() {
+  auth_needed(true);
+  if(!($message_id=post("message_id")))
+    reply_error("arg","message_id");
+  db_send_message($message_id);
+  reply("ok",[]);
 }
 
 ?>

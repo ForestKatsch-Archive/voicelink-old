@@ -3,6 +3,7 @@ var voicelink={
     actions:{
 	session_needed:[
 	    "set_recipients",
+	    "send_message",
 	    "end_session",
 	    "delete_message",
 	    "verify_session",
@@ -402,7 +403,6 @@ voicelink.is_message=function(id) {
 }
 
 voicelink.set_recipients=function(message_id,recipients,callback,error) {
-    console.log(recipients);
     for(var i=0;i<recipients.length;i++) {
 	var handle=recipients[i];
 	if(handle.length <= 2) {
@@ -413,10 +413,30 @@ voicelink.set_recipients=function(message_id,recipients,callback,error) {
     }
     if(voicelink.message_folder(message_id) != "drafts") {
 	error("invalid","folder");
+    } else if(recipients.length == 0) {
+	error("invalid","handle");
     } else {
 	voicelink.requests.push(new voicelink.Request("set_recipients",{
 	    message_id:message_id,
 	    recipients:recipients.join(",")
+	},function(r) {
+	    voicelink.update();
+	    if(callback)
+		callback(r);
+	},function(r,n) {
+	    if(error)
+		error(r,n);
+	}));
+	voicelink.process_requests();
+    }
+};
+
+voicelink.send_message=function(message_id,callback,error) {
+    if(voicelink.message_folder(message_id) != "drafts") {
+	error("invalid","folder");
+    } else {
+	voicelink.requests.push(new voicelink.Request("send_message",{
+	    message_id:message_id
 	},function(r) {
 	    voicelink.update();
 	    if(callback)

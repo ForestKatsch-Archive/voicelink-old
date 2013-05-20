@@ -484,6 +484,16 @@ function ui_update_to(id) {
     });
 }
 
+function ui_send_message(id) {
+    if(!voicelink.is_message(id))
+	return;
+    voicelink.send_message(id,function(r) {
+	console.log("sent!");
+    },function(r,n) {
+
+    });
+}
+
 function ui_delete_message(id) {
     if(!voicelink.is_message(id))
 	return;

@@ -10,6 +10,8 @@ $MYSQL_SERVER="localhost";
 $MYSQL_USER="root";
 $MYSQL_PASSWORD="mysql";
 
+$MYSQL_DRAFT_SELECT="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1";
+
 function mysql_init() {
   global $MYSQL_SERVER,$MYSQL_USER,$MYSQL_PASSWORD,$mysql,$DB_NAME;
   date_default_timezone_set("UTC");
@@ -291,10 +293,30 @@ function mysql_get_messages($user_id) {
   return array_merge(mysql_get_draft_messages($user_id));
 }
 
-function mysql_draft_message_number($user_id) {
-  global $DB_NAME_MESSAGES;
+function mysql_inbox_message_number($user_id) {
+  global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
+  $messages=[];
+  $q="select messages.message_id,messages.from_user_id,messages.sent 
+from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
+where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
+&& $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id && $DB_NAME_MESSAGES.draft=0 &&) 
+ORDER BY messages.sent DESC";
+  $result=mysql_q($q);
+  return $result->num_rows;
+}
+
+function mysql_inbox_message_number($user_id) {
+  global $DB_NAME_MESSAGES,$MYSQL_INBOX_SELECT;
   $messages=[];
   $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1";
+  $result=mysql_q($q);
+  return $result->num_rows;
+}
+
+function mysql_draft_message_number($user_id) {
+  global $DB_NAME_MESSAGES,$MYSQL_DRAFT_SELECT;
+  $messages=[];
+  $q=$MYSQL_DRAFT_SELECT;
   $result=mysql_q($q);
   return $result->num_rows;
 }
@@ -351,11 +373,42 @@ function mysql_play_message($message_id) {
   exit(0);
 }
 
+function mysql_recipient_number($message_id) {
+  global $DB_NAME_MESSAGE_RECIPIENTS;
+  mysql_verify_message($message_id);
+  $result=mysql_q("select message_id from $DB_NAME_MESSAGE_RECIPIENTS WHERE message_id=$message_id");
+  return $result->num_rows;
+}
+
 function mysql_delete_message($message_id) {
   global $DB_NAME_MESSAGES;
   mysql_verify_message($message_id);
-  error_log("DELETING MESSAGE!!!");
   mysql_q("delete from $DB_NAME_MESSAGES WHERE message_id=$message_id");
+  return;
+}
+
+function mysql_send_message($message_id) {
+  global $DB_NAME_MESSAGES;
+  mysql_verify_message($message_id);
+  if(mysql_recipient_number($message_id) == 0)
+    reply_error("invalid","handle");
+  $timestamp=date("Y-m-d H:i:s",time()); 
+  mysql_q("update $DB_NAME_MESSAGES set sent='$timestamp',draft=0 where message_id=$message_id");
+  return;
+}
+
+function mysql_clear_recipients($message_id) {
+  global $DB_NAME_MESSAGE_RECIPIENTS;
+  mysql_verify_message($message_id);
+  mysql_q("delete from $DB_NAME_MESSAGE_RECIPIENTS WHERE message_id=$message_id");
+  return;
+}
+
+function mysql_add_recipient($message_id,$handle) {
+  global $DB_NAME_MESSAGE_RECIPIENTS;
+  mysql_verify_message($message_id);
+  $user_id=mysql_get_user_id_from_handle($handle);
+  mysql_q("insert into $DB_NAME_MESSAGE_RECIPIENTS (message_id,to_user_id) values ($message_id,$user_id)");
   return;
 }
 

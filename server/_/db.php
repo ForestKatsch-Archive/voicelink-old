@@ -75,4 +75,16 @@ function db_delete_message($message_id) {
   return mysql_delete_message($message_id);
 }
 
+function db_send_message($message_id) {
+  return mysql_send_message($message_id);
+}
+
+function db_clear_recipients($message_id) {
+  return mysql_clear_recipients($message_id);
+}
+
+function db_add_recipient($message_id,$handle) {
+  return mysql_add_recipient($message_id,$handle);
+}
+
 ?>

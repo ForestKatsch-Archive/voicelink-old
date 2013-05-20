@@ -58,6 +58,8 @@ function view_generate_message(m,folder) {
 <span class='from' title='"+m.from_handle+"'>"+from+"</span>\
 "+to+"\
 <span class='sent' title='"+time_title+"'>"+d+"</span>\
+<a class='link send' onclick='javascript:ui_send_message("+m.message_id+")'>\
+Send</a>\
 <span class='duration'>"+duration+"</span>\
 "+del+"";
 }
