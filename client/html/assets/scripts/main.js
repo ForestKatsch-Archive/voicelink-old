@@ -59,9 +59,6 @@ function done() {
 }
 
 function update() {
-    view_update_messages("inbox",[]);
-    view_update_messages("sent",[]);
-    view_update_messages("drafts",[]);
     if(!voicelink.verified()) {
 	console.log("Not verified.");
 	return;

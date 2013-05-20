@@ -41,10 +41,10 @@ if($a == "info") {
 
 } else if($a == "update") {
   messages_update();
+} else if($a == "get_messages") {
+  messages_get_messages();
 } else if($a == "message") {
   message_play();
-} else if($a == "get_folder") {
-  messages_get_folder();
 } else if($a == "delete_message") {
   message_delete();
 

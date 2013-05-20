@@ -60,28 +60,22 @@ function ui_init() {
     ui_create_modals();
     ui_locale_init();
     voicelink.bind("start_session",function() {
-	console.log("Start session");
 	ui_logged_in();
     });
     voicelink.bind("register",function() {
-	console.log("Register");
 	ui_logged_in();
 	view_set("inbox");
     });
     voicelink.bind("end_session",function() {
-	console.log("End session");
 	ui_logged_out();
     });
     voicelink.bind("verify_session",function() {
-	console.log("Session verified");
 	$("body").addClass("logged-in");
 	$("#login-show").text(_("logout"));
 	$("#login-show").unbind("click");
 	$("#login-show").bind("click",ui_logout);
-	view_restore();
     });
     voicelink.bind("session_dead",function() {
-	console.log("Session dead");
 	ui_logged_out();
     });
     voicelink.bind("change_name",function() {
@@ -253,7 +247,7 @@ function ui_login() {
 	    $("#modal-login .error-message").text(_("incorrect_handle_or_password"));
 	} else {
 	    console.log("THIS IS BAD: ",r,n);
-	    $("#modal-login .error-message").text(_("this_is_bad"));
+	    $("#modal-login .error-message").html(_("this_is_bad"));
 	}
 	return false;
     });
@@ -287,7 +281,7 @@ function ui_register() {
 	    $("#modal-register .error-message").text(_("password_too_short"));
 	} else {
 	    console.log("THIS IS BAD: ",r,n);
-	    $("#modal-register .error-message").text(_("this_is_bad"));
+	    $("#modal-login .error-message").html(_("this_is_bad"));
 	}
 	return false;
     });
@@ -401,7 +395,6 @@ function ui_stop_record() {
 	voicelink.new_message(data.blob,function(data) {
 
 	});
-	console.log(data);
     });
 }
 

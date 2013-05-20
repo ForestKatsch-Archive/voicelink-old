@@ -271,22 +271,36 @@ function mysql_get_draft_messages($user_id) {
   $messages=[];
   $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1 ORDER BY composed DESC";
   $result=mysql_q($q);
+  $handle=mysql_get_handle_from_user_id($user_id);
   while($row=$result->fetch_assoc()) {
     $messages[]=[
 		 "message_id"=>$row["message_id"],
 		 "duration"=>$row["duration"],
+		 "folder"=>"drafts",
+		 "from"=>$handle,
+		 "reply_to"=>-1,
+		 "to"=>[],
 		 "composed"=>strtotime($row["composed"]),
+		 "sent"=>-1
 		 ];
   }
   return $messages;
 }
 
-function mysql_get_draft_message_number($user_id) {
+function mysql_get_messages($user_id) {
+  return array_merge(mysql_get_draft_messages($user_id));
+}
+
+function mysql_draft_message_number($user_id) {
   global $DB_NAME_MESSAGES;
   $messages=[];
   $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1";
   $result=mysql_q($q);
   return $result->num_rows;
+}
+
+function mysql_message_number($user_id) {
+  return mysql_draft_message_number($user_id);
 }
 
 function mysql_add_message($user_id,$file) {

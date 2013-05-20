@@ -6,34 +6,21 @@ function messages_update() {
   $shash=gshash();
   $user_id=db_get_user_id_from_session_id($sid,$shash);
   reply("ok",[
-	      "messages"=>db_message_number($user_id),
+	      "message_number"=>db_message_number($user_id),
 	      "user"=>[
 
 		       ]
 	      ]);
 }
 
-function messages_get_folder() {
+function messages_get_messages() {
   auth_needed(true);
   $sid=gsid();
   $shash=gshash();
-  if(!($folder=post("folder")))
-    reply_error("arg","folder");
-  if(!($number=post("number")))
-    reply_error("arg","number");
   $messages=null;
   $user_id=db_get_user_id_from_session_id($sid,$shash);
-  if($folder == "inbox") {
-    $messages=db_get_inbox_messages($user_id);
-    //  } else if($folder == "sent") {
-    //    $messages=db_get_sent_messages($number);
-  } else if($folder == "drafts") {
-    $messages=db_get_draft_messages($user_id);
-  } else {
-    reply_error("invalid","folder");
-  }
   reply("ok",[
-	      "messages"=>$messages
+	      "messages"=>db_get_messages($user_id)
 	      ]);
 }
 

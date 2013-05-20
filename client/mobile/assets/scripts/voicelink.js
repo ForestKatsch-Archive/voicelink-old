@@ -5,7 +5,7 @@ var voicelink={
 	    "end_session",
 	    "delete_message",
 	    "verify_session",
-	    "get_folder",
+	    "get_messages",
 	    "verify_user",
 	    "update",
 	    "change_name",
@@ -18,6 +18,7 @@ var voicelink={
     regexp:{
 	handle:/^[\w\-\.]+$/
     },
+    folders:["inbox","sent","drafts"],
     requests:[],
     messages:{},
     session:{
@@ -175,12 +176,20 @@ voicelink.delete_user=function(password,callback,error) {
     voicelink.process_requests();
 }
 
+voicelink.message_number=function() {
+    var n=0;
+    for(var i in voicelink.messages)
+	n++;
+    return n;
+}
+
 voicelink.update=function(callback,error) {
     voicelink.requests.push(new voicelink.Request("update",{},function(r) {
 	if(callback)
 	    callback(r);
-	if(r.folders != undefined) {
-
+	if(r.message_number != undefined) {
+	    if(r.message_number != voicelink.message_number())
+		voicelink.get_messages();
 	}
 	if(r.user != undefined) {
 	    if(r.user.name != undefined) {
@@ -192,19 +201,41 @@ voicelink.update=function(callback,error) {
     voicelink.process_requests();
 }
 
-voicelink.get_folder=function(folder,callback,error) {
-    voicelink.requests.push(new voicelink.Request("get_folder",{
-	folder:folder,
-	number:100
-    },function(r) {
-	if(r.messages != undefined) {
+voicelink.get_folder=function(folder) {
+    var correct_folder=false;
+    for(var i=0;i<voicelink.folders.length;i++)
+	if(folder == voicelink.folders[i])
+	    correct_folder=true;
+    if(!correct_folder)
+	return [];
+    var messages=[];
+    for(var i in voicelink.messages) {
+	var m=voicelink.messages[i];
+	messages.push(m);
+    }
+    messages=messages.sort(function(a,b) {
+	return b.composed-a.composed;
+    });
+    console.log(messages);
+    return messages;
+};
+
+voicelink.get_messages=function(callback,error) {
+    voicelink.requests.push(new voicelink.Request("get_messages",{},function(r) {
+	if(r.messages) {
+	    voicelink.messages={};
 	    for(var i=0;i<r.messages.length;i++) {
-		var message=r.messages[i];
-		var m=new voicelink.Message(parseInt(message.message_id),voicelink.get_name(),[],
-					    -1,message.composed,-1,message.duration);
-		voicelink.messages[message.message_id].push(m);
+		var m=r.messages[i];
+		voicelink.messages[m.message_id]=new voicelink.Message(m.message_id,
+								       m.from,
+								       m.to,
+								       m.reply_to,
+								       m.composed,
+								       m.sent,
+								       m.duration);
 	    }
 	}
+	voicelink.event("messages_changed");
 	if(callback)
 	    callback(r);
     },error));
@@ -333,7 +364,6 @@ voicelink.new_message=function(blob,callback,error) {
     var xhr=new XMLHttpRequest();
     xhr.onload=function(e) {
 	if(this.readyState === 4) {
-	    console.log(JSON.parse(e.target.responseText));
 	    voicelink.update();
 	}
     };

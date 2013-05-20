@@ -84,7 +84,7 @@ Submit it "+feedback("here")+". Thanks.</p>\
     settings:"Settings",
     start_record:"New message",
     stop_record:"Stop recording",
-    this_is_bad:"ERRORS. THIS IS BAD. (Check out the dev console.)",
+    this_is_bad:"<em>Something's</em> wrong. (Please "+feedback("tell us")+" about it.)",
     three_or_more:"The handle must be three or more characters long.",
     voicelink:"VoiceLink"
 };

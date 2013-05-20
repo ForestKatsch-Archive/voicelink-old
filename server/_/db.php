@@ -55,8 +55,12 @@ function db_change_name($user_id,$name) {
   return mysql_change_name($user_id,$name);
 }
 
+function db_get_messages($user_id) {
+  return mysql_get_messages($user_id);
+}
+
 function db_message_number($user_id) {
-  return 0;
+  return mysql_message_number($user_id);
 }
 
 function db_add_message($user_id,$filename) {

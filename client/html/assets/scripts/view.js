@@ -67,9 +67,15 @@ function view_update() {
 	view_update_messages("drafts");
 }
 
+function view_update_all() {
+    view_update_messages("inbox");
+    view_update_messages("sent");
+    view_update_messages("drafts");
+}
+
 function view_update_messages(folder) {
-    return;
     $("#view-"+folder+" .wrapper").empty();
+    var messages=voicelink.get_folder(folder);
     if(messages.length == 0) {
 	$("#view-"+folder+" .wrapper").append("<div class='folder no-messages'>"+_("no_messages")+"</div>")
     } else {
@@ -94,9 +100,9 @@ function view_init() {
 	var v=url.query;
 	view_set_final(v);
     });
-    voicelink.bind("get_folder",function(f) {
-	if(f.folder == view.view)
-	    view_update_messages(f.folder);
+    view_update_all();
+    voicelink.bind("messages_changed",function() {
+	view_update();
     });
     loaded("view");
 }
