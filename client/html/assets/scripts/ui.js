@@ -478,6 +478,8 @@ function ui_update_to(id) {
 		console.log(id);
 		$("#message-number-"+id+" .to").addClass("illegal");
 	    }
+	} else if(n == "arg") {
+	    return;
 	}
     });
 }

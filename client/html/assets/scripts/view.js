@@ -50,7 +50,7 @@ function view_generate_message(m,folder) {
 	var t="";
 	for(var i=0;i<m.to.length;i++)
 	    t+=m.to[i]+" ";
-	t=t.substr(0,t.length-2);
+	t=t.substr(0,t.length-3);
 	to="<input class='to' onblur='javascript:ui_update_to("+m.message_id+")' value='"+t+"' placeholder='To' />";
     }
     return "<a class='link play' onclick='javascript:ui_toggle_play_message("+m.message_id+")'>\
