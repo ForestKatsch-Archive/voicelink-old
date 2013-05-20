@@ -2,7 +2,7 @@
 @import "overlay.css";
 
 .modal p {
-    color: #888;
+    color: #bbb;
     font-size: 80%;
 }
 
@@ -19,8 +19,9 @@
 }
 
 .modal {
-    background-color: #fff;
+    background-color: #555;
     box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    border-radius: 3px;
     display: none;
     position: absolute;
     margin-left: -15em;
@@ -36,6 +37,7 @@
 }
 
 .modal header h1 {
+    color: #fff;
     font-weight: bold;
     display: inline-block;
 }

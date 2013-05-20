@@ -9,17 +9,17 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="12"
-   height="12"
-   id="svg3824"
+   width="64"
+   height="22"
+   id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="close.svg"
-   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/close.png"
+   sodipodi:docname="recording.svg"
+   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/recording.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
-     id="defs3826" />
+     id="defs4" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="6.8594439"
-     inkscape:cx="19.351306"
-     inkscape:cy="-1.6363348"
+     inkscape:zoom="13.718888"
+     inkscape:cx="49.673611"
+     inkscape:cy="6.0804126"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -40,21 +40,21 @@
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
-       id="grid3832"
+       id="grid2985"
        empspacing="4"
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true" />
   </sodipodi:namedview>
   <metadata
-     id="metadata3829">
+     id="metadata7">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -62,16 +62,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1040.3622)">
-    <path
-       style="fill:none;stroke:#f0f0f0;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 2,1050.3622 8,-8"
-       id="path3878"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;stroke:#f0f0f0;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 2,1042.3622 8,8"
-       id="path3882"
-       inkscape:connector-curvature="0" />
+     transform="translate(0,-1030.3622)">
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-opacity:1;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect3974"
+       width="18"
+       height="18.000017"
+       x="23"
+       y="1032.3622"
+       ry="3.0000174" />
   </g>
 </svg>

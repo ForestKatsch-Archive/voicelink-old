@@ -31,10 +31,10 @@ function init() {
 function start() {
     init();
     setTimeout(function() {
-	voicelink.init();
 	mic_init();
 	ui_init();
 	view_init();
+	voicelink.init();
 	loaded("main");
     },0);
 }

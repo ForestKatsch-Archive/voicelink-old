@@ -1,4 +1,29 @@
 
+var tested_browsers=[
+    ["Chrome",["28"],""]
+];
+
+var browsers="";
+
+browsers+="<tr class='header'><th class='name'>Browser</th><th class='versions'>Versions</th><th class='issues'>Issues</th></tr>";
+
+for(var i=0;i<tested_browsers.length;i++) {
+    var b=tested_browsers[i];
+    var l="";
+    if(b[1].length >= 1)
+    for(var x=0;x<b[1].length-1;x++) {
+	l+=b[1][x]+", "
+    }
+    if(b[1].length == 1)
+	l+=""+b[1][b[1].length-1];
+    else if(b[1].length >= 1)
+	l+="and "+b[1][b[1].length-1];
+    var iss=b[2];
+    if(iss == "")
+	iss="<span class='none'>none</span>";
+    browsers+="<tr><td class='name'>"+b[0]+"</td><td class='versions'>"+l+"</td><td class='issues'>"+iss+"</td></tr>";
+}
+
 var locale={
     about_voicelink:"About VoiceLink",
     account:"Account",
@@ -17,15 +42,31 @@ to them now still will. (You may want to <a href='#wipe-user'>wipe</a> your acco
     handle:"Handle",
     handle_too_short:"The handle must be three or more characters long.",
     help:"Help",
-    help_text:"\<div class='pane'>\
+    help_text:"\<article class='pane' id='getting-started'>\
 <h1>Getting started</h1>\
 <p>Welcome to VoiceLink. To get started,\
  <a href='#register' title='Register with VoiceLink'>register</a>.</p>\
-</div>\
-<div class='pane'>\
+</article>\
+<article class='pane' id='help-disclaimer'>\
+<h1>Disclaimer</h1>\
+<p>VoiceLink is currently an <strong>alpha</strong> product, and that's being nice to it. Do <strong>not</strong> expect \
+everything to work correctly. Do <strong>not</strong> put anything on here that you wouldn't like any random Joe to see. \
+That said, if there are any problems with this, please "+feedback("send feedback")+".</p>\
+</article><article class='pane' id='browser-supprot'>\
 <h1>Browser support</h1>\
-<p>Unfortunately, the HTML5 technology to record messages needs Chrome 28 or higher. We're planning to add support\
-for older browsers (using a</p></div>",
+<p>Unfortunately, the HTML5 technology to record messages needs either Chrome 28 and up or Firefox version 22 and up. We're planning \
+to add support for older browsers (using a Flash recorder or a browser plugin) but for now, you'll need to have a compatible browser. \
+You'll still be able to listen to messages, though.</p>\
+<h2>Tested browsers</h2>\
+<p>Here's a list of browsers that have been tested with the VoiceLink website.</p>\
+<table>"+browsers+"</table>\
+</article>\
+<article class='pane'>\
+<h1>Feedback / problems</h1>\
+<p>Found a problem with VoiceLink or have a feature request? \
+Submit it "+feedback("here")+". Thanks.</p>\
+</article>\
+<footer><span class='copyright'></span></footer>",
     inbox:"Inbox",
     incorrect_handle_or_password:"Incorrect handle or password.",
     incorrect_password:"Incorrect password.",

@@ -43,6 +43,8 @@ var ui={
     login:{
 	html:null,
     },
+    record_pulse:false,
+    record_pulse_direction:1,
     modal:{
 	fade_time:100,
 	overlay:null,
@@ -54,11 +56,17 @@ var ui={
 };
 
 function ui_init() {
+    ui_record_init();
     ui_create_modals();
     ui_locale_init();
     voicelink.bind("start_session",function() {
 	console.log("Start session");
 	ui_logged_in();
+    });
+    voicelink.bind("register",function() {
+	console.log("Register");
+	ui_logged_in();
+	view_set("inbox");
     });
     voicelink.bind("end_session",function() {
 	console.log("End session");
@@ -66,7 +74,11 @@ function ui_init() {
     });
     voicelink.bind("verify_session",function() {
 	console.log("Session verified");
-	ui_logged_in();
+	$("body").addClass("logged-in");
+	$("#login-show").text(_("logout"));
+	$("#login-show").unbind("click");
+	$("#login-show").bind("click",ui_logout);
+	view_restore();
     });
     voicelink.bind("session_dead",function() {
 	console.log("Session dead");
@@ -83,7 +95,7 @@ function ui_init() {
     $("#folders .sent").bind("click",view_sent);
     $("#folders .drafts").bind("click",view_drafts);
     $("#folders .help").bind("click",view_help);
-    $("#new #record-button").bind("click",ui_start_record);
+    $("#record-message").bind("click",ui_start_record);
     loaded("ui");
 }
 
@@ -95,7 +107,6 @@ function ui_locale_init() {
     $("#folders .drafts").text(_("drafts"));
     $("#folders .settings").text(_("settings"));
     $("#folders .help").text(_("help"));
-    $("#new #record-button").text(_("start_record"));
 }
 
 
@@ -142,7 +153,7 @@ function ui_create_modals() {
 <input type='text' id='login-handle' name='username' placeholder='"+_("handle")+"' autofocus />\n\
 <input type='password' id='login-password' name='password' placeholder='"+_("password")+"' />\n\
 <div class='error-message hidden'></div>\n\
-<div id='login-button' class='button action'>"+_("login")+"</button>\n\
+<div id='login-button' class='button'>"+_("login")+"</button>\n\
 ");
     ui.modal.windows.login.html.keydown(function(e) {
 	if(e.which == 13)
@@ -156,7 +167,7 @@ function ui_create_modals() {
 <input type='password' id='register-password' name='password' placeholder='"+_("password")+"' />\n\
 <input type='password' id='register-repeat-password' name='repeat-password' placeholder='"+_("repeat_password")+"' />\n\
 <div class='error-message hidden'></div>\n\
-<div id='register-button' class='button action'>"+_("register")+"</button>\n\
+<div id='register-button' class='button'>"+_("register")+"</button>\n\
 ");
     ui.modal.windows.register.html.keydown(function(e) {
 	if(e.which == 13)
@@ -169,7 +180,7 @@ function ui_create_modals() {
 <p class='text'>"+_("after_delete_account")+"</p>\n\
 <input type='password' id='confirm-delete-password' name='password' placeholder='"+_("confirm_password")+"' autofocus />\n\
 <div class='error-message hidden'></div>\n\
-<div id='confirm-button' class='button action'>"+_("confirm")+"</button>\n\
+<div id='confirm-button' class='button'>"+_("confirm")+"</button>\n\
 ");
     ui.modal.windows["confirm-delete"].html.keydown(function(e) {
 	if(e.which == 13)
@@ -180,7 +191,7 @@ function ui_create_modals() {
     });
     ui.modal.windows["change-name"]=new Modal("change-name",_("change_name"),"\
 <input type='text' id='change-name-to' name='change-name-to' placeholder='"+_("new_name")+"' autofocus />\n\
-<div id='change-name-button' class='button action'>"+_("change_name")+"</button>\n\
+<div id='change-name-button' class='button'>"+_("change_name")+"</button>\n\
 ");
     ui.modal.windows["change-name"].html.keydown(function(e) {
 	if(e.which == 13)
@@ -284,8 +295,7 @@ function ui_register() {
 
 function ui_change_name() {
     ui_show_modal("change-name");
-    if(voicelink.session.name != null)
-	$("#modal-change-name #change-name-to").val(voicelink.session.name);
+    $("#modal-change-name #change-name-to").val(voicelink.get_name());
 }
 
 function ui_change_name_final() {
@@ -298,16 +308,17 @@ function ui_change_name_final() {
 }
 
 function ui_logged_in() {
+    $("body").removeClass("logged-out");
     $("body").addClass("logged-in");
     $("#login-show").text(_("logout"));
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_logout);
-    view_restore("inbox");
     ui_hide_login();
 }
 
 function ui_logged_out() {
     $("body").removeClass("logged-in");
+    $("body").addClass("logged-out");
     $("#login-show").text(_("login"));
     $("#login-show").unbind("click");
     $("#login-show").bind("click",ui_show_login);
@@ -315,7 +326,7 @@ function ui_logged_out() {
 	$(this).val("");
     });
     ui_hide_modal_final("*");
-    view_help();
+    view_set_final_immediate("help");
 }
 
 function ui_show_login() {
@@ -340,11 +351,41 @@ function ui_done() {
 //    view_restore_immediate();
 }
 
+function ui_record_init() {
+    ui.record_pulse=false;
+}
+
+function ui_pulse() {
+    if(ui.record_pulse) {
+	if(ui.record_pulse_direction == 1) {
+	    $("#record-message").addClass("pulse");
+	    ui.record_pulse_direction=-1;
+	} else {
+	    ui.record_pulse_direction=1;
+	    $("#record-message").removeClass("pulse");
+	}
+	setTimeout(ui_pulse,500);
+    } else {
+	$("#record-message").removeClass("pulse");
+    }
+}
+
+function ui_record_start() {
+    ui.record_pulse=true;
+    ui_pulse();
+}
+
+function ui_record_stop() {
+    ui.record_pulse=false;
+}
+
 function ui_start_record() {
     mic_record_start(function(data) {
-	$("#new #record-button").text(_("stop_record"));
-	$("#new #record-button").unbind("click");
-	$("#new #record-button").bind("click",ui_stop_record);
+	$("body").addClass("record");
+	$("#record-message").unbind("click");
+	$("#record-message").bind("click",ui_stop_record);
+	$("#record-message img").attr("src","assets/img/recording.svg");
+	ui_record_start();
     },function() {
 	console.log("Hey, you denied VoiceLink microphone access!");
     });
@@ -352,15 +393,13 @@ function ui_start_record() {
 
 function ui_stop_record() {
     mic_record_stop(function(data) {
-	$("#new #record-button").text(_("start_record"));
-	$("#new #record-button").unbind("click");
-	$("#new #record-button").bind("click",ui_start_record);
+	ui_record_stop();
+	$("body").removeClass("record");
+	$("#record-message img").attr("src","assets/img/record.svg");
+	$("#record-message").unbind("click");
+	$("#record-message").bind("click",ui_start_record);
 	voicelink.new_message(data.blob,function(data) {
-	    voicelink.recipients(data.message_id,$("#new #recipients-input").val(),function(r) {
 
-	    },function(r,n) {
-
-	    });
 	});
 	console.log(data);
     });
@@ -384,26 +423,6 @@ function ui_format_date(timestamp) {
 	day:(difference>1?false:true),
 	full_time:date.format("l\\, F j, Y \\a\\t h\\:i\\:s a")
     };
-}
-
-function ui_edit_message(id) {
-    if(!voicelink.is_message(id))
-	return;
-    if(voicelink.message_folder(id) != "drafts")
-	return;
-    var m=voicelink.get_message(id);
-    $("#new .from").text(voicelink.get_name());
-    console.log(m.duration);
-    $("#new .duration").text(m.duration);
-    var d=ui_format_date(m.composed);
-    var title_time=d.full_time;
-    if(d.day)
-	d="<span class='time'>"+d.time+"</span>";
-    else
-	d="<span class='date'>"+date+"</span><span class='time'>"+d.time+"</span>";
-    $("#new .composed").attr("title",title_time);
-    $("#new .composed").empty();
-    $("#new .composed").append(d);
 }
 
 function ui_delete_message(id) {

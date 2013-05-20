@@ -1,13 +1,12 @@
 
 #h {
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.5);
+    border-bottom: 1px solid #bbb;
+    outline: 1px solid #eee;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
-    box-shadow: 0 0 4px rgba(0,0,0,0.1);
     color: #888;
     height: 52px;
-    padding: 10px;
-    position: relative;
     vertical-align: middle;
     width: 100%;
     z-index: 1000;
@@ -21,6 +20,7 @@
 
 #h #account-status {
     position: absolute;
+    top: 10px;
     right: 10px;
 }
 
@@ -48,15 +48,64 @@
     display: none;
 }
 
+#h #record-message {
+    display: inline-block;
+    line-height: 1em;
+    padding-top: 0;
+    border-width: 0;
+    padding-bottom: 0;
+    position: relative;
+    top: 10px;
+    left: 200px;
+    overflow: hidden;
+    opacity: 0;
+    max-height: 0;
+    -webkit-transition: max-height 0.1s ease, padding 0.1s ease, opacity 0.1s ease, border-width 0.1s ease;
+    -moz-transition: max-height 0.1s ease, padding 0.1s ease, opacity 0.1s ease, border-width 0.1s ease;
+}
+
+.logged-in #h #record-message {
+    border-width: 1px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    max-height: 50px;
+    opacity: 1;
+    -webkit-transition: background-color 0.5s ease;
+    -moz-transition: background-color 0.5s ease;
+}
+
+.record #h #record-message {
+    background-color: #b00;
+}
+
+#h #record-message.pulse {
+    background-color: #f66;
+}
+
+#h #record-message img {
+    display: block;
+}
+
 #h h1 {
-    background: transparent url("../img/logo-small.png") center center no-repeat;
+    background: #555 url("../img/logo-white.png") center center no-repeat;
+    border-bottom: 1px solid #888;
+    box-shadow: inset -100px 0 20px -100px #000, inset 0 -101px 0 -100px #111;
     color: transparent;
     display: inline-block;
+    padding: 10px;
     height: 32px;
     width: 150px;
     user-select: none;
+    -webkit-transition: background 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+    -moz-transition: background 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
     -moz-user-select: none;
     -webkit-user-select: none;
+}
+
+.logged-out #h h1 {
+    background: transparent url("../img/logo-black.png") center center no-repeat;
+    border-bottom-color: transparent;
+    box-shadow: none;
 }
 
 #h h1:hover {

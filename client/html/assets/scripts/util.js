@@ -1,4 +1,7 @@
 
+function feedback(s) {
+    return "<a target='_blank' href='https://docs.google.com/forms/d/11B7GBOvlyhU5FpbRSVVMEQJqT7vNg1rG8YaOLmNvBI8/viewform' title='Send us feedback'>"+s+"</a>";
+}
 
 // thanks to http://jacwright.com/projects/javascript/date_format/
 // Simulates PHP's date function

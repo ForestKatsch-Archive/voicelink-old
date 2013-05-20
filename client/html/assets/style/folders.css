@@ -1,42 +1,66 @@
 
 #folders {
+    background-color: #555;
+    box-shadow: inset -100px 0 20px -100px #000;
+    height: 100%;
+    padding-bottom: 52px;
+    top: 52px;
     position: absolute;
     left: 0;
-    bottom: 0;
-    width: 100%;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    width: 170px;
     z-index: 400;
+    -webkit-transition: width 0.1s ease, opacity 0.1s ease;
+    -moz-transition: width 0.1s ease, opacity 0.1s ease;
+}
+
+.logged-out #folders {
+    opacity: 0;
+    width: 0;
 }
 
 #folders ul {
-    padding-left: 17em;
+    width: 100%;
 }
 
 #folders li {
     border: none;
-    border-bottom: 3px solid transparent;
     border-radius: 0;
-    color: #888;
-    margin-bottom: -1px;
-    padding: 5px 20px;
-    -webkit-transition: color 0.1s ease, border-color 0.1s ease, text-shadow 0.1s ease,
-    width 0.1s ease, padding 0.1s ease, opacity 0.1s ease;
+    color: #ccc;
+    display: block;
+    padding: 5px 10px;
+    padding-right: 40px;
+    position: relative;
+    -webkit-transition: color 0.1s ease, background-color 0.1s ease, padding 0.1s ease;
+    -moz-transition: color 0.1s ease, background-color 0.1s ease, padding 0.1s ease;
+}
+
+#folders li:after {
+    border: 10px solid transparent;
+    content: "";
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 3px;
+    -webkit-transition: border-color 0.1s ease;
+    -moz-transition: border-color 0.1s ease;
 }
 
 #folders li:hover {
-    color: #888;
-}
-
-#folders li.hidden {
-    width: 0;
-    padding-left: 0;
-    padding-right: 0;
-    opacity: 0;
-    -webkit-transform: scale(1,0);
+    color: #fff;
 }
 
 #folders li.open {
-    border-color: #555;
-    color: #000;
+    padding-left: 20px;
+    padding-right: 30px;
+    color: #fff;
+}
+
+#folders li.open:after {
+    border-right-color: #ddd;
 }
 
 #folders ul {

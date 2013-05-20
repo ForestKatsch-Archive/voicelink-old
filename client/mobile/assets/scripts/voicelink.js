@@ -19,20 +19,7 @@ var voicelink={
 	handle:/^[\w\-\.]+$/
     },
     requests:[],
-    folders:{
-	inbox:{
-	    "messages":[],
-	    "unread_messages":0,
-	},
-	sent:{
-	    "messages":[],
-	    "unread_messages":0,
-	},
-	drafts:{
-	    "messages":[],
-	    "unread_messages":0,
-	},
-    },
+    messages:{},
     session:{
 	handle:null,
 	name:null,
@@ -116,10 +103,13 @@ voicelink.Request=function(action,args,callback,error) {
 voicelink.init=function() {
     $(document).unload(voicelink.save);
     voicelink.restore_session();
-    if(voicelink.session.session_id != -1)
-	voicelink.verify_session();
-    else
+    if(voicelink.session.session_id != -1) {
+	voicelink.verify_session(function() {},function(r,n) {
+	    voicelink.event("session_dead");
+	});
+    } else {
 	voicelink.event("session_dead");
+    }
 };
 
 voicelink.verified=function() {
@@ -127,13 +117,8 @@ voicelink.verified=function() {
 };
 
 voicelink.get_message=function(id) {
-    console.log(id);
-    for(var i=0;i<voicelink.folders[voicelink.message_folder(id)].messages.length;i++) {
-	var m=voicelink.folders[voicelink.message_folder(id)].messages[i];
-	console.log(m);
-	if(m.message_id == id)
-	    return m;
-    }
+    if(voicelink.messages[id] != undefined)
+	return voicelink.messages[id];
     return null;
 };
 
@@ -195,26 +180,7 @@ voicelink.update=function(callback,error) {
 	if(callback)
 	    callback(r);
 	if(r.folders != undefined) {
-	    if(r.folders.inbox != undefined) {
-		if(r.folders.inbox.number != voicelink.folders.inbox.messages.length) {
-		    console.log("Fetching inbox.");
-		    voicelink.get_folder("inbox",function(r) {
 
-		    },function(r,n) {
-			console.log(r,n);
-		    });
-		}
-	    }
-	    if(r.folders.drafts != undefined) {
-		if(r.folders.drafts.number != voicelink.folders.drafts.messages.length) {
-		    console.log("Fetching drafts.");
-		    voicelink.get_folder("drafts",function(r) {
-
-		    },function(r,n) {
-			//			console.log(r,n);
-		    });
-		}
-	    }
 	}
 	if(r.user != undefined) {
 	    if(r.user.name != undefined) {
@@ -231,16 +197,12 @@ voicelink.get_folder=function(folder,callback,error) {
 	folder:folder,
 	number:100
     },function(r) {
-	r.folder=folder;
-	if(folder == "drafts") {
-	    if(r.messages != undefined) {
-		voicelink.folders.drafts.messages=[];
-		for(var i=0;i<r.messages.length;i++) {
-		    var message=r.messages[i];
-		    var m=new voicelink.Message(parseInt(message.message_id),voicelink.get_name(),[],
-						-1,message.composed,-1,message.duration);
-		    voicelink.folders.drafts.messages.push(m);
-		}
+	if(r.messages != undefined) {
+	    for(var i=0;i<r.messages.length;i++) {
+		var message=r.messages[i];
+		var m=new voicelink.Message(parseInt(message.message_id),voicelink.get_name(),[],
+					    -1,message.composed,-1,message.duration);
+		voicelink.messages[message.message_id].push(m);
 	    }
 	}
 	if(callback)
@@ -386,7 +348,6 @@ voicelink.delete_message=function(message_id,callback,error) {
     voicelink.requests.push(new voicelink.Request("delete_message",{
 	message_id:message_id
     },function(r) {
-	voicelink.update();
 	if(callback)
 	    callback(r);
     },function(r,n) {
@@ -397,21 +358,6 @@ voicelink.delete_message=function(message_id,callback,error) {
 };
 
 voicelink.message_folder=function(message_id) {
-    for(var i=0;i<voicelink.folders.inbox.messages.length;i++) {
-	if(voicelink.folders.inbox.messages[i].message_id == message_id) {
-	    return "inbox";
-	}
-    }
-    for(var i=0;i<voicelink.folders.sent.messages.length;i++) {
-	if(voicelink.folders.sent.messages[i].message_id == message_id) {
-	    return "sent";
-	}
-    }
-    for(var i=0;i<voicelink.folders.drafts.messages.length;i++) {
-	if(voicelink.folders.drafts.messages[i].message_id == message_id) {
-	    return "drafts";
-	}
-    }
     return null;
 };
 

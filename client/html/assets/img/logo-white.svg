@@ -15,8 +15,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/logo-black.png"
+   sodipodi:docname="logo-white.svg"
+   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/logo-small.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45">
   <defs
@@ -61,9 +61,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="6.383838"
-     inkscape:cx="123.01945"
-     inkscape:cy="-4.7410964"
+     inkscape:zoom="9.0281103"
+     inkscape:cx="97.345377"
+     inkscape:cy="34.762578"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -127,7 +127,7 @@
        sodipodi:type="arc" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#404040;fill-opacity:1;stroke:none;font-family:Roboto Slab;-inkscape-font-specification:Roboto Slab Bold"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#f0f0f0;fill-opacity:1;stroke:none;font-family:Roboto Slab;-inkscape-font-specification:Roboto Slab Bold"
        x="81.215218"
        y="1035.3915"
        id="text2987"
@@ -136,10 +136,10 @@
          id="tspan2989"
          x="81.215218"
          y="1035.3915"
-         style="fill:#404040;fill-opacity:1">VoiceLink</tspan></text>
+         style="fill:#f0f0f0;fill-opacity:1">VoiceLink</tspan></text>
     <path
        sodipodi:type="arc"
-       style="fill:#404040;fill-opacity:1;stroke:none"
+       style="fill:#f0f0f0;fill-opacity:1;stroke:none"
        id="path3846"
        sodipodi:cx="32"
        sodipodi:cy="32"
@@ -152,9 +152,9 @@
        inkscape:connector-curvature="0"
        id="path3854"
        d="m 54,1016.3622 c -8,8 -36,8 -44,0 l 0,8 c 8,8 36,8 44,0 z"
-       style="fill:#ffffff;fill-opacity:1;stroke:none" />
+       style="fill:#404040;fill-opacity:1;stroke:none" />
     <path
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       style="fill:#404040;fill-opacity:1;stroke:none"
        d="m 36,1042.3622 c -8,-8 -8,-36 0,-44.00002 l -8,0 c -8,8.00002 -8,36.00002 0,44.00002 z"
        id="path3860"
        inkscape:connector-curvature="0"

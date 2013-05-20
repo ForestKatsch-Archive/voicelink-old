@@ -5,11 +5,11 @@
     <link rel="stylesheet" href="assets/style/main.css" />
     <link rel="favicon" href="assets/img/favicon.ico" />
     <script src="assets/scripts/jquery.min.js"></script>
+    <script src="assets/scripts/util.js"></script>
     <script src="assets/scripts/parseuri.js"></script>
     <script src="assets/scripts/recorder.js"></script>
     <script src="assets/scripts/locale.js"></script>
     <script src="assets/scripts/mic.js"></script>
-    <script src="assets/scripts/util.js"></script>
     <script src="assets/scripts/ui.js"></script>
     <script src="assets/scripts/view.js"></script>
     <script src="assets/scripts/voicelink.js"></script>
@@ -18,6 +18,7 @@
   <body>
     <header id="h"> 
      <h1>VoiceLink</h1>
+     <a id="record-message" class="button action"><img src="assets/img/record.png" alt="Record new message" title="Record new message" /></a>
      <div id="account-status">
        <a id="register-show" tabindex="100" class="hidden-button">Register</a>
        <a id="handle"></a>
@@ -25,29 +26,16 @@
      </div>
      <div id="folders" class="hidden">
        <ul>
-	 <li class="inbox login hidden-button open">Inbox</li>
-	 <li class="sent login hidden-button">Sent</li>
-	 <li class="drafts login hidden-button">Drafts</li>
-	 <li class="settings login hidden-button">Settings</li>
+	 <li class="inbox hidden-button open">Inbox</li>
+	 <li class="sent hidden-button">Sent</li>
+	 <li class="drafts hidden-button">Drafts</li>
+	 <li class="settings hidden-button">Settings</li>
 	 <li class="help hidden-button">Help</li>
        </ul>
      </div>
     </header>
     <div id="view">
       <div class="wrapper">
-      </div>
-    </div>
-    <div id="new">
-      <div class="wrapper">
-	<a id="record-button" class="button">New message</a>
-	<div class="info">
-	  <span class="from"></span>
-	  <span class="composed"></span>
-	  <span class="duration"></span>
-	</div>
-	<div class="recipients">
-	  <input id="recipients-input" placeholder="To" />
-	</div>
       </div>
     </div>
     <div id="modal">

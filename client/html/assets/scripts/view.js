@@ -46,15 +46,13 @@ function view_generate_message(m,folder) {
 	var time_title=d.full_time;
 	var from=voicelink.get_name();
 	var duration=m.duration;
-	return "<a class='link open' onclick='javascript:ui_edit_message("+m.message_id+")'>\
-<img src='assets/img/edit.png' alt='"+_("edit_message")+"' title='"+_("edit_message")+"' /></a>\
-<a class='link play' onclick='javascript:ui_play_message("+m.message_id+")'>\
+	return "<a class='link play' onclick='javascript:ui_play_message("+m.message_id+")'>\
 <img src='assets/img/play.png' alt='Play' title='Play message' /></a>\
 <span class='from' title='"+m.from_handle+"'>"+from+"</span>\
 <span class='sent' title='"+time_title+"'>"+d+"</span>\
 <span class='duration'>"+duration+"</span>\
 <a class='link delete' onclick='javascript:ui_delete_message("+m.message_id+")'>\
-<img src='assets/img/close.png' alt='Delete' title='Delete' /></a>";
+<img src='assets/img/delete.png' alt='Delete' title='Delete' /></a>";
     } else {
 	return "errors. this is BAD!!!";
     }
@@ -70,7 +68,7 @@ function view_update() {
 }
 
 function view_update_messages(folder) {
-    var messages=voicelink.folders[folder].messages;
+    return;
     $("#view-"+folder+" .wrapper").empty();
     if(messages.length == 0) {
 	$("#view-"+folder+" .wrapper").append("<div class='folder no-messages'>"+_("no_messages")+"</div>")
@@ -79,7 +77,7 @@ function view_update_messages(folder) {
     }
     for(var i=0;i<messages.length;i++) {
 	var m=messages[i];
-	$("#view-"+folder+" .wrapper ul").append("<li id='message-number-"+m.message_id+"'>"+view_generate_message(m,folder)+"</li>");
+	$("#view-"+folder+" .wrapper ul").append("<li id='message-number-"+m.message_id+"' class='message'>"+view_generate_message(m,folder)+"</li>");
     }
 }
 
@@ -146,15 +144,6 @@ function view_push_url(v) {
 function view_before_switch(v) {
     if(v == "")
 	v="help";
-    if(!voicelink.verified()) {
-	$("#folders li.login").addClass("hidden");
-	if(v != "help") {
-	    v="help";
-	    history.pushState(null,null,"?help#");
-	}
-    } else {
-	$("#folders li.login").removeClass("hidden");
-    }
     $("#folders *").removeClass("open");
     if($("#folders").find("."+v).length != 0)
 	$("#folders ."+v).addClass("open");
@@ -162,8 +151,6 @@ function view_before_switch(v) {
     for(var i in view.views) {
 	view.views[i].hide();
     }
-    if(v in voicelink.folders)
-	view_update_messages(v);
     return v;
 }
 
@@ -185,12 +172,12 @@ function view_save() {
 
 function view_restore() {
     if(!("view" in localStorage)) {
-	view.view="inbox";
+	view.view="help";
 	view_save();
     }
     view.view=localStorage["view"];
     view_push_url(view.view);
-    view_set_final(view.view);
+    view_set_final_immediate(view.view);
 }
 
 function view_restore_immediate() {

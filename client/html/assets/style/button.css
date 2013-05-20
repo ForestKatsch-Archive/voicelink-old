@@ -3,10 +3,10 @@
 .hidden-button {
     background: transparent;
     border: 1px solid transparent;
-    border-radius: 2px;
+    border-radius: 3px;
     color: #666;
     display: inline-block;
-    padding: 5px 10px;
+    padding: 4px 10px;
     -moz-transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
     -webkit-transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
     user-select: none;
@@ -17,16 +17,51 @@
 .button {
     background-color: #eee;
     border: 1px solid #bbb;
-    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 -10px 5px -10px rgba(0,0,0,0.05), 0 1px 1px rgba(255,255,255,0.5);
+    color: #555;
+}
+
+.modal .button,
+.button.dark {
+    background-color: #555;
+    border: 1px solid #444;
+    box-shadow: inset 0 -10px 5px -10px rgba(0,0,0,0.2), 0 1px 1px rgba(255,255,255,0.1);
+    color: #ddd;
+}
+
+.button.action {
+    background-color: #e00;
+    border: 1px solid #900;
+    color: #555;
 }
 
 .button:hover {
     background-color: #f6f6f6;
 }
 
+.modal .button:hover,
+.button.dark:hover {
+    background-color: #666;
+}
+
+.button.action:hover {
+    background-color: #f11;
+}
+
 .button:active {
     background: #ddd;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.1), 0 0 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 10px 5px -10px rgba(0,0,0,0.1), 0 1px 1px rgba(255,255,255,0.5);
+}
+
+.modal .button:active,
+.button.dark:active {
+    background-color: #333;
+    border-color: #111;
+    box-shadow: inset 0 10px 5px -10px rgba(0,0,0,0.1);
+}
+
+.button.action:active {
+    background-color: #b00;
 }
 
 .hidden-button:hover,

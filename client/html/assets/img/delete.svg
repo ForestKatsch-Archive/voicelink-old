@@ -14,8 +14,8 @@
    id="svg3824"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="close.svg"
-   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/close.png"
+   sodipodi:docname="delete.svg"
+   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/delete.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="6.8594439"
-     inkscape:cx="19.351306"
-     inkscape:cy="-1.6363348"
+     inkscape:zoom="54.875551"
+     inkscape:cx="9.5831954"
+     inkscape:cy="8.4528814"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,14 +64,11 @@
      id="layer1"
      transform="translate(0,-1040.3622)">
     <path
-       style="fill:none;stroke:#f0f0f0;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 2,1050.3622 8,-8"
-       id="path3878"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;stroke:#f0f0f0;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 2,1042.3622 8,8"
-       id="path3882"
-       inkscape:connector-curvature="0" />
+       style="fill:#404040;fill-opacity:1;stroke:none"
+       d="m 1,1 0,2 1,0 1,9 6,0 1,-9 1,0 L 11,1 8,1 8,0 4,0 4,1 z"
+       id="path3904"
+       inkscape:connector-curvature="0"
+       transform="translate(0,1040.3622)"
+       sodipodi:nodetypes="ccccccccccccc" />
   </g>
 </svg>

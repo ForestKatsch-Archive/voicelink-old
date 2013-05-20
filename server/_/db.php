@@ -18,9 +18,9 @@ function db_init() {
 
 db_init();
 
-function db_get_user_id_from_session_id($session_id,$session_hash) {
+function db_get_user_id_from_session_id($sid,$shash) {
   auth_needed(true);
-  return mysql_get_user_id_from_session_id($session_id,$session_hash);
+  return mysql_get_user_id_from_session_id($sid,$shash);
 }
 
 function db_user_exists($handle) {
@@ -31,12 +31,12 @@ function db_start_session($handle,$password) {
   return mysql_start_session($handle,$password);
 }
 
-function db_verify_session($session_id,$session_hash) {
-  return mysql_verify_session($session_id,$session_hash);
+function db_verify_session($sid,$shash) {
+  return mysql_verify_session($sid,$shash);
 }
 
-function db_end_session($session_id,$session_hash) {
-  return mysql_end_session($session_id,$session_hash);
+function db_end_session($sid,$shash) {
+  return mysql_end_session($sid,$shash);
 }
 
 function db_verify_user($handle,$password) {
@@ -55,16 +55,8 @@ function db_change_name($user_id,$name) {
   return mysql_change_name($user_id,$name);
 }
 
-function db_get_inbox_messages($user_id) {
-  return mysql_get_inbox_messages($user_id);
-}
-
-function db_get_draft_messages($user_id) {
-  return mysql_get_draft_messages($user_id);
-}
-
-function db_get_draft_message_number($user_id) {
-  return mysql_get_draft_message_number($user_id);
+function db_message_number($user_id) {
+  return 0;
 }
 
 function db_add_message($user_id,$filename) {

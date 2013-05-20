@@ -1,8 +1,13 @@
 
 @import "settings.css";
+@import "help.css";
 
 .view p {
     margin-top: 10px;
+}
+
+strong {
+    font-weight: bold;
 }
 
 a.link,

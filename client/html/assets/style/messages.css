@@ -1,8 +1,65 @@
 
+.folder {
+    max-width: 40em;
+}
+
 .no-messages {
     color: #888;
     display: block;
     font-style: italic;
     margin: 2em auto;
     text-align: center;
+}
+
+.folder .message {
+    padding: 10px;
+    position: relative;
+}
+
+.folder .message+.message {
+    border-top: 1px so.messaged #bbb;
+}
+
+.folder .message .from {
+    color: #000;
+    font-weight: bold;
+    margin-right: 1em;
+}
+
+.folder .message .date {
+    color: #333;
+}
+
+.folder .message .date:before {
+    color: #888;
+    margin-right: 0.3em;
+}
+
+.folder .message .time {
+    color: #333;
+}
+
+.folder .message .time:before {
+    color: #888;
+    margin: 0 0.3em;
+}
+
+.folder .message .duration {
+    color: #000;
+    float: right;
+    margin-right: 30px;
+}
+
+.folder .message .duration:after {
+    color: #666;
+    content: "s";
+}
+
+.folder .message .delete {
+    position: absolute;
+    right: 0;
+}
+
+.folder .message .play {
+    margin: 0 1em;
 }

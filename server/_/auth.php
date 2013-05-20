@@ -5,11 +5,11 @@ $AUTH_SESSION_LENGTH=60*60*24; // in seconds
 require("db.php");
 
 function auth_logged_in() {
-  if(!($session_id=get("session_id")))
+  if(!($sid=get("session_id")))
     return false;
-  if(!($session_hash=get("session_hash")))
+  if(!($shash=get("session_hash")))
     return false;
-  if(mysql_verify_session($session_id,$session_hash) == false) // it actually returns a dict object
+  if(mysql_verify_session($sid,$shash) == false) // it actually returns a dict object
     return false;
   return true;
 }
@@ -70,11 +70,9 @@ function auth_start_session() {
 }
 
 function auth_verify_session() {
-  if(!($session_id=get("session_id")))
-    reply_error("arg","session_id");
-  if(!($session_hash=get("session_hash")))
-    reply_error("arg","session_hash");
-  $data=db_verify_session($session_id,$session_hash);
+  $sid=gsid();
+  $shash=gshash();
+  $data=db_verify_session($sid,$shash);
   if($data == false)
     reply("ok",["active"=>"false"]);
   reply("ok",[
@@ -86,11 +84,9 @@ function auth_verify_session() {
 
 function auth_end_session() {
   auth_needed(true);
-  if(!($session_id=get("session_id")))
-    reply_error("arg","session_id");
-  if(!($session_hash=get("session_hash")))
-    reply_error("arg","session_hash");
-  db_end_session($session_id,$session_hash);
+  $sid=gsid();
+  $shash=gshash();
+  db_end_session($sid,$shash);
   reply("ok",["active"=>"false"]);
 }
 
@@ -106,13 +102,11 @@ function auth_delete_user() {
 
 function auth_change_name() {
   auth_needed(true);
-  if(!($session_id=get("session_id")))
-    reply_error("arg","session_id");
-  if(!($session_hash=get("session_hash")))
-    reply_error("arg","session_hash");
+  $sid=gsid();
+  $shash=gshash();
   if(!($name=post("name")))
     $name="";
-  db_change_name(db_get_user_id_from_session_id($session_id,$session_hash),$name);
+  db_change_name(db_get_user_id_from_session_id($sid,$shash),$name);
   reply("ok",[]);
 }
 

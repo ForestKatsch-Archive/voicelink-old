@@ -167,17 +167,17 @@ function mysql_start_session($handle,$password,$expires=null) {
   if($expires == null)
     $expires=$AUTH_SESSION_LENGTH;
   $expires=$expires+$timestamp;
-  $session_hash=md5($user_id . $expires);
-  mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ($user_id,'$session_hash',FROM_UNIXTIME($expires))");
-  $rows=mysql_q("select session_id from $DB_NAME_USER_SESSIONS WHERE user_id='$user_id' && session_hash='$session_hash'");
+  $shash=md5($user_id . $expires);
+  mysql_q("insert into $DB_NAME_USER_SESSIONS (user_id,session_hash,expires) VALUES ($user_id,'$shash',FROM_UNIXTIME($expires))");
+  $rows=mysql_q("select session_id from $DB_NAME_USER_SESSIONS WHERE user_id='$user_id' && session_hash='$shash'");
   if($rows->num_rows != 1)
     reply_error("mysql","Expected one unique session hash/user combination");
   $row=$rows->fetch_assoc();
-  $session_id=$row["session_id"];
+  $sid=$row["session_id"];
   return [
 	  "name"=>$name,
-	  "session_id"=>$session_id,
-	  "session_hash"=>$session_hash,
+	  "session_id"=>$sid,
+	  "session_hash"=>$shash,
 	  "current_time"=>$timestamp,
 	  "expires"=>$expires];
 }
@@ -187,17 +187,17 @@ function mysql_end_expired_sessions($user_id) {
   mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE user_id=$user_id AND expires<=NOW()");
 }
 
-function mysql_get_user_id_from_session_id($session_id,$session_hash) {
+function mysql_get_user_id_from_session_id($sid,$shash) {
   global $DB_NAME_USER_SESSIONS;
-  $rows=mysql_q("select user_id from $DB_NAME_USER_SESSIONS WHERE session_id=$session_id and session_hash='$session_hash'");
+  $rows=mysql_q("select user_id from $DB_NAME_USER_SESSIONS WHERE session_id=$sid and session_hash='$shash'");
   if($rows->num_rows < 1)
     return false;
   return $rows->fetch_assoc()["user_id"];
 }
 
-function mysql_end_expired_sessions_from_id($session_id,$session_hash) {
+function mysql_end_expired_sessions_from_id($sid,$shash) {
   global $DB_NAME_USER_SESSIONS;
-  $user_id=mysql_get_user_id_from_session_id($session_id,$session_hash);
+  $user_id=mysql_get_user_id_from_session_id($sid,$shash);
   if(!$user_id)
     return;
   mysql_end_expired_sessions($user_id);
@@ -208,18 +208,18 @@ function mysql_end_all_sessions($user_id) {
   mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE user_id=$user_id");
 }
 
-function mysql_end_session($session_id,$session_hash) {
+function mysql_end_session($sid,$shash) {
   global $DB_NAME_USER_SESSIONS;
-  if(mysql_verify_session($session_id,$session_hash) != false)
-    mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE session_id=$session_id AND session_hash='$session_hash'");
+  if(mysql_verify_session($sid,$shash) != false)
+    mysql_q("delete from $DB_NAME_USER_SESSIONS WHERE session_id=$sid AND session_hash='$shash'");
   else
     reply_error("auth","needed");
-  mysql_end_expired_sessions_from_id($session_id,$session_hash);
+  mysql_end_expired_sessions_from_id($sid,$shash);
 }
 
-function mysql_verify_session($session_id,$session_hash) {
+function mysql_verify_session($sid,$shash) {
   global $DB_NAME_USER_SESSIONS;
-  $rows=mysql_q("select session_hash,user_id,expires from $DB_NAME_USER_SESSIONS WHERE session_id=$session_id");
+  $rows=mysql_q("select session_hash,user_id,expires from $DB_NAME_USER_SESSIONS WHERE session_id=$sid");
   if($rows->num_rows != 1)
     reply_error("invalid","session");
   $row=$rows->fetch_assoc();
@@ -228,7 +228,7 @@ function mysql_verify_session($session_id,$session_hash) {
   $expires=$row["expires"];
   $expires=strtotime($row["expires"]);
   //  error_log($expires . "  " . $timestamp);
-  if($session_hash != $row["session_hash"])
+  if($shash != $row["session_hash"])
     return false;
   if($expires < $timestamp)
     return false;
@@ -311,11 +311,11 @@ function mysql_add_message($user_id,$file) {
 
 function mysql_verify_message($message_id) {
   global $DB_NAME_MESSAGES;
-  if(!($session_id=get("session_id")))
+  if(!($sid=get("session_id")))
     reply_error("auth","needed");
-  if(!($session_hash=get("session_hash")))
+  if(!($shash=get("session_hash")))
     reply_error("auth","needed");
-  $user_id=mysql_get_user_id_from_session_id($session_id,$session_hash);
+  $user_id=mysql_get_user_id_from_session_id($sid,$shash);
   $rows=mysql_q("select from_user_id from $DB_NAME_MESSAGES WHERE message_id=$message_id");
   if($rows->num_rows != 1)
     reply_error("invalid","rows");
