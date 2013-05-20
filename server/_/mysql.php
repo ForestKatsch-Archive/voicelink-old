@@ -10,8 +10,6 @@ $MYSQL_SERVER="localhost";
 $MYSQL_USER="root";
 $MYSQL_PASSWORD="mysql";
 
-$MYSQL_DRAFT_SELECT="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1";
-
 function mysql_init() {
   global $MYSQL_SERVER,$MYSQL_USER,$MYSQL_PASSWORD,$mysql,$DB_NAME;
   date_default_timezone_set("UTC");
@@ -143,6 +141,14 @@ function mysql_get_name($user_id) {
   return $rows->fetch_assoc()["name"];
 }
 
+function mysql_user_id_exists($user_id) {
+  global $DB_NAME_USERS;
+  $rows=mysql_q("select name from $DB_NAME_USERS WHERE user_id=$user_id");
+  if($rows->num_rows != 1)
+    return false;
+  return true;
+}
+
 function mysql_delete_user($handle,$password) {
   global $DB_NAME_USERS;
   $handle=mysql_escape($handle);
@@ -229,7 +235,6 @@ function mysql_verify_session($sid,$shash) {
   $timestamp=$date->getTimestamp();
   $expires=$row["expires"];
   $expires=strtotime($row["expires"]);
-  //  error_log($expires . "  " . $timestamp);
   if($shash != $row["session_hash"])
     return false;
   if($expires < $timestamp)
@@ -247,23 +252,44 @@ function mysql_change_name($user_id,$name) {
   mysql_q("update $DB_NAME_USERS set name='$name' where user_id=$user_id");
 }
 
+function mysql_get_recipients($message_id) {
+  global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
+  $q="select to_user_id from $DB_NAME_MESSAGE_RECIPIENTS where message_id=$message_id";
+  $result=mysql_q($q);
+  $recipients=[];
+  while($row=$result->fetch_assoc()) {
+    $recipients[]=mysql_get_handle_from_user_id($row["to_user_id"]);
+  }
+  return $recipients;
+}
+
 function mysql_get_inbox_messages($user_id) {
   global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
   $messages=[];
-  $q="select messages.message_id,messages.from_user_id,messages.sent 
-from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
-where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
-&& $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id) 
-ORDER BY messages.sent DESC";
-  $result=mysql_q($q);
-  while($row=$result->fetch_assoc()) {
-    $from=mysql_get_handle_from_user_id($row["from_user_id"]);
-    $messages[]=[
-		 "message_id"=>$row["message_id"],
-		 "duration"=>$row["duration"],
-		 "sent"=>strtotime($row["sent"]),
-		 "from"=>$from
-		 ];
+  $req="select message_id,to_user_id from $DB_NAME_MESSAGE_RECIPIENTS where to_user_id=$user_id";
+  $rresult=mysql_q($req);
+  while($row=$rresult->fetch_assoc()) {
+    $mid=$row["message_id"];
+    if(!isset($messages[$mid])) {
+      $mq="select from_user_id,duration,composed,sent from $DB_NAME_MESSAGES where message_id=$mid";
+      $mresult=mysql_q($mq);
+      if($mresult->num_rows != 1)
+	continue; // message no longer exists
+      $message=$mresult->fetch_assoc();
+      $from=mysql_get_handle_from_user_id($message["from_user_id"]);
+      $messages[$mid]=[
+		       "message_id"=>$mid,
+		       "duration"=>$message["duration"],
+		       "folder"=>"inbox",
+		       "from"=>mysql_get_handle_from_user_id($message["from_user_id"]),
+		       "reply_to"=>-1,
+		       "to"=>mysql_get_recipients($mid),
+		       "composed"=>strtotime($message["composed"]),
+		       "sent"=>strtotime($message["sent"]),
+		       ];
+    } else {
+      $messages[$mid]["to"][]=$row["to_user_id"];
+    }
   }
   return $messages;
 }
@@ -281,7 +307,28 @@ function mysql_get_draft_messages($user_id) {
 		 "folder"=>"drafts",
 		 "from"=>$handle,
 		 "reply_to"=>-1,
-		 "to"=>[],
+		 "to"=>mysql_get_recipients($row["message_id"]),
+		 "composed"=>strtotime($row["composed"]),
+		 "sent"=>-1
+		 ];
+  }
+  return $messages;
+}
+
+function mysql_get_sent_messages($user_id) {
+  global $DB_NAME_MESSAGES;
+  $messages=[];
+  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=0 ORDER BY composed DESC";
+  $result=mysql_q($q);
+  $handle=mysql_get_handle_from_user_id($user_id);
+  while($row=$result->fetch_assoc()) {
+    $messages[]=[
+		 "message_id"=>$row["message_id"],
+		 "duration"=>$row["duration"],
+		 "folder"=>"sent",
+		 "from"=>$handle,
+		 "reply_to"=>-1,
+		 "to"=>mysql_get_recipients($row["message_id"]),
 		 "composed"=>strtotime($row["composed"]),
 		 "sent"=>-1
 		 ];
@@ -290,39 +337,43 @@ function mysql_get_draft_messages($user_id) {
 }
 
 function mysql_get_messages($user_id) {
-  return array_merge(mysql_get_draft_messages($user_id));
+  if(!mysql_user_id_exists($user_id))
+    reply_error("invalid","user");
+  return array_merge(mysql_get_inbox_messages($user_id),
+		     mysql_get_sent_messages($user_id),
+		     mysql_get_draft_messages($user_id));
 }
 
 function mysql_inbox_message_number($user_id) {
   global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
   $messages=[];
-  $q="select messages.message_id,messages.from_user_id,messages.sent 
-from $DB_NAME_MESSAGES, $DB_NAME_MESSAGE_RECIPIENTS 
-where ($DB_NAME_MESSAGE_RECIPIENTS.to_user_id=$user_id 
-&& $DB_NAME_MESSAGES.message_id=$DB_NAME_MESSAGE_RECIPIENTS.message_id && $DB_NAME_MESSAGES.draft=0 &&) 
-ORDER BY messages.sent DESC";
+  $q="select message_id from $DB_NAME_MESSAGE_RECIPIENTS where to_user_id=$user_id";
   $result=mysql_q($q);
   return $result->num_rows;
 }
 
-function mysql_inbox_message_number($user_id) {
-  global $DB_NAME_MESSAGES,$MYSQL_INBOX_SELECT;
+function mysql_sent_message_number($user_id) {
+  global $DB_NAME_MESSAGES;
+  $messages=[];
+  $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=0";
+  $result=mysql_q($q);
+  return $result->num_rows;
+}
+
+function mysql_draft_message_number($user_id) {
+  global $DB_NAME_MESSAGES;
   $messages=[];
   $q="select message_id,duration,composed from $DB_NAME_MESSAGES WHERE from_user_id=$user_id AND draft=1";
   $result=mysql_q($q);
   return $result->num_rows;
 }
 
-function mysql_draft_message_number($user_id) {
-  global $DB_NAME_MESSAGES,$MYSQL_DRAFT_SELECT;
-  $messages=[];
-  $q=$MYSQL_DRAFT_SELECT;
-  $result=mysql_q($q);
-  return $result->num_rows;
-}
-
 function mysql_message_number($user_id) {
-  return mysql_draft_message_number($user_id);
+  if(!mysql_user_id_exists($user_id))
+    reply_error("invalid","user");
+  return mysql_inbox_message_number($user_id)+
+    mysql_sent_message_number($user_id)+
+    mysql_draft_message_number($user_id);
 }
 
 function mysql_add_message($user_id,$file) {
@@ -346,19 +397,30 @@ function mysql_add_message($user_id,$file) {
 }
 
 function mysql_verify_message($message_id) {
-  global $DB_NAME_MESSAGES;
+  global $DB_NAME_MESSAGES,$DB_NAME_MESSAGE_RECIPIENTS;
   if(!($sid=get("session_id")))
     reply_error("auth","needed");
   if(!($shash=get("session_hash")))
     reply_error("auth","needed");
   $user_id=mysql_get_user_id_from_session_id($sid,$shash);
-  $rows=mysql_q("select from_user_id from $DB_NAME_MESSAGES WHERE message_id=$message_id");
-  if($rows->num_rows != 1)
+  $mrows=mysql_q("select from_user_id,sent,draft from $DB_NAME_MESSAGES WHERE message_id=$message_id");
+  if($mrows->num_rows != 1)
     reply_error("invalid","rows");
-  $row=$rows->fetch_assoc();
-  if($row["from_user_id"] == $user_id)
+  $mrow=$mrows->fetch_assoc();
+  if($mrow["draft"] == 0) {
+    $rrows=mysql_q("select to_user_id from $DB_NAME_MESSAGE_RECIPIENTS WHERE message_id=$message_id");
+    if($mrows->num_rows >= 1) {
+      while($rrow=$rrows->fetch_assoc()) {
+	$to=$rrow["to_user_id"];
+	if($to == $user_id)
+	  return true;
+      }
+    }
+  }
+  if($mrow["from_user_id"] == $user_id)
     return true;
-  reply_error("auth","message");
+  error_log("NOT ALLOWED TO PLAY MESSAGE");
+  print("");
 }
 
 function mysql_play_message($message_id) {
@@ -367,7 +429,6 @@ function mysql_play_message($message_id) {
   $rows=mysql_q("select wav_data from $DB_NAME_MESSAGES WHERE message_id=$message_id");
   if($rows->num_rows != 1)
     reply_error("invalid","rows");
-  error_log($message_id);
   $row=$rows->fetch_assoc();
   print($row["wav_data"]);
   exit(0);

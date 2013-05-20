@@ -36,13 +36,13 @@ var voicelink={
 }
 
 voicelink.Message=function(message_id,folder,from,to,reply_to,composed,sent,duration) {
-    this.message_id=message_id;
+    this.message_id=parseInt(message_id);
     this.folder=folder;
     this.from=from;
     this.to=to;
-    this.composed=composed;
+    this.composed=parseInt(composed);
     this.sent=sent;
-    this.duration=duration/1000;
+    this.duration=parseInt(duration/1000);
 };
 
 voicelink.bind=function(e,c) {

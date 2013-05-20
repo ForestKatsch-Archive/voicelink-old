@@ -42,6 +42,7 @@ function view_generate_message(m,folder) {
     d=d[0];
     var del="";
     var to="";
+    var send="";
     if(folder == "drafts") {
 	var from=voicelink.get_name();
 	var duration=m.duration;
@@ -50,16 +51,28 @@ function view_generate_message(m,folder) {
 	var t="";
 	for(var i=0;i<m.to.length;i++)
 	    t+=m.to[i]+" ";
-	t=t.substr(0,t.length-3);
+	t=t.substr(0,t.length-1);
 	to="<input class='to' onblur='javascript:ui_update_to("+m.message_id+")' value='"+t+"' placeholder='To' />";
+	send="<a class='link send' onclick='javascript:ui_send_message("+m.message_id+")'><img src='assets/img/send.png' alt='"+_("send")+"' title='"+_("send")+"' /></a>";
+    } else if((folder == "inbox") || (folder == "sent")) {
+	d=ui_format_date(m.sent);
+	time_title=d[1];
+	d=d[0];
+	var from=m.from;
+	var duration=m.duration;
+	del="";
+	var t="";
+	for(var i=0;i<m.to.length;i++)
+	    t+=m.to[i]+" ";
+	t=t.substr(0,t.length-3);
+	to="";
     }
     return "<a class='link play' onclick='javascript:ui_toggle_play_message("+m.message_id+")'>\
 <img src='assets/img/play.png' alt='"+_("play_message")+"' title='"+_("play_message")+"' /></a>\
 <span class='from' title='"+m.from_handle+"'>"+from+"</span>\
 "+to+"\
+"+send+"\
 <span class='sent' title='"+time_title+"'>"+d+"</span>\
-<a class='link send' onclick='javascript:ui_send_message("+m.message_id+")'>\
-Send</a>\
 <span class='duration'>"+duration+"</span>\
 "+del+"";
 }
@@ -111,9 +124,10 @@ function view_update_time() {
 	var d="";
 	if(m.folder == "drafts")
 	    d=ui_format_date(m.composed);
+	else if(m.folder == "inbox")
+	    d=ui_format_date(m.sent);
 	var time_title=d[1];
 	d=d[0];
-	var time_title=d[1];
 	$("#view-"+m.folder+" #message-number-"+m.message_id+" .sent").text(d);
 	$("#view-"+m.folder+" #message-number-"+m.message_id+" .sent").attr("title",time_title);
     }

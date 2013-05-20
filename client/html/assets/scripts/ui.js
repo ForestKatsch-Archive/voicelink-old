@@ -468,8 +468,11 @@ function ui_update_to(id) {
 	return;
     $("#message-number-"+id+" .to").removeClass("illegal");
     var to=$("#message-number-"+id+" .to").val();
-    console.log("Message #"+id+" sent to "+to);
     to=to.split(/\s+/);
+    if(to.length == 1 && to[0] == "")
+	to=to.splice(1);
+    if(to.length == 0)
+	return;
     voicelink.set_recipients(id,to,function(r) {
 
     },function(r,n) {

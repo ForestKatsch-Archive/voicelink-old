@@ -82,6 +82,7 @@ Submit it "+feedback("here")+". Thanks.</p>\
     play_message:"Play message",
     register:"Register",
     repeat_password:"Repeat password",
+    send:"Send message",
     sent:"Sent",
     settings:"Settings",
     start_record:"New message",
