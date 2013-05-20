@@ -7,7 +7,7 @@
     color: #888;
     display: block;
     font-style: italic;
-    margin: 2em auto;
+    margin: 1em auto;
     text-align: center;
 }
 
@@ -24,6 +24,20 @@
     color: #000;
     font-weight: bold;
     margin-right: 1em;
+}
+
+.folder .message .to {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    color: #333;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+.folder .message .to.illegal {
+    color: #f66;
 }
 
 .folder .message .date {

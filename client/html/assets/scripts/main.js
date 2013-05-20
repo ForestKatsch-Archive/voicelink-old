@@ -63,17 +63,10 @@ function update() {
 	console.log("Not verified.");
 	return;
     }
-//    console.log("updating...");
     voicelink.update(function(r) {
-	return;
-	if(r.folders.inbox > 0)
-	    voicelink.get_messages("inbox");
-	if(r.folders.sent > 0)
-	    voicelink.get_messages("sent");
-	if(r.folders.drafts > 0)
-	    voicelink.get_messages("drafts");
+	view_update_time();
     },function(r,n) {
-	console.log(r,n);
+
     });
 }
 

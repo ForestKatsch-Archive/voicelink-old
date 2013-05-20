@@ -40,6 +40,8 @@ var Modal=function(name,title,content) {
 };
 
 var ui={
+    audio:null,
+    playing_message_id:-1,
     login:{
 	html:null,
     },
@@ -402,20 +404,82 @@ function ui_play_message(id) {
     if(!voicelink.is_message(id))
 	return;
     var url=voicelink.get_message_url(id);
-    location.href=url;
+    ui.playing_message_id=id;
+    ui.audio=new Audio();
+    ui.audio.setAttribute("src",url);
+    ui.audio.load();
+    ui.audio.play();
+    ui.audio.addEventListener("ended",ui_stop_message);
+    $("#message-number-"+id+" .play img").attr("src","assets/img/stop.png");
+    $("#message-number-"+ui.playing_message_id+" .play img").attr("title",_("stop_message"));
+}
+
+function ui_toggle_play_message(id) {
+    if(!voicelink.is_message(id))
+	return;
+    if(ui.audio != null)
+	ui_stop_message();
+    else
+	ui_play_message(id);
+    if(id != ui.playing_message_id)
+	ui_play_message(id);
+}
+
+function ui_stop_message() {
+    ui.audio.pause();
+    ui.audio=null;
+    $("#message-number-"+ui.playing_message_id+" .play img").attr("src","assets/img/play.png");
+    $("#message-number-"+ui.playing_message_id+" .play img").attr("title",_("play_message"));
 }
 
 function ui_format_date(timestamp) {
     var date=new Date((timestamp)*1000);
-    var difference=day_difference(date,new Date());
+    var now=new Date();
+    var difference=(now-date)/1000;
     var t=date.format("h\\:i a");
     var d=date.format("l\\, F j, Y");
-    return {
-	date:d,
-	time:t,
-	day:(difference>1?false:true),
-	full_time:date.format("l\\, F j, Y \\a\\t h\\:i\\:s a")
-    };
+    date=new Date(difference*1000);
+    var human="";
+    var seconds=date.format("s");
+    var minutes=date.format("i");
+    var hours=date.format("G");
+    var days=date.format("z");
+    var month=date.format("n");
+    if(seconds[0] == "0")
+	seconds=seconds[1];
+    if(minutes[0] == "0")
+	minutes=minutes[1];
+    if(difference < 60)
+	human=seconds+" second"+s(seconds)+" ago";
+    else if(difference < 60*60)
+	human=minutes+" minute"+s(minutes)+" ago";
+    else if(difference < 60*60*12)
+	human=hours+" hour"+s(hours)+" ago";
+    else if(difference < 60*60*24)
+	human=days+" day"+s(days)+" ago";
+    else if(difference < 60*60*24*30)
+	human=month+" month"+s(month)+" ago";
+    var full=d+" "+t;
+    return [human,full];
+}
+
+function ui_update_to(id) {
+    if(!voicelink.is_message(id))
+	return;
+    $("#message-number-"+id+" .to").removeClass("illegal");
+    var to=$("#message-number-"+id+" .to").val();
+    console.log("Message #"+id+" sent to "+to);
+    to=to.split(/\s+/);
+    voicelink.set_recipients(id,to,function(r) {
+
+    },function(r,n) {
+	if(r == "invalid") {
+	    if(n == "handle") {
+		console.log(id);
+		$("#message-number-"+id+" .to").addClass("illegal");
+	    }
+	}
+    });
 }
 
 function ui_delete_message(id) {

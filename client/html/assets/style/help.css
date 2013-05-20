@@ -1,0 +1,26 @@
+
+#view-help table {
+    display: block;
+    margin: 1em 0;
+}
+
+#view-help table th,
+#view-help table td {
+    padding: 5px;
+    text-align: center;
+    width: 1%;
+}
+
+#view-help table th {
+    border-bottom: 1px solid #444;
+    font-weight: bold;
+}
+
+#view-help table th+th {
+    border-left: 1px solid #444;
+}
+
+#view-help table td+td {
+    border-left: 1px solid #aaa;
+    border-top: 1px solid #aaa;
+}

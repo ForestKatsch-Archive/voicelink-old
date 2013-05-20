@@ -2,6 +2,7 @@
 var voicelink={
     actions:{
 	session_needed:[
+	    "set_recipients",
 	    "end_session",
 	    "delete_message",
 	    "verify_session",
@@ -33,10 +34,11 @@ var voicelink={
     }
 }
 
-voicelink.Message=function(message_id,from_handle,to_handles,reply_to,composed,sent,duration) {
+voicelink.Message=function(message_id,folder,from,to,reply_to,composed,sent,duration) {
     this.message_id=message_id;
-    this.from_handle=from_handle;
-    this.to_handles=to_handles;
+    this.folder=folder;
+    this.from=from;
+    this.to=to;
     this.composed=composed;
     this.sent=sent;
     this.duration=duration/1000;
@@ -211,12 +213,12 @@ voicelink.get_folder=function(folder) {
     var messages=[];
     for(var i in voicelink.messages) {
 	var m=voicelink.messages[i];
-	messages.push(m);
+	if(m.folder == folder)
+	    messages.push(m);
     }
     messages=messages.sort(function(a,b) {
 	return b.composed-a.composed;
     });
-    console.log(messages);
     return messages;
 };
 
@@ -227,6 +229,7 @@ voicelink.get_messages=function(callback,error) {
 	    for(var i=0;i<r.messages.length;i++) {
 		var m=r.messages[i];
 		voicelink.messages[m.message_id]=new voicelink.Message(m.message_id,
+								       m.folder,
 								       m.from,
 								       m.to,
 								       m.reply_to,
@@ -378,6 +381,7 @@ voicelink.delete_message=function(message_id,callback,error) {
     voicelink.requests.push(new voicelink.Request("delete_message",{
 	message_id:message_id
     },function(r) {
+	voicelink.update();
 	if(callback)
 	    callback(r);
     },function(r,n) {
@@ -388,22 +392,31 @@ voicelink.delete_message=function(message_id,callback,error) {
 };
 
 voicelink.message_folder=function(message_id) {
-    return null;
+    return voicelink.get_message(message_id).folder;
 };
 
 voicelink.is_message=function(id) {
-    if(voicelink.message_folder(id))
+    if(voicelink.messages[id] != undefined)
 	return true;
     return false;
 }
 
-voicelink.send_message=function(message_id,recipients,callback,error) {
+voicelink.set_recipients=function(message_id,recipients,callback,error) {
+    console.log(recipients);
+    for(var i=0;i<recipients.length;i++) {
+	var handle=recipients[i];
+	if(handle.length <= 2) {
+	    error("invalid","handle");
+	} else if(voicelink.regexp.handle.test(handle) == false) {
+	    error("invalid","handle");
+	}
+    }
     if(voicelink.message_folder(message_id) != "drafts") {
 	error("invalid","folder");
     } else {
-	voicelink.requests.push(new voicelink.Request("send_message",{
+	voicelink.requests.push(new voicelink.Request("set_recipients",{
 	    message_id:message_id,
-	    recipients:recipients
+	    recipients:recipients.join(",")
 	},function(r) {
 	    voicelink.update();
 	    if(callback)

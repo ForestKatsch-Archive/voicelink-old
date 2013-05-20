@@ -37,25 +37,29 @@ var view={
 };
 
 function view_generate_message(m,folder) {
+    var d=ui_format_date(m.composed);
+    var time_title=d[1];
+    d=d[0];
+    var del="";
+    var to="";
     if(folder == "drafts") {
-	var d=ui_format_date(m.composed);
-	if(d.day)
-	    d="<span class='time'>"+d.time+"</span>";
-	else
-	    d="<span class='date'>"+d.date+"</span><span class='time'>"+d.time+"</span>";
-	var time_title=d.full_time;
 	var from=voicelink.get_name();
 	var duration=m.duration;
-	return "<a class='link play' onclick='javascript:ui_play_message("+m.message_id+")'>\
-<img src='assets/img/play.png' alt='Play' title='Play message' /></a>\
+	del="<a class='link delete' onclick='javascript:ui_delete_message("+m.message_id+")'>\
+<img src='assets/img/delete.png' alt='"+_("delete_message")+"' title='"+_("delete_message")+"' /></a>";
+	var t="";
+	for(var i=0;i<m.to.length;i++)
+	    t+=m.to[i]+" ";
+	t=t.substr(0,t.length-2);
+	to="<input class='to' onblur='javascript:ui_update_to("+m.message_id+")' value='"+t+"' placeholder='To' />";
+    }
+    return "<a class='link play' onclick='javascript:ui_toggle_play_message("+m.message_id+")'>\
+<img src='assets/img/play.png' alt='"+_("play_message")+"' title='"+_("play_message")+"' /></a>\
 <span class='from' title='"+m.from_handle+"'>"+from+"</span>\
+"+to+"\
 <span class='sent' title='"+time_title+"'>"+d+"</span>\
 <span class='duration'>"+duration+"</span>\
-<a class='link delete' onclick='javascript:ui_delete_message("+m.message_id+")'>\
-<img src='assets/img/delete.png' alt='Delete' title='Delete' /></a>";
-    } else {
-	return "errors. this is BAD!!!";
-    }
+"+del+"";
 }
 
 function view_update() {
@@ -87,23 +91,44 @@ function view_update_messages(folder) {
     }
 }
 
+function view_history(e) {
+    var url=parseUri(location.href);
+    var hash="";
+    if(url.relative.indexOf("#") >= 0)
+	hash=url.relative.split("#")[1];
+    ui_hide_modal_final("*");
+    if(hash != "")
+	ui_show_modal(hash);
+    var v=url.query;
+    view_set_final(v);
+}
+
+function view_update_time() {
+    for(var i in voicelink.messages) {
+	var m=voicelink.messages[i];
+	var d="";
+	if(m.folder == "drafts")
+	    d=ui_format_date(m.composed);
+	var time_title=d[1];
+	d=d[0];
+	var time_title=d[1];
+	$("#view-"+m.folder+" #message-number-"+m.message_id+" .sent").text(d);
+	$("#view-"+m.folder+" #message-number-"+m.message_id+" .sent").attr("title",time_title);
+    }
+}
+
 function view_init() {
     view_create_views();
-    $(window).bind("popstate",function(e) {
-	var url=parseUri(location.href);
-	var hash="";
-	if(url.relative.indexOf("#") >= 0)
-	    hash=url.relative.split("#")[1];
-	ui_hide_modal_final("*");
-	if(hash != "")
-	    ui_show_modal(hash);
-	var v=url.query;
-	view_set_final(v);
-    });
+    $(window).bind("popstate",view_history);
+    setTimeout(function() {
+	if(view.url == "")
+	    view_history();
+    },100);
     view_update_all();
     voicelink.bind("messages_changed",function() {
-	view_update();
+	view_update_all();
     });
+    setInterval(view_update_time,8000);
     loaded("view");
 }
 
@@ -178,12 +203,12 @@ function view_save() {
 
 function view_restore() {
     if(!("view" in localStorage)) {
-	view.view="help";
-	view_save();
+	view_set("help");
+    } else {
+	view.view=localStorage["view"];
+	view_push_url(view.view);
+	view_set_final_immediate(view.view);
     }
-    view.view=localStorage["view"];
-    view_push_url(view.view);
-    view_set_final_immediate(view.view);
 }
 
 function view_restore_immediate() {

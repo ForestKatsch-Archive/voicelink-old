@@ -51,9 +51,16 @@ function message_delete() {
   auth_needed(true);
   if(!($message_id=post("message_id")))
     reply_error("arg","message_id");
-  error_log("Deleting the f**k'n message");
   db_delete_message($message_id);
   reply("ok",[]);
+}
+
+function message_set_recipients() {
+  auth_needed(true);
+  if(!($recipients=post("recipients")))
+    reply_error("arg","recipients");
+  $recipients=explode(",",$recipients);
+  reply_error("niy","set_recipient");
 }
 
 ?>

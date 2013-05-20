@@ -47,6 +47,8 @@ if($a == "info") {
   message_play();
 } else if($a == "delete_message") {
   message_delete();
+} else if($a == "set_recipients") {
+  message_set_recipients();
 
 } else if($a == "upload") {
   messages_upload();

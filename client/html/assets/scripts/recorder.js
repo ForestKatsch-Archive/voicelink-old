@@ -16,6 +16,7 @@
     });
     var recording = false,
       currCallback;
+      var recordCallback=function() {}, recorded=false;
 
     this.node.onaudioprocess = function(e){
       if (!recording) return;
@@ -36,8 +37,10 @@
       }
     }
 
-    this.record = function(){
-      recording = true;
+    this.record = function(callback){
+	recordCallback=callback;
+	recording = true;
+	recorded=false;
     }
 
     this.stop = function(){
@@ -64,8 +67,15 @@
     }
 
     worker.onmessage = function(e){
-      var blob = e.data;
-      currCallback(blob);
+	if(e.data == "recording") {
+	    if(!recorded) {
+		recordCallback();
+		recorded=true;
+	    }
+	} else {
+	    var blob = e.data;
+	    currCallback(blob);
+	}
     }
 
     source.connect(this.node);

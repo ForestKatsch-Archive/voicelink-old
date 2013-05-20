@@ -14,8 +14,8 @@
    id="svg3824"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="play.svg"
-   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/close.png"
+   sodipodi:docname="stop.svg"
+   inkscape:export-filename="/home/forest/projects/voicelink/client/html/assets/img/stop.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="29.481933"
-     inkscape:cx="11.823744"
-     inkscape:cy="5.2797732"
+     inkscape:zoom="20.846875"
+     inkscape:cx="12.022694"
+     inkscape:cy="5.9659862"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -37,7 +37,9 @@
      inkscape:window-height="713"
      inkscape:window-x="0"
      inkscape:window-y="27"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="true"
+     inkscape:object-paths="true">
     <inkscape:grid
        type="xygrid"
        id="grid3832"
@@ -54,7 +56,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -63,12 +65,14 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1040.3622)">
-    <path
-       style="fill:#404040;fill-opacity:1;stroke:#404040;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-       d="M 3,10 10,6 3,2 z"
-       id="path3857"
-       inkscape:connector-curvature="0"
+    <rect
+       style="fill:#404040;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3036"
+       width="8"
+       height="8"
+       x="2"
+       y="2"
        transform="translate(0,1040.3622)"
-       sodipodi:nodetypes="cccc" />
+       ry="1" />
   </g>
 </svg>
