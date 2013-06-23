@@ -12,7 +12,9 @@
 }
 
 .folder .message {
+    display: block;
     position: relative;
+    margin: 2px 0;
 }
 
 .folder .message>* {

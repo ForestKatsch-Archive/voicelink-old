@@ -280,7 +280,7 @@ function mysql_get_inbox_messages($user_id) {
       $messages[$mid]=[
 		       "message_id"=>$mid,
 		       "duration"=>$message["duration"],
-		       "folder"=>"inbox",
+		       "folders"=>["inbox"],
 		       "from"=>mysql_get_handle_from_user_id($message["from_user_id"]),
 		       "reply_to"=>-1,
 		       "to"=>mysql_get_recipients($mid),
@@ -301,10 +301,10 @@ function mysql_get_draft_messages($user_id) {
   $result=mysql_q($q);
   $handle=mysql_get_handle_from_user_id($user_id);
   while($row=$result->fetch_assoc()) {
-    $messages[]=[
+    $messages[$row["message_id"]]=[
 		 "message_id"=>$row["message_id"],
 		 "duration"=>$row["duration"],
-		 "folder"=>"drafts",
+		 "folders"=>["drafts"],
 		 "from"=>$handle,
 		 "reply_to"=>-1,
 		 "to"=>mysql_get_recipients($row["message_id"]),
@@ -322,10 +322,10 @@ function mysql_get_sent_messages($user_id) {
   $result=mysql_q($q);
   $handle=mysql_get_handle_from_user_id($user_id);
   while($row=$result->fetch_assoc()) {
-    $messages[]=[
+    $messages[$row["message_id"]]=[
 		 "message_id"=>$row["message_id"],
 		 "duration"=>$row["duration"],
-		 "folder"=>"sent",
+		 "folders"=>["sent"],
 		 "from"=>$handle,
 		 "reply_to"=>-1,
 		 "to"=>mysql_get_recipients($row["message_id"]),
@@ -339,9 +339,30 @@ function mysql_get_sent_messages($user_id) {
 function mysql_get_messages($user_id) {
   if(!mysql_user_id_exists($user_id))
     reply_error("invalid","user");
-  return array_merge(mysql_get_inbox_messages($user_id),
-		     mysql_get_sent_messages($user_id),
-		     mysql_get_draft_messages($user_id));
+  $messages=mysql_get_inbox_messages($user_id);
+  foreach(mysql_get_draft_messages($user_id) as $m) {
+    $existing=false;
+    foreach($messages as $om) {
+      if($m["message_id"] == $om["message_id"]) {
+	$messages[$m["message_id"]]->folder[]="draft";
+	$existing=true;
+      }
+    }
+    if($existing == false)
+      $messages[$m["message_id"]]=$m;
+  }
+  foreach(mysql_get_sent_messages($user_id) as $m) {
+    $existing=false;
+    foreach($messages as $om) {
+      if($m["message_id"] == $om["message_id"]) {
+	$messages[$m["message_id"]]->folder[]="sent";
+	$existing=true;
+      }
+    }
+    if($existing == false)
+      $messages[$m["message_id"]]=$m;
+  }
+  return $messages;
 }
 
 function mysql_inbox_message_number($user_id) {

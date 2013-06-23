@@ -227,10 +227,10 @@ voicelink.get_messages=function(callback,error) {
     voicelink.requests.push(new voicelink.Request("get_messages",{},function(r) {
 	if(r.messages) {
 	    voicelink.messages={};
-	    for(var i=0;i<r.messages.length;i++) {
+	    for(var i in r.messages) {
 		var m=r.messages[i];
 		voicelink.messages[m.message_id]=new voicelink.Message(m.message_id,
-								       m.folder,
+								       m.folders,
 								       m.from,
 								       m.to,
 								       m.reply_to,
@@ -243,6 +243,7 @@ voicelink.get_messages=function(callback,error) {
 	if(callback)
 	    callback(r);
     },error));
+    console.log(voicelink.messages);
     voicelink.process_requests();
 }
 
